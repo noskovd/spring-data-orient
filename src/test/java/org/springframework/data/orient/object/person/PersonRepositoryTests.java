@@ -53,8 +53,6 @@ public class PersonRepositoryTests {
     
     @Test
     public void findByFirstName() {
-        for (Person person : repository.findByFirstName("Dzmitry")) {
-            System.out.println(person.getFirstName());
-        }
+        Assert.assertFalse(repository.findByFirstName("Dzmitry").isEmpty());
     }
 }

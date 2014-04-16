@@ -4,6 +4,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.aop.SpringProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
@@ -43,7 +44,6 @@ public class ContextEnviromentTests {
     
     @Test
     public void checkTransactionalOrientObjectTemplate() {
-        System.out.println(template.getClass()); 
+        Assert.assertTrue(SpringProxy.class.isAssignableFrom(template.getClass()));
     }
-
 }
