@@ -1,5 +1,7 @@
 package org.springframework.data.orient.repository.object.query;
 
+import org.springframework.data.repository.query.ParameterAccessor;
+import org.springframework.data.repository.query.ParametersParameterAccessor;
 import org.springframework.orm.orient.OrientObjectTemplate;
 
 import com.orientechnologies.orient.core.sql.query.OSQLQuery;
@@ -21,6 +23,9 @@ public class StringBasedOrientQuery extends AbstractOrientQuery {
     @Override
     @SuppressWarnings("rawtypes")
     protected OSQLQuery doCreateQuery(Object[] values) {
-        return new OSQLSynchQuery(query);
+        ParameterAccessor accessor = new ParametersParameterAccessor(getQueryMethod().getParameters(), values);
+        String sortedQuery = QueryUtils.applySorting(query, accessor.getSort());
+        
+        return new OSQLSynchQuery(sortedQuery);
     }
 }
