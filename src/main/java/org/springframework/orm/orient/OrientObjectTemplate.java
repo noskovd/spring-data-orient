@@ -1,0 +1,697 @@
+package org.springframework.orm.orient;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.Callable;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import com.orientechnologies.orient.core.cache.OLevel1RecordCache;
+import com.orientechnologies.orient.core.cache.OLevel2RecordCache;
+import com.orientechnologies.orient.core.command.OCommandRequest;
+import com.orientechnologies.orient.core.db.ODatabase;
+import com.orientechnologies.orient.core.db.ODatabase.ATTRIBUTES;
+import com.orientechnologies.orient.core.db.ODatabase.STATUS;
+import com.orientechnologies.orient.core.db.ODatabaseComplex;
+import com.orientechnologies.orient.core.db.ODatabaseComplex.OPERATION_MODE;
+import com.orientechnologies.orient.core.db.ODatabaseListener;
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
+import com.orientechnologies.orient.core.db.record.OIdentifiable;
+import com.orientechnologies.orient.core.dictionary.ODictionary;
+import com.orientechnologies.orient.core.entity.OEntityManager;
+import com.orientechnologies.orient.core.hook.ORecordHook;
+import com.orientechnologies.orient.core.hook.ORecordHook.HOOK_POSITION;
+import com.orientechnologies.orient.core.hook.ORecordHook.RESULT;
+import com.orientechnologies.orient.core.hook.ORecordHook.TYPE;
+import com.orientechnologies.orient.core.id.ORID;
+import com.orientechnologies.orient.core.intent.OIntent;
+import com.orientechnologies.orient.core.metadata.security.OUser;
+import com.orientechnologies.orient.core.query.OQuery;
+import com.orientechnologies.orient.core.record.ORecordInternal;
+import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.storage.ORecordCallback;
+import com.orientechnologies.orient.core.storage.ORecordMetadata;
+import com.orientechnologies.orient.core.storage.OStorage;
+import com.orientechnologies.orient.core.storage.OStorage.CLUSTER_TYPE;
+import com.orientechnologies.orient.core.tx.OTransaction;
+import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
+import com.orientechnologies.orient.core.version.ORecordVersion;
+import com.orientechnologies.orient.object.db.ODatabasePojoAbstract;
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.orientechnologies.orient.object.enhancement.OObjectMethodFilter;
+import com.orientechnologies.orient.object.iterator.OObjectIteratorClass;
+import com.orientechnologies.orient.object.iterator.OObjectIteratorCluster;
+import com.orientechnologies.orient.object.metadata.OMetadataObject;
+
+@Transactional
+public class OrientObjectTemplate {
+
+    private final OrientObjectDatabaseFactory dbf;
+
+    public OrientObjectTemplate(OrientObjectDatabaseFactory dbf) {
+        super();
+        this.dbf = dbf;
+    }
+    
+    public OObjectDatabaseTx database() {
+        return dbf.db();
+    }
+
+    public int hashCode() {
+        return dbf.db().hashCode();
+    }
+
+    public void finalize() {
+        dbf.db().finalize();
+    }
+
+    public <THISDB extends ODatabase> THISDB create() {
+        return dbf.db().create();
+    }
+
+    public boolean exists() {
+        return dbf.db().exists();
+    }
+
+    public void reload() {
+        dbf.db().reload();
+    }
+
+    public void backup(OutputStream out, Map<String, Object> options, Callable<Object> callable) throws IOException {
+        dbf.db().backup(out, options, callable);
+    }
+
+    public void restore(InputStream in, Map<String, Object> options, Callable<Object> callable) throws IOException {
+        dbf.db().restore(in, options, callable);
+    }
+
+    public void replaceStorage(OStorage iNewStorage) {
+        dbf.db().replaceStorage(iNewStorage);
+    }
+
+    public void drop() {
+        dbf.db().drop();
+    }
+
+    public STATUS getStatus() {
+        return dbf.db().getStatus();
+    }
+
+    public <THISDB extends ODatabase> THISDB setStatus(STATUS iStatus) {
+        return dbf.db().setStatus(iStatus);
+    }
+
+    public void close() {
+        dbf.db().close();
+    }
+
+    public String getName() {
+        return dbf.db().getName();
+    }
+
+    public String getURL() {
+        return dbf.db().getURL();
+    }
+
+    public OStorage getStorage() {
+        return dbf.db().getStorage();
+    }
+
+    public OTransaction getTransaction() {
+        return dbf.db().getTransaction();
+    }
+
+    public OLevel1RecordCache getLevel1Cache() {
+        return dbf.db().getLevel1Cache();
+    }
+
+    public ODatabaseComplex<Object> begin() {
+        return dbf.db().begin();
+    }
+
+    public OLevel2RecordCache getLevel2Cache() {
+        return dbf.db().getLevel2Cache();
+    }
+
+    public ODatabaseComplex<Object> begin(TXTYPE iType) {
+        return dbf.db().begin(iType);
+    }
+
+    public boolean isClosed() {
+        return dbf.db().isClosed();
+    }
+
+    public ODatabaseComplex<Object> begin(OTransaction iTx) {
+        return dbf.db().begin(iTx);
+    }
+
+    public long countClusterElements(int iClusterId) {
+        return dbf.db().countClusterElements(iClusterId);
+    }
+
+    public long countClusterElements(int[] iClusterIds) {
+        return dbf.db().countClusterElements(iClusterIds);
+    }
+
+    public long countClusterElements(String iClusterName) {
+        return dbf.db().countClusterElements(iClusterName);
+    }
+
+    public <T> T newInstance(Class<T> iType) {
+        return dbf.db().newInstance(iType);
+    }
+
+    public long countClusterElements(int iClusterId, boolean countTombstones) {
+        return dbf.db().countClusterElements(iClusterId, countTombstones);
+    }
+
+    public <T> T newInstance(Class<T> iType, Object... iArgs) {
+        return dbf.db().newInstance(iType, iArgs);
+    }
+
+    public long countClusterElements(int[] iClusterIds, boolean countTombstones) {
+        return dbf.db().countClusterElements(iClusterIds, countTombstones);
+    }
+
+    public <RET> RET newInstance(String iClassName) {
+        return dbf.db().newInstance(iClassName);
+    }
+
+    public void setDirty(Object iPojo) {
+        dbf.db().setDirty(iPojo);
+    }
+
+    public int getClusters() {
+        return dbf.db().getClusters();
+    }
+
+    public boolean existsCluster(String iClusterName) {
+        return dbf.db().existsCluster(iClusterName);
+    }
+
+    public Collection<String> getClusterNames() {
+        return dbf.db().getClusterNames();
+    }
+
+    public OMetadataObject getMetadata() {
+        return dbf.db().getMetadata();
+    }
+
+    public String getClusterType(String iClusterName) {
+        return dbf.db().getClusterType(iClusterName);
+    }
+
+    public void unsetDirty(Object iPojo) {
+        dbf.db().unsetDirty(iPojo);
+    }
+
+    public <RET> RET newInstance(String iClassName, Object iEnclosingClass,
+            Object... iArgs) {
+        return dbf.db().newInstance(iClassName, iEnclosingClass, iArgs);
+    }
+
+    public int getDataSegmentIdByName(String iDataSegmentName) {
+        return dbf.db().getDataSegmentIdByName(iDataSegmentName);
+    }
+
+    public String getDataSegmentNameById(int iDataSegmentId) {
+        return dbf.db().getDataSegmentNameById(iDataSegmentId);
+    }
+
+    public int getClusterIdByName(String iClusterName) {
+        return dbf.db().getClusterIdByName(iClusterName);
+    }
+
+    public void setInternal(ATTRIBUTES attribute, Object iValue) {
+        dbf.db().setInternal(attribute, iValue);
+    }
+
+    public String getClusterNameById(int iClusterId) {
+        return dbf.db().getClusterNameById(iClusterId);
+    }
+
+    public long getClusterRecordSizeById(int iClusterId) {
+        return dbf.db().getClusterRecordSizeById(iClusterId);
+    }
+
+    public long getClusterRecordSizeByName(String iClusterName) {
+        return dbf.db().getClusterRecordSizeByName(iClusterName);
+    }
+
+    public int addCluster(String iType, String iClusterName, String iLocation, String iDataSegmentName, Object... iParameters) {
+        return dbf.db().addCluster(iType, iClusterName, iLocation, iDataSegmentName, iParameters);
+    }
+
+    public int addCluster(String iType, String iClusterName, int iRequestedId, String iLocation, String iDataSegmentName, Object... iParameters) {
+        return dbf.db().addCluster(iType, iClusterName, iRequestedId, iLocation, iDataSegmentName, iParameters);
+    }
+
+    public <RET> RET newInstance(String iClassName, Object iEnclosingClass, ODocument iDocument, Object... iArgs) {
+        return dbf.db().newInstance(iClassName, iEnclosingClass, iDocument, iArgs);
+    }
+
+    public OUser getUser() {
+        return dbf.db().getUser();
+    }
+
+    public int addCluster(String iClusterName, CLUSTER_TYPE iType, Object... iParameters) {
+        return dbf.db().addCluster(iClusterName, iType, iParameters);
+    }
+
+    public void setUser(OUser user) {
+        dbf.db().setUser(user);
+    }
+
+    public <RET extends OCommandRequest> RET command(OCommandRequest iCommand) {
+        return dbf.db().command(iCommand);
+    }
+
+    public int addCluster(String iClusterName, CLUSTER_TYPE iType) {
+        return dbf.db().addCluster(iClusterName, iType);
+    }
+
+    public boolean dropDataSegment(String name) {
+        return dbf.db().dropDataSegment(name);
+    }
+
+    public <RET extends List<?>> RET query(OQuery<?> iCommand, Object... iArgs) {
+        return dbf.db().query(iCommand, iArgs);
+    }
+
+    public boolean dropCluster(String iClusterName, boolean iTruncate) {
+        return dbf.db().dropCluster(iClusterName, iTruncate);
+    }
+
+    public boolean dropCluster(int iClusterId, boolean iTruncate) {
+        return dbf.db().dropCluster(iClusterId, iTruncate);
+    }
+
+    public int addDataSegment(String iSegmentName, String iLocation) {
+        return dbf.db().addDataSegment(iSegmentName, iLocation);
+    }
+
+    public <RET> OObjectIteratorClass<RET> browseClass(Class<RET> iClusterClass) {
+        return dbf.db().browseClass(iClusterClass);
+    }
+
+    public int getDefaultClusterId() {
+        return dbf.db().getDefaultClusterId();
+    }
+
+    public <RET> OObjectIteratorClass<RET> browseClass(
+            Class<RET> iClusterClass, boolean iPolymorphic) {
+        return dbf.db().browseClass(iClusterClass, iPolymorphic);
+    }
+
+    public boolean declareIntent(OIntent iIntent) {
+        return dbf.db().declareIntent(iIntent);
+    }
+
+    public ODatabaseComplex<Object> delete(ORecordInternal<?> iRecord) {
+        return dbf.db().delete(iRecord);
+    }
+
+    public <RET> OObjectIteratorClass<RET> browseClass(String iClassName) {
+        return dbf.db().browseClass(iClassName);
+    }
+
+    public ODatabaseComplex<?> getDatabaseOwner() {
+        return dbf.db().getDatabaseOwner();
+    }
+
+    public <RET> OObjectIteratorClass<RET> browseClass(String iClassName, boolean iPolymorphic) {
+        return dbf.db().browseClass(iClassName, iPolymorphic);
+    }
+
+    public ODatabaseComplex<?> setDatabaseOwner(ODatabaseComplex<?> iOwner) {
+        return dbf.db().setDatabaseOwner(iOwner);
+    }
+
+    public boolean equals(Object iOther) {
+        return dbf.db().equals(iOther);
+    }
+
+    public <DBTYPE extends ODatabaseComplex<?>> DBTYPE registerHook(ORecordHook iHookImpl) {
+        return dbf.db().registerHook(iHookImpl);
+    }
+
+    public <RET> OObjectIteratorCluster<RET> browseCluster(String iClusterName) {
+        return dbf.db().browseCluster(iClusterName);
+    }
+
+    public String toString() {
+        return dbf.db().toString();
+    }
+
+    public Object setProperty(String iName, Object iValue) {
+        return dbf.db().setProperty(iName, iValue);
+    }
+
+    public <DBTYPE extends ODatabaseComplex<?>> DBTYPE registerHook(ORecordHook iHookImpl, HOOK_POSITION iPosition) {
+        return dbf.db().registerHook(iHookImpl, iPosition);
+    }
+
+    public Object getProperty(String iName) {
+        return dbf.db().getProperty(iName);
+    }
+
+    public RESULT callbackHooks(TYPE iType, OIdentifiable iObject) {
+        return dbf.db().callbackHooks(iType, iObject);
+    }
+
+    public Iterator<Entry<String, Object>> getProperties() {
+        return dbf.db().getProperties();
+    }
+
+    public <RET> RET load(Object iPojo) {
+        return dbf.db().load(iPojo);
+    }
+
+    public <RET> RET reload(Object iPojo) {
+        return dbf.db().reload(iPojo);
+    }
+
+    public Object get(ATTRIBUTES iAttribute) {
+        return dbf.db().get(iAttribute);
+    }
+
+    public Set<ORecordHook> getHooks() {
+        return dbf.db().getHooks();
+    }
+
+    public <RET> RET reload(Object iPojo, boolean iIgnoreCache) {
+        return dbf.db().reload(iPojo, iIgnoreCache);
+    }
+
+    public <THISDB extends ODatabase> THISDB set(ATTRIBUTES attribute, Object iValue) {
+        return dbf.db().set(attribute, iValue);
+    }
+
+    public <DBTYPE extends ODatabaseComplex<?>> DBTYPE unregisterHook(
+            ORecordHook iHookImpl) {
+        return dbf.db().unregisterHook(iHookImpl);
+    }
+
+    public <RET> RET reload(Object iPojo, String iFetchPlan, boolean iIgnoreCache) {
+        return dbf.db().reload(iPojo, iFetchPlan, iIgnoreCache);
+    }
+
+    public void registerListener(ODatabaseListener iListener) {
+        dbf.db().registerListener(iListener);
+    }
+
+    public boolean isMVCC() {
+        return dbf.db().isMVCC();
+    }
+
+    public <DBTYPE extends ODatabaseComplex<?>> DBTYPE setMVCC(boolean iMvcc) {
+        return dbf.db().setMVCC(iMvcc);
+    }
+
+    public void unregisterListener(ODatabaseListener iListener) {
+        dbf.db().unregisterListener(iListener);
+    }
+
+    public <V> V callInLock(Callable<V> iCallable, boolean iExclusiveLock) {
+        return dbf.db().callInLock(iCallable, iExclusiveLock);
+    }
+
+    public ODatabasePojoAbstract<Object> setRetainObjects(boolean iValue) {
+        return dbf.db().setRetainObjects(iValue);
+    }
+
+    public <RET> RET load(Object iPojo, String iFetchPlan) {
+        return dbf.db().load(iPojo, iFetchPlan);
+    }
+
+    public <V> V callInRecordLock(Callable<V> iCallable, ORID rid,
+            boolean iExclusiveLock) {
+        return dbf.db().callInRecordLock(iCallable, rid, iExclusiveLock);
+    }
+
+    public void attach(Object iPojo) {
+        dbf.db().attach(iPojo);
+    }
+
+    public ORecordMetadata getRecordMetadata(ORID rid) {
+        return dbf.db().getRecordMetadata(rid);
+    }
+
+    public <RET> RET attachAndSave(Object iPojo) {
+        return dbf.db().attachAndSave(iPojo);
+    }
+
+    public boolean isRetainObjects() {
+        return dbf.db().isRetainObjects();
+    }
+
+    public long getSize() {
+        return dbf.db().getSize();
+    }
+
+    public <RET> RET detach(Object iPojo) {
+        return dbf.db().detach(iPojo);
+    }
+
+    public void freeze(boolean throwException) {
+        dbf.db().freeze(throwException);
+    }
+
+    public void freeze() {
+        dbf.db().freeze();
+    }
+
+    public void release() {
+        dbf.db().release();
+    }
+
+    public void freezeCluster(int iClusterId, boolean throwException) {
+        dbf.db().freezeCluster(iClusterId, throwException);
+    }
+
+    public <RET> RET detach(Object iPojo, boolean returnNonProxiedInstance) {
+        return dbf.db().detach(iPojo, returnNonProxiedInstance);
+    }
+
+    public void freezeCluster(int iClusterId) {
+        dbf.db().freezeCluster(iClusterId);
+    }
+
+    public void releaseCluster(int iClusterId) {
+        dbf.db().releaseCluster(iClusterId);
+    }
+
+    public boolean existsUserObjectByRID(ORID iRID) {
+        return dbf.db().existsUserObjectByRID(iRID);
+    }
+
+    public ODocument getRecordById(ORID iRecordId) {
+        return dbf.db().getRecordById(iRecordId);
+    }
+
+    public <RET> RET detachAll(Object iPojo, boolean returnNonProxiedInstance) {
+        return dbf.db().detachAll(iPojo, returnNonProxiedInstance);
+    }
+
+    public boolean isManaged(Object iEntity) {
+        return dbf.db().isManaged(iEntity);
+    }
+
+    public Object getUserObjectByRecord(OIdentifiable iRecord, String iFetchPlan) {
+        return dbf.db().getUserObjectByRecord(iRecord, iFetchPlan);
+    }
+
+    public <RET> RET load(Object iPojo, String iFetchPlan, boolean iIgnoreCache) {
+        return dbf.db().load(iPojo, iFetchPlan, iIgnoreCache);
+    }
+
+    public <RET> RET load(Object iPojo, String iFetchPlan, boolean iIgnoreCache, boolean loadTombstone) {
+        return dbf.db().load(iPojo, iFetchPlan, iIgnoreCache, loadTombstone);
+    }
+
+    public <RET> RET load(ORID iRecordId) {
+        return dbf.db().load(iRecordId);
+    }
+
+    public <RET> RET load(ORID iRecordId, String iFetchPlan) {
+        return dbf.db().load(iRecordId, iFetchPlan);
+    }
+
+    public <RET> RET load(ORID iRecordId, String iFetchPlan, boolean iIgnoreCache) {
+        return dbf.db().load(iRecordId, iFetchPlan, iIgnoreCache);
+    }
+
+    public <RET> RET load(ORID iRecordId, String iFetchPlan, boolean iIgnoreCache, boolean loadTombstone) {
+        return dbf.db().load(iRecordId, iFetchPlan, iIgnoreCache, loadTombstone);
+    }
+
+    public <RET> RET save(Object iContent) {
+        return dbf.db().save(iContent);
+    }
+
+    public <RET> RET save(Object iContent, OPERATION_MODE iMode,
+            boolean iForceCreate,
+            ORecordCallback<? extends Number> iRecordCreatedCallback,
+            ORecordCallback<ORecordVersion> iRecordUpdatedCallback) {
+        return dbf.db().save(iContent, iMode, iForceCreate, iRecordCreatedCallback, iRecordUpdatedCallback);
+    }
+
+    public <RET> RET save(Object iPojo, String iClusterName) {
+        return dbf.db().save(iPojo, iClusterName);
+    }
+
+    public boolean updatedReplica(Object iPojo) {
+        return dbf.db().updatedReplica(iPojo);
+    }
+
+    public <RET> RET save(Object iPojo, String iClusterName,
+            OPERATION_MODE iMode, boolean iForceCreate,
+            ORecordCallback<? extends Number> iRecordCreatedCallback,
+            ORecordCallback<ORecordVersion> iRecordUpdatedCallback) {
+        return dbf.db().save(iPojo, iClusterName, iMode, iForceCreate, iRecordCreatedCallback, iRecordUpdatedCallback);
+    }
+
+    public ODatabaseObject delete(Object iPojo) {
+        return dbf.db().delete(iPojo);
+    }
+
+    public ODatabaseObject delete(ORID iRID) {
+        return dbf.db().delete(iRID);
+    }
+
+    public ODatabaseObject delete(ORID iRID, ORecordVersion iVersion) {
+        return dbf.db().delete(iRID, iVersion);
+    }
+
+    public ODatabaseComplex<Object> cleanOutRecord(ORID iRID, ORecordVersion iVersion) {
+        return dbf.db().cleanOutRecord(iRID, iVersion);
+    }
+
+    public long countClass(String iClassName) {
+        return dbf.db().countClass(iClassName);
+    }
+
+    public long countClass(Class<?> iClass) {
+        return dbf.db().countClass(iClass);
+    }
+
+    public ODictionary<Object> getDictionary() {
+        return dbf.db().getDictionary();
+    }
+
+    public ODatabasePojoAbstract<Object> commit() {
+        return dbf.db().commit();
+    }
+
+    public ODatabasePojoAbstract<Object> rollback() {
+        return dbf.db().rollback();
+    }
+
+    public OEntityManager getEntityManager() {
+        return dbf.db().getEntityManager();
+    }
+
+    public ODatabaseDocument getUnderlying() {
+        return dbf.db().getUnderlying();
+    }
+
+    public ORecordVersion getVersion(Object iPojo) {
+        return dbf.db().getVersion(iPojo);
+    }
+
+    public ORID getIdentity(Object iPojo) {
+        return dbf.db().getIdentity(iPojo);
+    }
+
+    public boolean isSaveOnlyDirty() {
+        return dbf.db().isSaveOnlyDirty();
+    }
+
+    public void setSaveOnlyDirty(boolean saveOnlyDirty) {
+        dbf.db().setSaveOnlyDirty(saveOnlyDirty);
+    }
+
+    public boolean isAutomaticSchemaGeneration() {
+        return dbf.db().isAutomaticSchemaGeneration();
+    }
+
+    public void setAutomaticSchemaGeneration(boolean automaticSchemaGeneration) {
+        dbf.db().setAutomaticSchemaGeneration(automaticSchemaGeneration);
+    }
+
+    public Object newInstance() {
+        return dbf.db().newInstance();
+    }
+
+    public <DBTYPE extends ODatabase> DBTYPE checkSecurity(String iResource, byte iOperation) {
+        return dbf.db().checkSecurity(iResource, iOperation);
+    }
+
+    public <DBTYPE extends ODatabase> DBTYPE checkSecurity(String iResource, int iOperation, Object iResourceSpecific) {
+        return dbf.db().checkSecurity(iResource, iOperation, iResourceSpecific);
+    }
+
+    public <DBTYPE extends ODatabase> DBTYPE checkSecurity(String iResource, int iOperation, Object... iResourcesSpecific) {
+        return dbf.db().checkSecurity(iResource, iOperation, iResourcesSpecific);
+    }
+
+    public ODocument pojo2Stream(Object iPojo, ODocument iRecord) {
+        return dbf.db().pojo2Stream(iPojo, iRecord);
+    }
+
+    public Object stream2pojo(ODocument iRecord, Object iPojo, String iFetchPlan) {
+        return dbf.db().stream2pojo(iRecord, iPojo, iFetchPlan);
+    }
+
+    public Object stream2pojo(ODocument iRecord, Object iPojo, String iFetchPlan, boolean iReload) {
+        return dbf.db().stream2pojo(iRecord, iPojo, iFetchPlan, iReload);
+    }
+
+    public boolean isLazyLoading() {
+        return dbf.db().isLazyLoading();
+    }
+
+    public void setLazyLoading(boolean lazyLoading) {
+        dbf.db().setLazyLoading(lazyLoading);
+    }
+
+    public String getType() {
+        return dbf.db().getType();
+    }
+
+    public ODocument getRecordByUserObject(Object iPojo, boolean iCreateIfNotAvailable) {
+        return dbf.db().getRecordByUserObject(iPojo, iCreateIfNotAvailable);
+    }
+
+    public Object getUserObjectByRecord(OIdentifiable iRecord, String iFetchPlan, boolean iCreate) {
+        return dbf.db().getUserObjectByRecord(iRecord, iFetchPlan, iCreate);
+    }
+
+    public void registerUserObject(Object iObject, ORecordInternal<?> iRecord) {
+        dbf.db().registerUserObject(iObject, iRecord);
+    }
+
+    public void registerUserObjectAfterLinkSave(ORecordInternal<?> iRecord) {
+        dbf.db().registerUserObjectAfterLinkSave(iRecord);
+    }
+
+    public void unregisterPojo(Object iObject, ODocument iRecord) {
+        dbf.db().unregisterPojo(iObject, iRecord);
+    }
+
+    public void registerClassMethodFilter(Class<?> iClass, OObjectMethodFilter iMethodFilter) {
+        dbf.db().registerClassMethodFilter(iClass, iMethodFilter);
+    }
+
+    public void deregisterClassMethodFilter(Class<?> iClass) {
+        dbf.db().deregisterClassMethodFilter(iClass);
+    }
+}
