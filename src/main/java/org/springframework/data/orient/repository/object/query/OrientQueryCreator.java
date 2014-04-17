@@ -54,6 +54,7 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, SelectCondi
         String property = part.getProperty().toDotPath();
         
         switch (part.getType()) {
+            case LIKE: return DSL.field(property).like(iterator.next().toString());
             case SIMPLE_PROPERTY: return DSL.field(property).eq(iterator.next());
             default: throw new IllegalArgumentException("Unsupported keyword!");
         }

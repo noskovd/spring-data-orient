@@ -3,6 +3,7 @@ package org.springframework.data.orient.object.person;
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +42,16 @@ public class PersonRepositoryTests {
     public void saveTest() {
         Person person = new Person();
         person.setFirstName("Dzmitry");
-        person.setLastName("Naksou");
+        person.setLastName("Naskou");
         
         Assert.assertNotNull(repository.save(person).getRid());
+    }
+    
+    @Test
+    @Ignore
+    public void deleteAllTest() {
+        repository.deleteAll();
+        Assert.assertEquals(0, repository.count());
     }
     
     @Test
@@ -65,12 +73,12 @@ public class PersonRepositoryTests {
     
     @Test
     public void findByLastName() {
-        Assert.assertFalse(repository.findByLastName("Naksou").isEmpty());
+        Assert.assertFalse(repository.findByLastName("Naskou").isEmpty());
     }
     
     @Test
     public void printFindByLastName() {
-        for (Person person : repository.findByLastName("Naksou")) {
+        for (Person person : repository.findByLastName("Naskou")) {
             System.out.println(person.getFirstName() + " " + person.getLastName());
         }
     }
