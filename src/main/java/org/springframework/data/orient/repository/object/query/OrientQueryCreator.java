@@ -3,9 +3,7 @@ package org.springframework.data.orient.repository.object.query;
 import java.util.Iterator;
 
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.ParameterAccessor;
@@ -13,7 +11,9 @@ import org.springframework.data.repository.query.parser.AbstractQueryCreator;
 import org.springframework.data.repository.query.parser.Part;
 import org.springframework.data.repository.query.parser.PartTree;
 
-public class OrientQueryCreator extends AbstractQueryCreator<CriteriaQuery<Object>, Predicate> {
+import com.orientechnologies.orient.core.sql.query.OSQLQuery;
+
+public class OrientQueryCreator extends AbstractQueryCreator<OSQLQuery<Object>, Predicate> {
 
     private final CriteriaBuilder builder;
     
@@ -40,7 +40,7 @@ public class OrientQueryCreator extends AbstractQueryCreator<CriteriaQuery<Objec
     }
 
     @Override
-    protected CriteriaQuery<Object> complete(Predicate criteria, Sort sort) {
+    protected OSQLQuery<Object> complete(Predicate criteria, Sort sort) {
         return null;
     }
 
