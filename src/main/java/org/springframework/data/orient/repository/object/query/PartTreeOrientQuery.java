@@ -1,5 +1,7 @@
 package org.springframework.data.orient.repository.object.query;
 
+import org.springframework.data.repository.query.Parameters;
+import org.springframework.data.repository.query.ParametersParameterAccessor;
 import org.springframework.data.repository.query.parser.PartTree;
 import org.springframework.orm.orient.OrientObjectTemplate;
 
@@ -15,19 +17,24 @@ public class PartTreeOrientQuery extends AbstractOrientQuery {
     
     private final PartTree tree;
     
+    private final Parameters<?, ?> parameters;
+    
     public PartTreeOrientQuery(OrientObjectQueryMethod method, OrientObjectTemplate template) {
         super(method, template);
         
         this.template = template;
         this.domainClass = method.getEntityInformation().getJavaType();
         this.tree = new PartTree(method.getName(), domainClass);
+        this.parameters = method.getParameters();
     }
 
     @Override
     @SuppressWarnings("rawtypes")
     protected OSQLQuery doCreateQuery(Object[] values) {
-        OrientQueryCreator creator = new OrientQueryCreator(tree, domainClass, null, new OrientCriteriaBuilderImpl());
+        ParametersParameterAccessor accessor = new ParametersParameterAccessor(parameters, values);
         
-        return new OSQLSynchQuery(creator.createQuery().toSQL());
+        OrientQueryCreator creator = new OrientQueryCreator(tree, domainClass, accessor);
+        
+        return new OSQLSynchQuery(creator.createQuery());
     }
 }

@@ -9,6 +9,7 @@
         <orientdb.version>1.6.3</orientdb.version>
         <spring.data.commons.version>1.7.2.RELEASE</spring.data.commons.version>
         <junit.version>4.10</junit.version>
+        <jooq.version>3.3.1</jooq.version>
     </properties>
 		
 	<dependencies>
@@ -36,7 +37,12 @@
 			<artifactId>spring-data-commons</artifactId>
 			<version>${spring.data.commons.version}</version>
         </dependency>
-        
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq</artifactId>
+			<version>${jooq.version}</version>
+		</dependency>
+
         <dependency>
         	<groupId>junit</groupId>
         	<artifactId>junit-dep</artifactId>

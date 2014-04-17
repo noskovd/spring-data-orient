@@ -52,7 +52,26 @@ public class PersonRepositoryTests {
     }
     
     @Test
+    public void printFindAll() {
+        for (Person person : repository.findAll()) {
+            System.out.println(person.getFirstName() + " " + person.getLastName());
+        }
+    }
+    
+    @Test
     public void findByFirstName() {
         Assert.assertFalse(repository.findByFirstName("Dzmitry").isEmpty());
+    }
+    
+    @Test
+    public void findByLastName() {
+        Assert.assertFalse(repository.findByLastName("Naksou").isEmpty());
+    }
+    
+    @Test
+    public void printFindByLastName() {
+        for (Person person : repository.findByLastName("Naksou")) {
+            System.out.println(person.getFirstName() + " " + person.getLastName());
+        }
     }
 }

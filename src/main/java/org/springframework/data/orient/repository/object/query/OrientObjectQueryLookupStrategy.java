@@ -77,9 +77,7 @@ public final class OrientObjectQueryLookupStrategy {
         @Override
         protected RepositoryQuery resolveQuery(OrientObjectQueryMethod method, OrientObjectTemplate template, NamedQueries namedQueries) {
             String query = method.getAnnotatedQuery();
-            
-            System.out.println(query);
-            
+
             if (query != null) {
                 return new StringBasedOrientQuery(query, method, template);
             }
