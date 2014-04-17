@@ -7,6 +7,6 @@ import org.springframework.data.orient.repository.object.Query;
 
 public interface PersonRepository extends OrientObjectRepository<Person> {
 
-    @Query("select from person")
+    @Query("select from person where firstName = ?")
     List<Person> findByFirstName(String firstName);
 }
