@@ -2,8 +2,9 @@ package org.springframework.data.orient.repository.object.query;
 
 import java.util.Iterator;
 
-import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.ParameterAccessor;
@@ -11,22 +12,28 @@ import org.springframework.data.repository.query.parser.AbstractQueryCreator;
 import org.springframework.data.repository.query.parser.Part;
 import org.springframework.data.repository.query.parser.PartTree;
 
-import com.orientechnologies.orient.core.sql.query.OSQLQuery;
+public class OrientQueryCreator extends AbstractQueryCreator<OrientCriteriaQuery<Object>, Predicate> {
 
-public class OrientQueryCreator extends AbstractQueryCreator<OSQLQuery<Object>, Predicate> {
-
-    private final CriteriaBuilder builder;
+    private final OrientCriteriaBuilder builder;
     
-    public OrientQueryCreator(PartTree tree, ParameterAccessor parameters, CriteriaBuilder builder) {
+    private final Root<?> root;
+    
+    private final OrientCriteriaQuery<Object> query;
+    
+    private final Class<?> domainClass;
+    
+    public OrientQueryCreator(PartTree tree, Class<?> domainClass, ParameterAccessor parameters, OrientCriteriaBuilder builder) {
         super(tree, parameters);
         
         this.builder = builder;
+        this.domainClass = domainClass;
+        this.query = (OrientCriteriaQuery<Object>) builder.createQuery().distinct(tree.isDistinct());
+        this.root = query.from(this.domainClass);
     }
 
     @Override
     protected Predicate create(Part part, Iterator<Object> iterator) {
-        // TODO Auto-generated method stub
-        return null;
+        return toPredicate(part);
     }
 
     @Override
@@ -40,11 +47,31 @@ public class OrientQueryCreator extends AbstractQueryCreator<OSQLQuery<Object>, 
     }
 
     @Override
-    protected OSQLQuery<Object> complete(Predicate criteria, Sort sort) {
-        return null;
+    protected OrientCriteriaQuery<Object> complete(Predicate criteria, Sort sort) {
+        CriteriaQuery<Object> select = query.select(root);
+        
+        return (OrientCriteriaQuery<Object>) (criteria == null ? select : select.where(criteria));
     }
 
     private Predicate toPredicate(Part part) {
-        return null;
+        return new PredicateBuilder(part).build();
+    }
+    
+    private class PredicateBuilder {
+        
+        private final Part part;
+        
+        public PredicateBuilder(Part part) {
+            super();
+            this.part = part;
+        }
+
+        public Predicate build() {
+            switch (part.getType()) {
+                case SIMPLE_PROPERTY: return builder.equal(null, null);
+
+                default: throw new IllegalArgumentException("Unsupported keyword " + part.getType());
+            }
+        }
     }
 }
