@@ -6,8 +6,15 @@ import com.orientechnologies.orient.core.sql.query.OSQLQuery;
 
 public class PartTreeOrientQuery extends AbstractOrientQuery {
 
+    private final OrientObjectTemplate template;
+    
+    private final Class<?> domainClass;
+    
     public PartTreeOrientQuery(OrientObjectQueryMethod method, OrientObjectTemplate template) {
         super(method, template);
+        
+        this.template = template;
+        this.domainClass = method.getEntityInformation().getJavaType();
     }
 
     @Override
