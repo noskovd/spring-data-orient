@@ -88,4 +88,8 @@ public class PersonRepositoryTests {
         Assert.assertFalse(repository.findByLastNameLike("Na%").isEmpty());
     }
 
+    @Test
+    public void findByFirstNameAndLastName() {
+        Assert.assertFalse(repository.findByFirstNameAndLastName("Dzmitry", "Naskou").isEmpty());
+    }
 }

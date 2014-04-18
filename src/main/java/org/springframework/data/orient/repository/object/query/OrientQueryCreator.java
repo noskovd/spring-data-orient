@@ -36,7 +36,7 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, SelectCondi
 
     @Override
     protected SelectConditionStep<Record> and(Part part, SelectConditionStep<Record> base, Iterator<Object> iterator) {
-        throw new UnsupportedOperationException("Not implemented");
+        return base.and(toCondition(part, iterator));
     }
 
     @Override
