@@ -6,9 +6,7 @@ import java.util.Iterator;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.Record;
 import org.jooq.SQLDialect;
-import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.ParameterAccessor;
@@ -16,7 +14,7 @@ import org.springframework.data.repository.query.parser.AbstractQueryCreator;
 import org.springframework.data.repository.query.parser.Part;
 import org.springframework.data.repository.query.parser.PartTree;
 
-public class OrientQueryCreator extends AbstractQueryCreator<String, SelectConditionStep<Record>> {
+public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> {
 
     private final Class<?> domainClass;
     
@@ -30,23 +28,23 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, SelectCondi
     }
 
     @Override
-    protected SelectConditionStep<Record> create(Part part, Iterator<Object> iterator) {
-        return context.select().from(domainClass.getSimpleName()).where(toCondition(part, iterator));
+    protected Condition create(Part part, Iterator<Object> iterator) {
+        return toCondition(part, iterator);
     }
 
     @Override
-    protected SelectConditionStep<Record> and(Part part, SelectConditionStep<Record> base, Iterator<Object> iterator) {
+    protected Condition and(Part part, Condition base, Iterator<Object> iterator) {
         return base.and(toCondition(part, iterator));
     }
 
     @Override
-    protected SelectConditionStep<Record> or(SelectConditionStep<Record> base, SelectConditionStep<Record> criteria) {
-        throw new UnsupportedOperationException("Not implemented");
+    protected Condition or(Condition base, Condition criteria) {
+        return base.or(criteria);
     }
 
     @Override
-    protected String complete(SelectConditionStep<Record> criteria, Sort sort) {
-        String query = context.renderNamedParams(criteria);
+    protected String complete(Condition criteria, Sort sort) {
+        String query = context.renderNamedParams(context.select().from(domainClass.getSimpleName()).where(criteria));
         System.out.println(query);
         
         return query;
