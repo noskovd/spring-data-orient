@@ -8,13 +8,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.springframework.transaction.annotation.Transactional;
 
 import com.orientechnologies.orient.core.cache.OLevel1RecordCache;
 import com.orientechnologies.orient.core.cache.OLevel2RecordCache;
+import com.orientechnologies.orient.core.command.OCommandOutputListener;
 import com.orientechnologies.orient.core.command.OCommandRequest;
 import com.orientechnologies.orient.core.db.ODatabase;
 import com.orientechnologies.orient.core.db.ODatabase.ATTRIBUTES;
@@ -27,6 +27,7 @@ import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.dictionary.ODictionary;
 import com.orientechnologies.orient.core.entity.OEntityManager;
+import com.orientechnologies.orient.core.exception.OTransactionException;
 import com.orientechnologies.orient.core.hook.ORecordHook;
 import com.orientechnologies.orient.core.hook.ORecordHook.HOOK_POSITION;
 import com.orientechnologies.orient.core.hook.ORecordHook.RESULT;
@@ -41,6 +42,7 @@ import com.orientechnologies.orient.core.storage.ORecordCallback;
 import com.orientechnologies.orient.core.storage.ORecordMetadata;
 import com.orientechnologies.orient.core.storage.OStorage;
 import com.orientechnologies.orient.core.storage.OStorage.CLUSTER_TYPE;
+import com.orientechnologies.orient.core.storage.OStorage.LOCKING_STRATEGY;
 import com.orientechnologies.orient.core.tx.OTransaction;
 import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
 import com.orientechnologies.orient.core.version.ORecordVersion;
@@ -83,14 +85,6 @@ public class OrientObjectTemplate {
 
     public void reload() {
         dbf.db().reload();
-    }
-
-    public void backup(OutputStream out, Map<String, Object> options, Callable<Object> callable) throws IOException {
-        dbf.db().backup(out, options, callable);
-    }
-
-    public void restore(InputStream in, Map<String, Object> options, Callable<Object> callable) throws IOException {
-        dbf.db().restore(in, options, callable);
     }
 
     public void replaceStorage(OStorage iNewStorage) {
@@ -383,7 +377,7 @@ public class OrientObjectTemplate {
         return dbf.db().get(iAttribute);
     }
 
-    public Set<ORecordHook> getHooks() {
+    public Map<ORecordHook, HOOK_POSITION> getHooks() {
         return dbf.db().getHooks();
     }
 
@@ -513,10 +507,6 @@ public class OrientObjectTemplate {
         return dbf.db().load(iPojo, iFetchPlan, iIgnoreCache);
     }
 
-    public <RET> RET load(Object iPojo, String iFetchPlan, boolean iIgnoreCache, boolean loadTombstone) {
-        return dbf.db().load(iPojo, iFetchPlan, iIgnoreCache, loadTombstone);
-    }
-
     public <RET> RET load(ORID iRecordId) {
         return dbf.db().load(iRecordId);
     }
@@ -527,10 +517,6 @@ public class OrientObjectTemplate {
 
     public <RET> RET load(ORID iRecordId, String iFetchPlan, boolean iIgnoreCache) {
         return dbf.db().load(iRecordId, iFetchPlan, iIgnoreCache);
-    }
-
-    public <RET> RET load(ORID iRecordId, String iFetchPlan, boolean iIgnoreCache, boolean loadTombstone) {
-        return dbf.db().load(iRecordId, iFetchPlan, iIgnoreCache, loadTombstone);
     }
 
     public <RET> RET save(Object iContent) {
@@ -693,5 +679,33 @@ public class OrientObjectTemplate {
 
     public void deregisterClassMethodFilter(Class<?> iClass) {
         dbf.db().deregisterClassMethodFilter(iClass);
+    }
+
+    public void backup(OutputStream out, Map<String, Object> options, Callable<Object> callable, OCommandOutputListener iListener, int compressionLevel, int bufferSize) throws IOException {
+        dbf.db().backup(out, options, callable, iListener, compressionLevel, bufferSize);
+    }
+
+    public ODatabasePojoAbstract<Object> commit(boolean force) throws OTransactionException {
+        return dbf.db().commit(force);
+    }
+
+    public <RET> RET load(Object iPojo, String iFetchPlan, boolean iIgnoreCache, boolean loadTombstone, LOCKING_STRATEGY iLockingStrategy) {
+        return dbf.db().load(iPojo, iFetchPlan, iIgnoreCache, loadTombstone, iLockingStrategy);
+    }
+
+    public <RET> RET load(ORID iRecordId, String iFetchPlan, boolean iIgnoreCache, boolean loadTombstone, LOCKING_STRATEGY iLockingStrategy) {
+        return dbf.db().load(iRecordId, iFetchPlan, iIgnoreCache, loadTombstone, iLockingStrategy);
+    }
+
+    public <THISDB extends ODatabase> THISDB open(String iUserName, String iUserPassword) {
+        return dbf.db().open(iUserName, iUserPassword);
+    }
+
+    public void restore(InputStream in, Map<String, Object> options, Callable<Object> callable, OCommandOutputListener iListener) throws IOException {
+        dbf.db().restore(in, options, callable, iListener);
+    }
+
+    public ODatabasePojoAbstract<Object> rollback(boolean force) throws OTransactionException {
+        return dbf.db().rollback(force);
     }
 }

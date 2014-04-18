@@ -7,16 +7,6 @@ import org.springframework.util.Assert;
 import com.orientechnologies.orient.core.db.ODatabaseComplex;
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
 
-/**
- * Base class for OrientDB factories. Each concrete implementation is responsible for a
- * given OrientDB type, i.e. document, object or graph database. Concrete implementations also
- * encapsulate a pool for the given database type.
- * <p>
- * All properties are optional and have default values, except the {@code url} property.
- * 
- * @author Harald Wellmann
- * 
- */
 public abstract class AbstractOrientDatabaseFactory {
 
     /** Default database username. */
