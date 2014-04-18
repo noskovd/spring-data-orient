@@ -22,10 +22,6 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
 
     private AbstractOrientDatabaseFactory<? extends ODatabase> dbf;
 
-    public OrientTransactionManager() {
-        super();
-    }
-
     public OrientTransactionManager(AbstractOrientDatabaseFactory<? extends ODatabase> dbf) {
         super();
         this.dbf = dbf;
