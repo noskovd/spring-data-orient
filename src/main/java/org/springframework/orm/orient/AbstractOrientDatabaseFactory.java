@@ -46,6 +46,7 @@ public abstract class AbstractOrientDatabaseFactory<T extends ODatabase> {
 
     protected void createPool() {
         pool = doCreatePool();
+        pool.setup(minPoolSize, maxPoolSize);
     }
     
     protected abstract ODatabasePoolBase<T> doCreatePool();
