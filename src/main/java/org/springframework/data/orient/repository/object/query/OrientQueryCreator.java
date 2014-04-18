@@ -1,5 +1,7 @@
 package org.springframework.data.orient.repository.object.query;
 
+import static org.jooq.impl.DSL.field;
+
 import java.util.Iterator;
 
 import org.jooq.Condition;
@@ -54,8 +56,8 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, SelectCondi
         String property = part.getProperty().toDotPath();
         
         switch (part.getType()) {
-            case LIKE: return DSL.field(property).like(iterator.next().toString());
-            case SIMPLE_PROPERTY: return DSL.field(property).eq(iterator.next());
+            case LIKE: return field(property).like(iterator.next().toString());
+            case SIMPLE_PROPERTY: return field(property).eq(iterator.next());
             default: throw new IllegalArgumentException("Unsupported keyword!");
         }
     }
