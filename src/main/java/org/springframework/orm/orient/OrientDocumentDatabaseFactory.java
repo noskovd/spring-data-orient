@@ -4,17 +4,14 @@ import com.orientechnologies.orient.core.db.ODatabasePoolBase;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 
-public class OrientDocumentDatabaseFactory extends AbstractOrientDatabaseFactory {
+public class OrientDocumentDatabaseFactory extends AbstractOrientDatabaseFactory<ODatabaseDocumentTx> {
 
     private ODatabaseDocumentTx db;
-    private ODatabasePoolBase<ODatabaseDocumentTx> pool;
 
     @Override
-    protected void createPool() {
-        pool = new ODatabaseDocumentPool(getUrl(), getUsername(), getPassword());
-        pool.setup(getMinPoolSize(), getMaxPoolSize());        
+    protected ODatabasePoolBase<ODatabaseDocumentTx> doCreatePool() {
+        return new ODatabaseDocumentPool(getUrl(), getUsername(), getPassword());
     }
-
 
     @Override
     public ODatabaseDocumentTx openDatabase() {
@@ -25,7 +22,6 @@ public class OrientDocumentDatabaseFactory extends AbstractOrientDatabaseFactory
     public ODatabaseDocumentTx db() {
         return (ODatabaseDocumentTx) super.db();
     }
-    
 
     protected ODatabaseDocumentTx newDatabase() {
         return new ODatabaseDocumentTx(getUrl());

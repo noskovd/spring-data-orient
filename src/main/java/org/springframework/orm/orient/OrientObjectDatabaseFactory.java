@@ -4,19 +4,13 @@ import com.orientechnologies.orient.core.db.ODatabasePoolBase;
 import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
-public class OrientObjectDatabaseFactory extends AbstractOrientDatabaseFactory {
+public class OrientObjectDatabaseFactory extends AbstractOrientDatabaseFactory<OObjectDatabaseTx> {
 
     private OObjectDatabaseTx db;
-    
-    private ODatabasePoolBase<OObjectDatabaseTx> pool;
 
-    /* (non-Javadoc)
-     * @see org.springframework.orient.AbstractOrientDatabaseFactory#createPool()
-     */
     @Override
-    protected void createPool() {
-        pool = new OObjectDatabasePool(getUrl(), getUsername(), getPassword());
-        pool.setup(getMinPoolSize(), getMaxPoolSize());
+    protected ODatabasePoolBase<OObjectDatabaseTx> doCreatePool() {
+        return new OObjectDatabasePool(getUrl(), getUsername(), getPassword());
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.ResourceTransactionManager;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import com.orientechnologies.orient.core.db.ODatabase;
 import com.orientechnologies.orient.core.db.ODatabaseComplex;
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
 import com.orientechnologies.orient.core.db.record.ODatabaseRecord;
@@ -19,13 +20,13 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
 
     private static Logger log = LoggerFactory.getLogger(OrientTransactionManager.class);
 
-    private AbstractOrientDatabaseFactory dbf;
+    private AbstractOrientDatabaseFactory<? extends ODatabase> dbf;
 
     public OrientTransactionManager() {
         super();
     }
 
-    public OrientTransactionManager(AbstractOrientDatabaseFactory dbf) {
+    public OrientTransactionManager(AbstractOrientDatabaseFactory<? extends ODatabase> dbf) {
         super();
         this.dbf = dbf;
     }
@@ -156,7 +157,7 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
      * 
      * @return the database
      */
-    public AbstractOrientDatabaseFactory getDatabaseFactory() {
+    public AbstractOrientDatabaseFactory<? extends ODatabase> getDatabaseFactory() {
         return dbf;
     }
 
@@ -165,7 +166,7 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
      * 
      * @param databaseFactory the database to set
      */
-    public void setDatabaseManager(AbstractOrientDatabaseFactory databaseFactory) {
+    public void setDatabaseManager(AbstractOrientDatabaseFactory<ODatabase> databaseFactory) {
         this.dbf = databaseFactory;
     }
 }
