@@ -82,4 +82,10 @@ public class PersonRepositoryTests {
             System.out.println(person.getFirstName() + " " + person.getLastName());
         }
     }
+    
+    @Test
+    public void findByLastNameLike() {
+        Assert.assertFalse(repository.findByLastNameLike("Na%").isEmpty());
+    }
+
 }

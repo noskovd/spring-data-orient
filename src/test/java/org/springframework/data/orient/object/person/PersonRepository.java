@@ -11,4 +11,6 @@ public interface PersonRepository extends OrientObjectRepository<Person> {
     List<Person> findByFirstName(String firstName);
     
     List<Person> findByLastName(String lastName);
+
+    List<Person> findByLastNameLike(String string);
 }
