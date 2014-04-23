@@ -126,4 +126,9 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
             template.delete(entity);
         }
 	}
+
+    @Override
+    public Class<T> getDomainClass() {
+        return domainClass;
+    }
 }

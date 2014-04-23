@@ -5,5 +5,6 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean
 public interface OrientRepository<T> extends CrudRepository<T, String> {
-
+    
+    Class<T> getDomainClass();
 }
