@@ -10,6 +10,8 @@ import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.ParametersParameterAccessor;
 import org.springframework.orm.orient.OrientObjectTemplate;
 
+import com.orientechnologies.orient.core.sql.query.OSQLQuery;
+
 public abstract class OrientQueryExecution {
 
     protected final OrientObjectTemplate template;
@@ -71,6 +73,7 @@ public abstract class OrientQueryExecution {
         }
 
         @Override
+        @SuppressWarnings("rawtypes")
         protected Object doExecute(AbstractOrientQuery query, Object[] values) {
             final Object[] params = prepare(parameters, values);
             Long total = template.count(query.createCountQuery(values), params);
@@ -80,8 +83,11 @@ public abstract class OrientQueryExecution {
             
             List<Object> content;
             
-            if (pageable == null || total > pageable.getOffset()) {
-                content = template.query(query.createQuery(values), params);
+            if (pageable != null && total > pageable.getOffset()) {
+                OSQLQuery sqlQuery = query.createQuery(values);
+                sqlQuery.setLimit(pageable.getPageSize());
+                
+                content = template.query(sqlQuery, params);
             } else {
                 content = Collections.emptyList();
             }
