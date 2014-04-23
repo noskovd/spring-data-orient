@@ -37,4 +37,9 @@ public class PartTreeOrientQuery extends AbstractOrientQuery {
         
         return new OSQLSynchQuery(creator.createQuery());
     }
+
+    @Override
+    protected boolean isCountQuery() {
+        return tree.isCountProjection();
+    }
 }

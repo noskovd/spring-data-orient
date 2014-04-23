@@ -1,6 +1,10 @@
 package org.springframework.data.orient.repository.object.query;
 
 import org.springframework.data.orient.repository.object.query.OrientQueryExecution.CollectionExecution;
+import org.springframework.data.orient.repository.object.query.OrientQueryExecution.SingleEntityExecution;
+import org.springframework.data.orient.repository.object.query.OrientQueryExecution.PagedExecution;
+import org.springframework.data.orient.repository.object.query.OrientQueryExecution.CountExecution;
+
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.orm.orient.OrientObjectTemplate;
@@ -43,10 +47,16 @@ public abstract class AbstractOrientQuery implements RepositoryQuery {
     protected OrientQueryExecution getExecution() {
         if (method.isCollectionQuery()) {
             return new CollectionExecution(template);
+        } else if (isCountQuery()) {
+            return new CountExecution(template);
         } else if (method.isQueryForEntity()) {
-            
+            return new SingleEntityExecution(template);
+        } else if (method.isPageQuery()) {
+            return new PagedExecution(template);
         }
         
         throw new IllegalArgumentException();
     }
+    
+    protected abstract boolean isCountQuery();
 }

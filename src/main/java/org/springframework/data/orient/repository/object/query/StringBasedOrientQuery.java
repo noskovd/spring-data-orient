@@ -14,9 +14,12 @@ public class StringBasedOrientQuery extends AbstractOrientQuery {
     
     private final String query;
     
+    private final boolean isCountQuery;
+    
     public StringBasedOrientQuery(String query, OrientObjectQueryMethod method, OrientObjectTemplate template) {
         super(method, template);
         this.query = query;
+        this.isCountQuery = method.hasAnnotatedQuery() ? method.getQueryAnnotation().count() : false;
         this.template = template;
     }
 
@@ -27,5 +30,10 @@ public class StringBasedOrientQuery extends AbstractOrientQuery {
         String sortedQuery = QueryUtils.applySorting(query, accessor.getSort());
         
         return new OSQLSynchQuery(sortedQuery);
+    }
+
+    @Override
+    protected boolean isCountQuery() {
+        return this.isCountQuery;
     }
 }

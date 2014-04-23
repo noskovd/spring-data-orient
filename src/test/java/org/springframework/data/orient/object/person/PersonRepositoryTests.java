@@ -39,6 +39,11 @@ public class PersonRepositoryTests {
     }
     
     @Test
+    public void countByFirstName() {
+        System.out.println(repository.countByFirstName("Dzmitry"));
+    }
+    
+    @Test
     public void saveTest() {
         Person person = new Person();
         person.setFirstName("Dzmitry");

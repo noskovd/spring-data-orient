@@ -10,7 +10,9 @@ import java.util.List;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.Record;
 import org.jooq.SQLDialect;
+import org.jooq.SelectSelectStep;
 import org.jooq.impl.DSL;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.ParameterAccessor;
@@ -24,11 +26,14 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
     
     private final DSLContext context;
     
+    private final PartTree tree;
+    
     public OrientQueryCreator(PartTree tree, Class<?> domainClass, ParameterAccessor parameters) {
         super(tree, parameters);
         
         this.domainClass = domainClass;
         this.context = DSL.using(SQLDialect.MYSQL);
+        this.tree = tree;
     }
 
     @Override
@@ -48,7 +53,17 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
 
     @Override
     protected String complete(Condition criteria, Sort sort) {
-        String query = context.renderNamedParams(context.select().from(domainClass.getSimpleName()).where(criteria));
+        SelectSelectStep<? extends Record> select;
+        
+        if (tree.isCountProjection()) {
+            select = context.selectCount();
+        } else if (tree.isDistinct()) {
+            select = context.selectDistinct();
+        } else {
+            select = context.select();
+        }
+        
+        String query = context.renderNamedParams(select.from(domainClass.getSimpleName()).where(criteria));
         System.out.println(query);
         
         return query;

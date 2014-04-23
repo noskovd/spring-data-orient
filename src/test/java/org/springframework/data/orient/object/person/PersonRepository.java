@@ -21,4 +21,6 @@ public interface PersonRepository extends OrientObjectRepository<Person> {
     List<Person> findByFirstNameLike(String string);
     
     List<Person> findByFirstNameStartsWith(String firstName);
+
+    Long countByFirstName(String firstName);
 }

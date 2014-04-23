@@ -49,7 +49,7 @@ public abstract class OrientQueryExecution {
 
         @Override
         protected Object doExecute(AbstractOrientQuery query, Object[] values) {
-            throw new UnsupportedOperationException("Not implemented yet");
+            return template.count(query.createQuery(values), values);
         }
     }
     

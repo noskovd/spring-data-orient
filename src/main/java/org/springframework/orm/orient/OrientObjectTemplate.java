@@ -715,4 +715,8 @@ public class OrientObjectTemplate {
         
         return list.isEmpty() ? null : list.get(0);
     }
+
+    public Long count(OSQLQuery<?> query, Object... values) {
+        return ((ODocument) dbf.db().query(query, values).get(0)).field("count");
+    }
 }
