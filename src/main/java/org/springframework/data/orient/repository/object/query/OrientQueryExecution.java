@@ -40,4 +40,28 @@ public abstract class OrientQueryExecution {
             return template.queryForObject(query.createQuery(values), values);
         }
     }
+    
+    static class CountExecution extends OrientQueryExecution {
+
+        public CountExecution(OrientObjectTemplate template) {
+            super(template);
+        }
+
+        @Override
+        protected Object doExecute(AbstractOrientQuery query, Object[] values) {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+    }
+    
+    static class PagedExecution extends OrientQueryExecution {
+
+        public PagedExecution(OrientObjectTemplate template) {
+            super(template);
+        }
+
+        @Override
+        protected Object doExecute(AbstractOrientQuery query, Object[] values) {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+    }
 }
