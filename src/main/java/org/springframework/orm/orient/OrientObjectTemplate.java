@@ -38,6 +38,7 @@ import com.orientechnologies.orient.core.metadata.security.OUser;
 import com.orientechnologies.orient.core.query.OQuery;
 import com.orientechnologies.orient.core.record.ORecordInternal;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.sql.query.OSQLQuery;
 import com.orientechnologies.orient.core.storage.ORecordCallback;
 import com.orientechnologies.orient.core.storage.ORecordMetadata;
 import com.orientechnologies.orient.core.storage.OStorage;
@@ -707,5 +708,11 @@ public class OrientObjectTemplate {
 
     public ODatabasePojoAbstract<Object> rollback(boolean force) throws OTransactionException {
         return dbf.db().rollback(force);
+    }
+
+    public <RET> RET queryForObject(OSQLQuery<?> query, Object... values) {
+        List<RET> list = query(query, values);
+        
+        return list.isEmpty() ? null : list.get(0);
     }
 }

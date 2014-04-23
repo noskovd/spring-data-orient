@@ -43,7 +43,9 @@ public abstract class AbstractOrientQuery implements RepositoryQuery {
     protected OrientQueryExecution getExecution() {
         if (method.isCollectionQuery()) {
             return new CollectionExecution(template);
-        } 
+        } else if (method.isQueryForEntity()) {
+            
+        }
         
         throw new IllegalArgumentException();
     }

@@ -28,4 +28,16 @@ public abstract class OrientQueryExecution {
             return template.query(query.createQuery(values), values);
         }
     }
+    
+    static class SingleEntityExecution extends OrientQueryExecution {
+
+        public SingleEntityExecution(OrientObjectTemplate template) {
+            super(template);
+        }
+
+        @Override
+        protected Object doExecute(AbstractOrientQuery query, Object[] values) {
+            return template.queryForObject(query.createQuery(values), values);
+        }
+    }
 }
