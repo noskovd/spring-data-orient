@@ -72,6 +72,14 @@ public class PersonRepositoryTests {
     }
     
     @Test
+    public void findByFirstNameLike() {
+        for (Person person : repository.findByFirstNameLike("Dzm%")) {
+            System.out.println(person.getFirstName());
+            Assert.assertTrue(person.getFirstName().startsWith("Dzm"));
+        }
+    }
+    
+    @Test
     public void findByLastName() {
         Assert.assertFalse(repository.findByLastName("Naskou").isEmpty());
     }
