@@ -75,10 +75,12 @@ public abstract class OrientQueryExecution {
         @Override
         @SuppressWarnings("rawtypes")
         protected Object doExecute(AbstractOrientQuery query, Object[] values) {
-            final Object[] params = prepare(parameters, values);
-            Long total = template.count(query.createCountQuery(values), params);
-            
             ParameterAccessor accessor = new ParametersParameterAccessor(parameters, values);
+            
+            final Object[] queryParams = prepareForQuery(parameters, values);
+            
+            Long total = template.count(query.createCountQuery(values), queryParams);
+            
             Pageable pageable = accessor.getPageable();
             
             List<Object> content;
@@ -87,7 +89,9 @@ public abstract class OrientQueryExecution {
                 OSQLQuery sqlQuery = query.createQuery(values);
                 sqlQuery.setLimit(pageable.getPageSize());
                 
-                content = template.query(sqlQuery, params);
+                //Object object = template.query(new OSQLSynchQuery("select * from person where firstName = 'Dzmitry' limit 10 offset 7"));
+                
+                content = template.query(sqlQuery, queryParams);
             } else {
                 content = Collections.emptyList();
             }
@@ -96,16 +100,40 @@ public abstract class OrientQueryExecution {
         }
     }
     
-    Object[] prepare(Parameters<?, ?> parameters, Object[] values) {
-        if (parameters.hasSpecialParameter()) {
+    Object[] prepareForQuery(Parameters<?, ?> parameters, Object[] values) {
+        if (parameters.hasPageableParameter()) {
+            //TODO: Also implement for Sort parameter!!!
             int index = parameters.getPageableIndex() >= 0 ? parameters.getPageableIndex() : parameters.getSortIndex();
             
-            Object[] result = new Object[values.length - 1];
+            Object[] result = new Object[values.length -1];
             
             System.arraycopy(values, 0, result, 0, index);
             
             if (values.length != index) {
                 System.arraycopy(values, index + 1, result, index, values.length - index - 1);
+            }
+            
+            return result;
+        }
+        
+        return values;
+    }
+    
+    @Deprecated
+    Object[] prepareForPagedQuery(ParameterAccessor accessor, Parameters<?, ?> parameters, Object[] values) {
+        if (parameters.hasSpecialParameter()) {
+            int index = parameters.getPageableIndex();
+            Pageable pageable = accessor.getPageable();
+            
+            Object[] result = new Object[values.length + 1];
+            
+            System.arraycopy(values, 0, result, 0, index);
+            
+            result[index] = pageable.getPageSize();
+            result[index + 1] = pageable.getOffset();
+            
+            if (values.length != index) {
+                System.arraycopy(values, index + 1, result, index + 2, values.length - index - 1);
             }
             
             return result;

@@ -10,11 +10,19 @@ import java.util.List;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.QueryPart;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
+import org.jooq.SelectConditionStep;
+import org.jooq.SelectLimitStep;
 import org.jooq.SelectSelectStep;
+import org.jooq.SortField;
+import org.jooq.SortOrder;
 import org.jooq.impl.DSL;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.repository.query.ParameterAccessor;
 import org.springframework.data.repository.query.parser.AbstractQueryCreator;
 import org.springframework.data.repository.query.parser.Part;
@@ -28,12 +36,15 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
     
     private final PartTree tree;
     
+    private final ParameterAccessor accessor;
+    
     public OrientQueryCreator(PartTree tree, Class<?> domainClass, ParameterAccessor parameters) {
         super(tree, parameters);
         
         this.domainClass = domainClass;
         this.context = DSL.using(SQLDialect.MYSQL);
         this.tree = tree;
+        this.accessor = parameters;
     }
 
     @Override
@@ -57,17 +68,28 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
 
     @Override
     protected String complete(Condition criteria, Sort sort) {
-        SelectSelectStep<? extends Record> select;
+        @SuppressWarnings("unused")
+        Pageable pageable = accessor.getPageable();
+        
+        SelectSelectStep<? extends Record> selectStep;
         
         if (isCountQuery()) {
-            select = context.selectCount();
+            selectStep = context.selectCount();
         } else if (tree.isDistinct()) {
-            select = context.selectDistinct();
+            selectStep = context.selectDistinct();
         } else {
-            select = context.select();
+            selectStep = context.select();
         }
         
-        String query = context.renderNamedParams(select.from(domainClass.getSimpleName()).where(criteria));
+        SelectConditionStep<? extends Record> conditionStep = selectStep.from(domainClass.getSimpleName()).where(criteria);        
+        
+        SelectLimitStep<? extends Record> limitStep = sort == null ? conditionStep : conditionStep.orderBy(toOrders(sort));
+        
+        //TODO: FIXED pagination!!!
+        //QueryPart queryPart = pageable == null || isCountQuery() ? limitStep : limitStep.limit(pageable.getPageSize()).offset(pageable.getOffset());
+        QueryPart queryPart = limitStep;
+        
+        String query = context.renderNamedParams(queryPart);
         System.out.println(query);
         
         return query;
@@ -123,5 +145,15 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
         }
         
         return list;
+    }
+    
+    private List<SortField<?>> toOrders(Sort sort) {
+        List<SortField<?>> orders = new ArrayList<SortField<?>>();
+        
+        for (Order order : sort) {
+            orders.add(field(order.getProperty()).sort(order.getDirection() == Direction.ASC ? SortOrder.ASC : SortOrder.DESC)); 
+        }
+
+        return orders;
     }
 }
