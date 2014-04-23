@@ -4,7 +4,6 @@ import org.springframework.data.orient.repository.object.query.OrientQueryExecut
 import org.springframework.data.orient.repository.object.query.OrientQueryExecution.SingleEntityExecution;
 import org.springframework.data.orient.repository.object.query.OrientQueryExecution.PagedExecution;
 import org.springframework.data.orient.repository.object.query.OrientQueryExecution.CountExecution;
-
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.orm.orient.OrientObjectTemplate;
@@ -42,7 +41,15 @@ public abstract class AbstractOrientQuery implements RepositoryQuery {
     }
     
     @SuppressWarnings("rawtypes")
+    protected OSQLQuery createCountQuery(Object[] values) {
+        return doCreateCountQuery(values);
+    }
+    
+    @SuppressWarnings("rawtypes")
     protected abstract OSQLQuery doCreateQuery(Object[] values);
+    
+    @SuppressWarnings("rawtypes")
+    protected abstract OSQLQuery doCreateCountQuery(Object[] values);
     
     protected OrientQueryExecution getExecution() {
         if (method.isCollectionQuery()) {
@@ -52,7 +59,7 @@ public abstract class AbstractOrientQuery implements RepositoryQuery {
         } else if (method.isQueryForEntity()) {
             return new SingleEntityExecution(template);
         } else if (method.isPageQuery()) {
-            return new PagedExecution(template);
+            return new PagedExecution(template, method.getParameters());
         }
         
         throw new IllegalArgumentException();

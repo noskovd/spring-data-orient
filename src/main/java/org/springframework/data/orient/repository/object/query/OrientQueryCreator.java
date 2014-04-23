@@ -50,12 +50,16 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
     protected Condition or(Condition base, Condition criteria) {
         return base.or(criteria);
     }
+    
+    public boolean isCountQuery() {
+        return tree.isCountProjection();
+    }
 
     @Override
     protected String complete(Condition criteria, Sort sort) {
         SelectSelectStep<? extends Record> select;
         
-        if (tree.isCountProjection()) {
+        if (isCountQuery()) {
             select = context.selectCount();
         } else if (tree.isDistinct()) {
             select = context.selectDistinct();

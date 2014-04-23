@@ -1,5 +1,13 @@
 package org.springframework.data.orient.repository.object.query;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.ParameterAccessor;
+import org.springframework.data.repository.query.Parameters;
+import org.springframework.data.repository.query.ParametersParameterAccessor;
 import org.springframework.orm.orient.OrientObjectTemplate;
 
 public abstract class OrientQueryExecution {
@@ -55,13 +63,29 @@ public abstract class OrientQueryExecution {
     
     static class PagedExecution extends OrientQueryExecution {
 
-        public PagedExecution(OrientObjectTemplate template) {
+        private final Parameters<?, ?> parameters;
+        
+        public PagedExecution(OrientObjectTemplate template, Parameters<?, ?> parameters) {
             super(template);
+            this.parameters = parameters;
         }
 
         @Override
         protected Object doExecute(AbstractOrientQuery query, Object[] values) {
-            throw new UnsupportedOperationException("Not implemented yet");
+            Long total = template.count(query.createCountQuery(values), values);
+            
+            ParameterAccessor accessor = new ParametersParameterAccessor(parameters, values);
+            Pageable pageable = accessor.getPageable();
+            
+            List<Object> content;
+            
+            if (pageable == null || total > pageable.getOffset()) {
+                content = template.query(query.createQuery(values), values);
+            } else {
+                content = Collections.emptyList();
+            }
+            
+            return new PageImpl<Object>(content, pageable, total);
         }
     }
 }

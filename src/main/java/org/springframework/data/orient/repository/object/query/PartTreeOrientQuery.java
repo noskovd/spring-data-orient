@@ -39,6 +39,16 @@ public class PartTreeOrientQuery extends AbstractOrientQuery {
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
+    protected OSQLQuery doCreateCountQuery(Object[] values) {
+        ParametersParameterAccessor accessor = new ParametersParameterAccessor(parameters, values);
+        
+        OrientQueryCreator creator = new OrientCountQueryCreator(tree, domainClass, accessor);
+        
+        return new OSQLSynchQuery(creator.createQuery());
+    }
+
+    @Override
     protected boolean isCountQuery() {
         return tree.isCountProjection();
     }
