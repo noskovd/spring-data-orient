@@ -42,7 +42,7 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
     private final ParamType paramType;
     
     public OrientQueryCreator(PartTree tree, Class<?> domainClass, ParameterAccessor parameters) {
-        this(tree, domainClass, parameters, ParamType.INLINED);
+        this(tree, domainClass, parameters, ParamType.NAMED);
     }
 
     public OrientQueryCreator(PartTree tree, Class<?> domainClass, ParameterAccessor parameters, ParamType paramType) {
@@ -94,7 +94,11 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
         
         Query query = pageable == null || isCountQuery() ? limitStep : limitStep.limit(pageable.getPageSize()).offset(pageable.getOffset());
         
-        String queryString = query.getSQL(paramType);
+        
+        //TODO: Fix it!! 
+        //String queryString = query.getSQL(paramType);
+        //Use inline parameters for paged queries
+        String queryString = pageable == null ? query.getSQL(paramType) : query.getSQL(ParamType.INLINED);
         System.out.println(queryString);
         
         return queryString;
