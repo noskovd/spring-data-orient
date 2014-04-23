@@ -8,9 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.orient.repository.OrientRepository;
 import org.springframework.data.orient.repository.object.support.OrientObjectRepositoryFactoryBean;
 import org.springframework.data.repository.query.QueryLookupStrategy.Key;
 
@@ -27,7 +25,7 @@ public @interface EnableOrientObjectRepositories {
 
     Class<?>[] basePackageClasses() default {};
 
-    Filter[] includeFilters() default {@Filter(type = FilterType.ASSIGNABLE_TYPE, value = OrientRepository.class)};
+    Filter[] includeFilters() default {};//{@Filter(type = FilterType.ASSIGNABLE_TYPE, value = OrientRepository.class)};
 
     Filter[] excludeFilters() default {};
 
