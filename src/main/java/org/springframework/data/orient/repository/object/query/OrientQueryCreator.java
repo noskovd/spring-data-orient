@@ -10,7 +10,7 @@ import java.util.List;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.QueryPart;
+import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.SelectConditionStep;
@@ -18,6 +18,7 @@ import org.jooq.SelectLimitStep;
 import org.jooq.SelectSelectStep;
 import org.jooq.SortField;
 import org.jooq.SortOrder;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -38,15 +39,22 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
     
     private final ParameterAccessor accessor;
     
+    private final ParamType paramType;
+    
     public OrientQueryCreator(PartTree tree, Class<?> domainClass, ParameterAccessor parameters) {
+        this(tree, domainClass, parameters, ParamType.INLINED);
+    }
+
+    public OrientQueryCreator(PartTree tree, Class<?> domainClass, ParameterAccessor parameters, ParamType paramType) {
         super(tree, parameters);
         
         this.domainClass = domainClass;
         this.context = DSL.using(SQLDialect.MYSQL);
         this.tree = tree;
         this.accessor = parameters;
+        this.paramType = paramType;
     }
-
+    
     @Override
     protected Condition create(Part part, Iterator<Object> iterator) {
         return toCondition(part, iterator);
@@ -68,7 +76,6 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
 
     @Override
     protected String complete(Condition criteria, Sort sort) {
-        @SuppressWarnings("unused")
         Pageable pageable = accessor.getPageable();
         
         SelectSelectStep<? extends Record> selectStep;
@@ -83,16 +90,14 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
         
         SelectConditionStep<? extends Record> conditionStep = selectStep.from(domainClass.getSimpleName()).where(criteria);        
         
-        SelectLimitStep<? extends Record> limitStep = sort == null ? conditionStep : conditionStep.orderBy(toOrders(sort));
+        SelectLimitStep<? extends Record> limitStep = sort == null || isCountQuery() ? conditionStep : conditionStep.orderBy(toOrders(sort));
         
-        //TODO: FIXED pagination!!!
-        //QueryPart queryPart = pageable == null || isCountQuery() ? limitStep : limitStep.limit(pageable.getPageSize()).offset(pageable.getOffset());
-        QueryPart queryPart = limitStep;
+        Query query = pageable == null || isCountQuery() ? limitStep : limitStep.limit(pageable.getPageSize()).offset(pageable.getOffset());
         
-        String query = context.renderNamedParams(queryPart);
-        System.out.println(query);
+        String queryString = query.getSQL(paramType);
+        System.out.println(queryString);
         
-        return query;
+        return queryString;
     }
     
     protected Condition toCondition(Part part, Iterator<Object> iterator) {

@@ -10,8 +10,6 @@ import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.ParametersParameterAccessor;
 import org.springframework.orm.orient.OrientObjectTemplate;
 
-import com.orientechnologies.orient.core.sql.query.OSQLQuery;
-
 public abstract class OrientQueryExecution {
 
     protected final OrientObjectTemplate template;
@@ -73,7 +71,6 @@ public abstract class OrientQueryExecution {
         }
 
         @Override
-        @SuppressWarnings("rawtypes")
         protected Object doExecute(AbstractOrientQuery query, Object[] values) {
             ParameterAccessor accessor = new ParametersParameterAccessor(parameters, values);
             
@@ -86,12 +83,7 @@ public abstract class OrientQueryExecution {
             List<Object> content;
             
             if (pageable != null && total > pageable.getOffset()) {
-                OSQLQuery sqlQuery = query.createQuery(values);
-                sqlQuery.setLimit(pageable.getPageSize());
-                
-                //Object object = template.query(new OSQLSynchQuery("select * from person where firstName = 'Dzmitry' limit 10 offset 7"));
-                
-                content = template.query(sqlQuery, queryParams);
+                content = template.query(query.createQuery(values), queryParams);
             } else {
                 content = Collections.emptyList();
             }
