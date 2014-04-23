@@ -7,6 +7,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -40,7 +41,7 @@ public class PersonRepositoryTests {
     
     @Test
     public void countByFirstName() {
-        System.out.println(repository.countByFirstName("Dzmitry"));
+        Assert.assertTrue(repository.countByFirstName("Dzmitry") > 0);
     }
     
     @Test
@@ -74,6 +75,11 @@ public class PersonRepositoryTests {
     @Test
     public void findByFirstName() {
         Assert.assertFalse(repository.findByFirstName("Dzmitry").isEmpty());
+    }
+    
+    @Test
+    public void findByFirstNamePage() {
+        System.out.println(repository.findByFirstName("Dzmitry", new PageRequest(0, 5)));
     }
     
     @Test

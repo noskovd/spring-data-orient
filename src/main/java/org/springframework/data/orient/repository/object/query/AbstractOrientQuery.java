@@ -56,11 +56,11 @@ public abstract class AbstractOrientQuery implements RepositoryQuery {
             return new CollectionExecution(template);
         } else if (isCountQuery()) {
             return new CountExecution(template);
-        } else if (method.isQueryForEntity()) {
-            return new SingleEntityExecution(template);
         } else if (method.isPageQuery()) {
             return new PagedExecution(template, method.getParameters());
-        }
+        } else if (method.isQueryForEntity()) {
+            return new SingleEntityExecution(template);
+        } 
         
         throw new IllegalArgumentException();
     }

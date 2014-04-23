@@ -72,7 +72,8 @@ public abstract class OrientQueryExecution {
 
         @Override
         protected Object doExecute(AbstractOrientQuery query, Object[] values) {
-            Long total = template.count(query.createCountQuery(values), values);
+            final Object[] params = prepare(parameters, values);
+            Long total = template.count(query.createCountQuery(values), params);
             
             ParameterAccessor accessor = new ParametersParameterAccessor(parameters, values);
             Pageable pageable = accessor.getPageable();
@@ -80,12 +81,30 @@ public abstract class OrientQueryExecution {
             List<Object> content;
             
             if (pageable == null || total > pageable.getOffset()) {
-                content = template.query(query.createQuery(values), values);
+                content = template.query(query.createQuery(values), params);
             } else {
                 content = Collections.emptyList();
             }
             
             return new PageImpl<Object>(content, pageable, total);
         }
+    }
+    
+    Object[] prepare(Parameters<?, ?> parameters, Object[] values) {
+        if (parameters.hasSpecialParameter()) {
+            int index = parameters.getPageableIndex() >= 0 ? parameters.getPageableIndex() : parameters.getSortIndex();
+            
+            Object[] result = new Object[values.length - 1];
+            
+            System.arraycopy(values, 0, result, 0, index);
+            
+            if (values.length != index) {
+                System.arraycopy(values, index + 1, result, index, values.length - index - 1);
+            }
+            
+            return result;
+        }
+        
+        return values;
     }
 }
