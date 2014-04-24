@@ -87,14 +87,13 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
         } else {
             selectStep = context.select();
         }
-        
+
         SelectConditionStep<? extends Record> conditionStep = selectStep.from(domainClass.getSimpleName()).where(criteria);        
-        
-        SelectLimitStep<? extends Record> limitStep = sort == null || isCountQuery() ? conditionStep : conditionStep.orderBy(toOrders(sort));
-        
-        Query query = pageable == null || isCountQuery() ? limitStep : limitStep.limit(pageable.getPageSize()).offset(pageable.getOffset());
-        
-        
+
+        SelectLimitStep<? extends Record> limitStep = orderByIfRequired(conditionStep, pageable, sort);
+
+        Query query = limitIfPageable(limitStep, pageable, sort);
+
         //TODO: Fix it!! 
         //String queryString = query.getSQL(paramType);
         //Use inline parameters for paged queries
@@ -164,5 +163,25 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
         }
 
         return orders;
+    }
+    
+    private SelectLimitStep<? extends Record> orderByIfRequired(SelectConditionStep<? extends Record> conditionStep, Pageable pageable, Sort sort) {
+        if (isCountQuery()) {
+            return conditionStep;
+        } if (sort == null) {
+            return pageable == null ? conditionStep : conditionStep.and(field("@rid").gt(pageable.getOffset()));
+        } else {
+            return conditionStep.orderBy(toOrders(sort));
+        }
+    }
+    
+    private Query limitIfPageable(SelectLimitStep<? extends Record> limitStep, Pageable pageable, Sort sort) {
+        if (pageable == null || isCountQuery()) {
+            return limitStep;
+        } else if (sort == null) {
+            return limitStep.limit(pageable.getPageSize());
+        } else {
+            return limitStep.limit(pageable.getPageSize()).offset(pageable.getOffset());
+        }
     }
 }

@@ -79,7 +79,7 @@ public class PersonRepositoryTests {
     
     @Test
     public void findByFirstNamePage() {
-        System.out.println(repository.findByFirstName("Dzmitry", new PageRequest(0, 5)));
+        System.out.println(repository.findByFirstName("Dzmitry", new PageRequest(1, 5)));
     }
     
     @Test
