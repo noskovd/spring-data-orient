@@ -1,7 +1,42 @@
-target/
-.settings/
-.project
+### Eclipse ###
 .classpath
-.springBeans
+.project
+.settings
 .sonar4clipse
 *.sonar4clipseExternals
+
+### Linux ###
+.*
+!.gitignore
+*~
+
+### Java ###
+*.class
+
+### IntelliJ ###
+*.iml
+*.ipr
+*.iws
+.idea/
+rebel.xml
+
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+### Build ###
+target/
+.springBeans
+/build
+build
+/bin
+bin/
+
+### UI build files ###
+bower_components
+node_modules
+
+##Netbeans IDE
+nb-configuration.xml
