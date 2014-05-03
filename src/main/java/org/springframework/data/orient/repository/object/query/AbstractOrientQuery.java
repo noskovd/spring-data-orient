@@ -1,5 +1,6 @@
 package org.springframework.data.orient.repository.object.query;
 
+import org.springframework.data.orient.repository.object.DetachMode;
 import org.springframework.data.orient.repository.object.query.OrientQueryExecution.CollectionExecution;
 import org.springframework.data.orient.repository.object.query.OrientQueryExecution.SingleEntityExecution;
 import org.springframework.data.orient.repository.object.query.OrientQueryExecution.PagedExecution;
@@ -56,7 +57,7 @@ public abstract class AbstractOrientQuery implements RepositoryQuery {
      * @return the object
      */
     protected Object doExecute(OrientQueryExecution execution, Object[] values) {
-        return execution.execute(this, method.getDetachMode(), values);
+        return execution.execute(this, getDetachMode(), values);
     }
     
     /**
@@ -134,5 +135,9 @@ public abstract class AbstractOrientQuery implements RepositoryQuery {
         }
         
         return query;
+    }
+    
+    protected DetachMode getDetachMode() {
+        return method.getDetachMode();
     }
 }
