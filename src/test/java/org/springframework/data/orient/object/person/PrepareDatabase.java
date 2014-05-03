@@ -11,6 +11,7 @@ public class PrepareDatabase {
         
         try {
             db.getMetadata().getSchema().generateSchema(Person.class);
+            db.getMetadata().getSchema().generateSchema(Address.class);
         } finally {
             db.close();
         }
