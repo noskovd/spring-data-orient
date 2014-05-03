@@ -3,6 +3,7 @@ package org.springframework.orm.orient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
+import org.springframework.data.orient.repository.object.DetachMode;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.orientechnologies.orient.core.cache.OLevel1RecordCache;
@@ -68,32 +70,8 @@ public class OrientObjectTemplate {
         return dbf.db();
     }
 
-    public int hashCode() {
-        return dbf.db().hashCode();
-    }
-
-    public void finalize() {
-        dbf.db().finalize();
-    }
-
-    public <THISDB extends ODatabase> THISDB create() {
-        return dbf.db().create();
-    }
-
-    public boolean exists() {
-        return dbf.db().exists();
-    }
-
     public void reload() {
         dbf.db().reload();
-    }
-
-    public void replaceStorage(OStorage iNewStorage) {
-        dbf.db().replaceStorage(iNewStorage);
-    }
-
-    public void drop() {
-        dbf.db().drop();
     }
 
     public STATUS getStatus() {
@@ -102,10 +80,6 @@ public class OrientObjectTemplate {
 
     public <THISDB extends ODatabase> THISDB setStatus(STATUS iStatus) {
         return dbf.db().setStatus(iStatus);
-    }
-
-    public void close() {
-        dbf.db().close();
     }
 
     public String getName() {
@@ -280,17 +254,41 @@ public class OrientObjectTemplate {
     public <RET extends List<?>> RET query(OQuery<?> iCommand, Object... iArgs) {
         return dbf.db().query(iCommand, iArgs);
     }
-
-    public boolean dropCluster(String iClusterName, boolean iTruncate) {
-        return dbf.db().dropCluster(iClusterName, iTruncate);
+    
+    public <RET extends List<?>> RET query(OQuery<?> iCommand, DetachMode detachMode, Object... iArgs) {
+        RET result = query(iCommand, iArgs);
+        
+        switch (detachMode) {
+            case ENTITY: return detach(result);
+            case ALL: return detachAll(result);
+            case NONE:
+        }
+        
+        return result;
     }
 
-    public boolean dropCluster(int iClusterId, boolean iTruncate) {
-        return dbf.db().dropCluster(iClusterId, iTruncate);
+    @SuppressWarnings("unchecked")
+    public <RET extends List<?>> RET detach(RET list) {
+        final OObjectDatabaseTx db = dbf.db();
+        List<Object> pojos = new ArrayList<Object>(list.size());
+        
+        for (Object object : list) {
+            pojos.add(db.detach(object, true));
+        }
+        
+        return (RET) pojos;
     }
-
-    public int addDataSegment(String iSegmentName, String iLocation) {
-        return dbf.db().addDataSegment(iSegmentName, iLocation);
+    
+    @SuppressWarnings("unchecked")
+    public <RET extends List<?>> RET detachAll(RET list) {
+        final OObjectDatabaseTx db = dbf.db();
+        List<Object> pojos = new ArrayList<Object>(list.size());
+        
+        for (Object object : list) {
+            pojos.add(db.detachAll(object, true));
+        }
+        
+        return (RET) pojos;
     }
 
     public <RET> OObjectIteratorClass<RET> browseClass(Class<RET> iClusterClass) {
@@ -714,6 +712,18 @@ public class OrientObjectTemplate {
         List<RET> list = query(query, values);
         
         return list.isEmpty() ? null : list.get(0);
+    }
+    
+    public <RET> RET queryForObject(OSQLQuery<?> query, DetachMode detachMode, Object... values) {
+        RET result = queryForObject(query, values);
+        
+        switch (detachMode) {
+            case ENTITY: return dbf.db().detach(result, true);
+            case ALL: return dbf.db().detachAll(result, true);
+            case NONE:
+        }
+        
+        return result;
     }
 
     public Long count(OSQLQuery<?> query, Object... values) {

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.orient.repository.object.DetachMode;
 import org.springframework.data.repository.query.ParameterAccessor;
 import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.ParametersParameterAccessor;
@@ -33,8 +34,8 @@ public abstract class OrientQueryExecution {
      * @param values the parameters values
      * @return the result
      */
-    public Object execute(AbstractOrientQuery query, Object[] values) {
-        return doExecute(query, values);
+    public Object execute(AbstractOrientQuery query, DetachMode mode, Object[] values) {
+        return doExecute(query, mode, values);
     }
     
     /**
@@ -44,7 +45,7 @@ public abstract class OrientQueryExecution {
      * @param values the parameters values
      * @return the result
      */
-    protected abstract Object doExecute(AbstractOrientQuery query, Object[] values);
+    protected abstract Object doExecute(AbstractOrientQuery query, DetachMode mode, Object[] values);
     
     /**
      * Executes the query to return a simple collection of entities.
@@ -66,8 +67,8 @@ public abstract class OrientQueryExecution {
          * @see org.springframework.data.orient.repository.object.query.OrientQueryExecution#doExecute(org.springframework.data.orient.repository.object.query.AbstractOrientQuery, java.lang.Object[])
          */
         @Override
-        protected Object doExecute(AbstractOrientQuery query, Object[] values) {
-            return template.query(query.createQuery(values), values);
+        protected Object doExecute(AbstractOrientQuery query, DetachMode mode, Object[] values) {
+            return template.query(query.createQuery(values), mode, values);
         }
     }
     
@@ -91,8 +92,8 @@ public abstract class OrientQueryExecution {
          * @see org.springframework.data.orient.repository.object.query.OrientQueryExecution#doExecute(org.springframework.data.orient.repository.object.query.AbstractOrientQuery, java.lang.Object[])
          */
         @Override
-        protected Object doExecute(AbstractOrientQuery query, Object[] values) {
-            return template.queryForObject(query.createQuery(values), values);
+        protected Object doExecute(AbstractOrientQuery query, DetachMode mode, Object[] values) {
+            return template.queryForObject(query.createQuery(values), mode, values);
         }
     }
     
@@ -116,7 +117,7 @@ public abstract class OrientQueryExecution {
          * @see org.springframework.data.orient.repository.object.query.OrientQueryExecution#doExecute(org.springframework.data.orient.repository.object.query.AbstractOrientQuery, java.lang.Object[])
          */
         @Override
-        protected Object doExecute(AbstractOrientQuery query, Object[] values) {
+        protected Object doExecute(AbstractOrientQuery query, DetachMode mode, Object[] values) {
             return template.count(query.createQuery(values), values);
         }
     }
@@ -146,7 +147,7 @@ public abstract class OrientQueryExecution {
          * @see org.springframework.data.orient.repository.object.query.OrientQueryExecution#doExecute(org.springframework.data.orient.repository.object.query.AbstractOrientQuery, java.lang.Object[])
          */
         @Override
-        protected Object doExecute(AbstractOrientQuery query, Object[] values) {
+        protected Object doExecute(AbstractOrientQuery query, DetachMode mode, Object[] values) {
             ParameterAccessor accessor = new ParametersParameterAccessor(parameters, values);
             
             final Object[] queryParams = prepareForQuery(parameters, values);
@@ -158,7 +159,7 @@ public abstract class OrientQueryExecution {
             List<Object> content;
             
             if (pageable != null && total > pageable.getOffset()) {
-                content = template.query(query.createQuery(values), queryParams);
+                content = template.query(query.createQuery(values), mode, queryParams);
             } else {
                 content = Collections.emptyList();
             }

@@ -3,6 +3,8 @@ package org.springframework.data.orient.repository.object.query;
 import java.lang.reflect.Method;
 
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.data.orient.repository.object.Detach;
+import org.springframework.data.orient.repository.object.DetachMode;
 import org.springframework.data.orient.repository.object.FetchPlan;
 import org.springframework.data.orient.repository.object.Query;
 import org.springframework.data.repository.core.RepositoryMetadata;
@@ -67,5 +69,15 @@ public class OrientObjectQueryMethod extends QueryMethod {
         String plan = (String) AnnotationUtils.getValue(getFetchPlanAnnotation());
         
         return StringUtils.hasText(plan) ? plan : null;
+    }
+    
+    Detach getDetachAnnotation() {
+        return method.getAnnotation(Detach.class);
+    }
+    
+    DetachMode getDetachMode() {
+        DetachMode mode = (DetachMode) AnnotationUtils.getValue(getFetchPlanAnnotation());
+        
+        return mode == null ? DetachMode.NONE : mode;
     }
 }

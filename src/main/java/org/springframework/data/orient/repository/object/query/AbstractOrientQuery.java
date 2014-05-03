@@ -56,7 +56,7 @@ public abstract class AbstractOrientQuery implements RepositoryQuery {
      * @return the object
      */
     protected Object doExecute(OrientQueryExecution execution, Object[] values) {
-        return execution.execute(this, values);
+        return execution.execute(this, method.getDetachMode(), values);
     }
     
     /**
