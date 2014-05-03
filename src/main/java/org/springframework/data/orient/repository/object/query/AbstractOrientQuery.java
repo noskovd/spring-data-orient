@@ -67,7 +67,7 @@ public abstract class AbstractOrientQuery implements RepositoryQuery {
      */
     @SuppressWarnings("rawtypes")
     protected OSQLQuery createQuery(Object[] values) {
-        return doCreateQuery(values);
+        return applyFetchPlan(doCreateQuery(values));
     }
     
     /**
@@ -124,4 +124,15 @@ public abstract class AbstractOrientQuery implements RepositoryQuery {
      * @return true, if is count query
      */
     protected abstract boolean isCountQuery();
+    
+    @SuppressWarnings("rawtypes")
+    private OSQLQuery applyFetchPlan(OSQLQuery query) {
+        String fetchPlan = method.getFetchPlan();
+        
+        if (fetchPlan != null) {
+            query.setFetchPlan(fetchPlan);
+        }
+        
+        return query;
+    }
 }

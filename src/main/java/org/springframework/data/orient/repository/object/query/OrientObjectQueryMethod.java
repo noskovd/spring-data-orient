@@ -3,6 +3,7 @@ package org.springframework.data.orient.repository.object.query;
 import java.lang.reflect.Method;
 
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.data.orient.repository.object.FetchPlan;
 import org.springframework.data.orient.repository.object.Query;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.QueryMethod;
@@ -56,5 +57,15 @@ public class OrientObjectQueryMethod extends QueryMethod {
      */
     Query getQueryAnnotation() {
         return method.getAnnotation(Query.class);
+    }
+    
+    FetchPlan getFetchPlanAnnotation() {
+        return method.getAnnotation(FetchPlan.class);
+    }
+    
+    String getFetchPlan() {
+        String plan = (String) AnnotationUtils.getValue(getFetchPlanAnnotation());
+        
+        return StringUtils.hasText(plan) ? plan : null;
     }
 }
