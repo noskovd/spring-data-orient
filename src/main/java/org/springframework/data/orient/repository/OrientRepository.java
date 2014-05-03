@@ -1,5 +1,7 @@
 package org.springframework.data.orient.repository;
 
+import java.util.List;
+
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -18,4 +20,10 @@ public interface OrientRepository<T> extends PagingAndSortingRepository<T, Strin
      * @return the domain class
      */
     Class<T> getDomainClass();
+    
+    /* (non-Javadoc)
+     * @see org.springframework.data.repository.CrudRepository#findAll()
+     */
+    @Override
+    List<T> findAll();
 }

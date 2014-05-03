@@ -94,10 +94,10 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
 	}
 
 	/* (non-Javadoc)
-	 * @see org.springframework.data.repository.CrudRepository#findAll()
+	 * @see org.springframework.data.orient.repository.OrientRepository#findAll()
 	 */
-	public Iterable<T> findAll() {
-		return template.browseClass(domainClass);
+	public List<T> findAll() {
+	    return template.query(getQuery(null));
 	}
 
 	public Iterable<T> findAll(Iterable<String> ids) {
