@@ -10,8 +10,15 @@ import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.ParametersParameterAccessor;
 import org.springframework.orm.orient.OrientObjectTemplate;
 
+/**
+ * Set of classes to contain query execution strategies. 
+ * 
+ * @author Dzmitry_Naskou
+ * 
+ */
 public abstract class OrientQueryExecution {
 
+    /** The orient object template. */
     protected final OrientObjectTemplate template;
 
     public OrientQueryExecution(OrientObjectTemplate template) {
@@ -19,57 +26,125 @@ public abstract class OrientQueryExecution {
         this.template = template;
     }
     
+    /**
+     * Executes the given {@link AbstractOrientQuery} with the given {@link Object[]} values.
+     *
+     * @param query the orient query
+     * @param values the parameters values
+     * @return the result
+     */
     public Object execute(AbstractOrientQuery query, Object[] values) {
         return doExecute(query, values);
     }
     
+    /**
+     * Method to implement by executions.
+     *
+     * @param query the orient query
+     * @param values the parameters values
+     * @return the result
+     */
     protected abstract Object doExecute(AbstractOrientQuery query, Object[] values);
     
+    /**
+     * Executes the query to return a simple collection of entities.
+     * 
+     * @author Dzmitry_Naskou
+     */
     static class CollectionExecution extends OrientQueryExecution {
 
+        /**
+         * Instantiates a new {@link CollectionExecution}.
+         *
+         * @param template the template
+         */
         public CollectionExecution(OrientObjectTemplate template) {
             super(template);
         }
 
+        /* (non-Javadoc)
+         * @see org.springframework.data.orient.repository.object.query.OrientQueryExecution#doExecute(org.springframework.data.orient.repository.object.query.AbstractOrientQuery, java.lang.Object[])
+         */
         @Override
         protected Object doExecute(AbstractOrientQuery query, Object[] values) {
             return template.query(query.createQuery(values), values);
         }
     }
     
+    /**
+     * Executes a {@link AbstractOrientQuery} to return a single entity.
+     * 
+     * @author Dzmitry_Naskou
+     */
     static class SingleEntityExecution extends OrientQueryExecution {
 
+        /**
+         * Instantiates a new {@link SingleEntityExecution}.
+         *
+         * @param template the template
+         */
         public SingleEntityExecution(OrientObjectTemplate template) {
             super(template);
         }
 
+        /* (non-Javadoc)
+         * @see org.springframework.data.orient.repository.object.query.OrientQueryExecution#doExecute(org.springframework.data.orient.repository.object.query.AbstractOrientQuery, java.lang.Object[])
+         */
         @Override
         protected Object doExecute(AbstractOrientQuery query, Object[] values) {
             return template.queryForObject(query.createQuery(values), values);
         }
     }
     
+    /**
+     * Executes a {@link AbstractOrientQuery} to return a count of entities.
+     * 
+     * @author Dzmitry_Naskou
+     */
     static class CountExecution extends OrientQueryExecution {
 
+        /**
+         * Instantiates a new {@link CountExecution}.
+         *
+         * @param template the template
+         */
         public CountExecution(OrientObjectTemplate template) {
             super(template);
         }
 
+        /* (non-Javadoc)
+         * @see org.springframework.data.orient.repository.object.query.OrientQueryExecution#doExecute(org.springframework.data.orient.repository.object.query.AbstractOrientQuery, java.lang.Object[])
+         */
         @Override
         protected Object doExecute(AbstractOrientQuery query, Object[] values) {
             return template.count(query.createQuery(values), values);
         }
     }
-    
+
+    /**
+     * Executes the {@link AbstractOrientQuery} to return a {@link org.springframework.data.domain.Page} of entities.
+     * 
+     * @author Dzmitry_Naskou
+     */
     static class PagedExecution extends OrientQueryExecution {
 
+        /** The parameters. */
         private final Parameters<?, ?> parameters;
         
+        /**
+         * Instantiates a new {@link PagedExecution}.
+         *
+         * @param template the orient object template
+         * @param parameters the parameters
+         */
         public PagedExecution(OrientObjectTemplate template, Parameters<?, ?> parameters) {
             super(template);
             this.parameters = parameters;
         }
 
+        /* (non-Javadoc)
+         * @see org.springframework.data.orient.repository.object.query.OrientQueryExecution#doExecute(org.springframework.data.orient.repository.object.query.AbstractOrientQuery, java.lang.Object[])
+         */
         @Override
         protected Object doExecute(AbstractOrientQuery query, Object[] values) {
             ParameterAccessor accessor = new ParametersParameterAccessor(parameters, values);

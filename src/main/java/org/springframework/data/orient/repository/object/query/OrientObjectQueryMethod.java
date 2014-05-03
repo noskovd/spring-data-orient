@@ -8,10 +8,22 @@ import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.util.StringUtils;
 
+/**
+ * Orient specific extension of {@link QueryMethod}.
+ * 
+ * @author Dzmitry_Naskou
+ */
 public class OrientObjectQueryMethod extends QueryMethod {
 
+    /** The method. */
     private final Method method;
     
+    /**
+     * Instantiates a new {@link OrientObjectQueryMethod}.
+     *
+     * @param method the method
+     * @param metadata the metadata
+     */
     public OrientObjectQueryMethod(Method method, RepositoryMetadata metadata) {
         super(method, metadata);
         this.method = method;

@@ -35,10 +35,18 @@ import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 @Transactional(readOnly = true)
 public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T> {
 
+	/** The orient template. */
 	private final OrientObjectTemplate template;
 	
+	/** The domain class. */
 	private final Class<T> domainClass;
 
+	/**
+	 * Instantiates a new {@link SimpleOrientObjectRepository}.
+	 *
+	 * @param template the template
+	 * @param domainClass the domain class
+	 */
 	public SimpleOrientObjectRepository(OrientObjectTemplate template, Class<T> domainClass) {
 		super();
 		this.template = template;

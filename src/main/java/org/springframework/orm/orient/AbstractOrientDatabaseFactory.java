@@ -9,6 +9,12 @@ import com.orientechnologies.orient.core.db.ODatabaseComplex;
 import com.orientechnologies.orient.core.db.ODatabasePoolBase;
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
 
+/**
+ * A base factory for creating {@link ODatabase} objects.
+ *
+ * @author Dzmitry_Naskou
+ * @param <T> the type of database to handle
+ */
 public abstract class AbstractOrientDatabaseFactory<T extends ODatabase> {
 
     /** Default database username. */
@@ -23,12 +29,16 @@ public abstract class AbstractOrientDatabaseFactory<T extends ODatabase> {
     /** Default maximum pool size. */
     public static final int DEFAULT_MAX_POOL_SIZE = 20;
 
+    /** The username. */
     private String username = DEFAULT_USERNAME;
 
+    /** The password. */
     private String password = DEFAULT_PASSWORD;
 
+    /** The min pool size. */
     private int minPoolSize = DEFAULT_MIN_POOL_SIZE;
 
+    /** The max pool size. */
     private int maxPoolSize = DEFAULT_MAX_POOL_SIZE;
 
     private String url;
@@ -49,8 +59,18 @@ public abstract class AbstractOrientDatabaseFactory<T extends ODatabase> {
         pool.setup(minPoolSize, maxPoolSize);
     }
     
+    /**
+     * Do create pool.
+     *
+     * @return the o database pool base
+     */
     protected abstract ODatabasePoolBase<T> doCreatePool();
 
+    /**
+     * Open the database.
+     *
+     * @return the o database complex
+     */
     public abstract ODatabaseComplex<?> openDatabase();
 
     protected abstract ODatabaseComplex<?> newDatabase();
@@ -68,42 +88,92 @@ public abstract class AbstractOrientDatabaseFactory<T extends ODatabase> {
         }
     }
 
+    /**
+     * Gets the database url.
+     *
+     * @return the url
+     */
     public String getUrl() {
         return url;
     }
 
+    /**
+     * Sets the database url.
+     *
+     * @param url the new url
+     */
     public void setUrl(String url) {
         this.url = url;
     }
 
+    /**
+     * Gets the username.
+     *
+     * @return the username
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Sets the username.
+     *
+     * @param username the new username
+     */
     public void setUsername(String username) {
         this.username = username;
     }
 
+    /**
+     * Gets the password.
+     *
+     * @return the password
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Sets the password.
+     *
+     * @param password the new password
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
+    /**
+     * Gets the min pool size.
+     *
+     * @return the min pool size
+     */
     public int getMinPoolSize() {
         return minPoolSize;
     }
 
+    /**
+     * Sets the min pool size.
+     *
+     * @param minPoolSize the new min pool size
+     */
     public void setMinPoolSize(int minPoolSize) {
         this.minPoolSize = minPoolSize;
     }
 
+    /**
+     * Gets the max pool size.
+     *
+     * @return the max pool size
+     */
     public int getMaxPoolSize() {
         return maxPoolSize;
     }
 
+    /**
+     * Sets the max pool size.
+     *
+     * @param maxPoolSize the new max pool size
+     */
     public void setMaxPoolSize(int maxPoolSize) {
         this.maxPoolSize = maxPoolSize;
     }

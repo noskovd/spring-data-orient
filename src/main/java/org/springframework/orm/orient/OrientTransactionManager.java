@@ -18,10 +18,17 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
 
     private static final long serialVersionUID = 1L;
 
+    /** The logger. */
     private static Logger log = LoggerFactory.getLogger(OrientTransactionManager.class);
 
+    /** The database factory. */
     private AbstractOrientDatabaseFactory<? extends ODatabase> dbf;
 
+    /**
+     * Instantiates a new {@link OrientTransactionManager}.
+     *
+     * @param dbf the dbf
+     */
     public OrientTransactionManager(AbstractOrientDatabaseFactory<? extends ODatabase> dbf) {
         super();
         this.dbf = dbf;
