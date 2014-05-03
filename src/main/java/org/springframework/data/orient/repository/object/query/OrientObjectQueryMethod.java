@@ -76,7 +76,7 @@ public class OrientObjectQueryMethod extends QueryMethod {
     }
     
     DetachMode getDetachMode() {
-        DetachMode mode = (DetachMode) AnnotationUtils.getValue(getFetchPlanAnnotation());
+        DetachMode mode = (DetachMode) AnnotationUtils.getValue(getDetachAnnotation());
         
         return mode == null ? DetachMode.NONE : mode;
     }

@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.orient.repository.object.Detach;
+import org.springframework.data.orient.repository.object.DetachMode;
 import org.springframework.data.orient.repository.object.FetchPlan;
 import org.springframework.data.orient.repository.object.OrientObjectRepository;
 import org.springframework.data.orient.repository.object.Query;
@@ -29,6 +31,7 @@ public interface PersonRepository extends OrientObjectRepository<Person> {
 
     Long countByFirstName(String firstName);
 
+    @Detach(DetachMode.ENTITY)
     List<Person> findByAddress_City(String city);
 
     @FetchPlan("*:-1")
