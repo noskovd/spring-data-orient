@@ -9,9 +9,11 @@ import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.SelectJoinStep;
+import org.jooq.SelectLimitStep;
 import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.orient.repository.object.OrientObjectRepository;
@@ -97,7 +99,7 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
 	 * @see org.springframework.data.orient.repository.OrientRepository#findAll()
 	 */
 	public List<T> findAll() {
-	    return template.query(getQuery(null));
+	    return template.query(getQuery((Sort) null));
 	}
 
 	public Iterable<T> findAll(Iterable<String> ids) {
@@ -169,8 +171,16 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
      * @see org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Pageable)
      */
     @Override
+    @SuppressWarnings("unchecked")
     public Page<T> findAll(Pageable pageable) {
-        throw new UnsupportedOperationException("Not supported yet");
+        if (pageable == null) {
+            return new PageImpl<T>(findAll());
+        }
+        
+        Long total = count();
+        List<T> content = (List<T>) (total > pageable.getOffset() ? template.query(getQuery(pageable)) : Collections.<T> emptyList());
+        
+        return new PageImpl<T>(content, pageable, total);
     }
     
     /**
@@ -184,6 +194,23 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
         SelectJoinStep<? extends Record> joinStep = context.select().from(domainClass.getSimpleName());
         
         Query query = sort == null ? joinStep : joinStep.orderBy(QueryUtils.toOrders(sort));
+        
+        return new OSQLSynchQuery<T>(query.getSQL(ParamType.INLINED));
+    }
+    
+    /**
+     * Creates the query for the given {@link Sort}.
+     *
+     * @param sort the sort
+     * @return the query
+     */
+    private OSQLQuery<T> getQuery(Pageable pageable) {
+        DSLContext context = DSL.using(SQLDialect.MYSQL);
+        SelectJoinStep<? extends Record> joinStep = context.select().from(domainClass.getSimpleName());
+        
+        Sort sort = pageable.getSort();
+        SelectLimitStep<? extends Record> limitStep = sort == null ? joinStep : joinStep.orderBy(QueryUtils.toOrders(sort));
+        Query query = pageable == null ? limitStep : limitStep.limit(pageable.getPageSize()).offset(pageable.getOffset());
         
         return new OSQLSynchQuery<T>(query.getSQL(ParamType.INLINED));
     }
