@@ -4,12 +4,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.jooq.DSLContext;
+import org.jooq.Query;
+import org.jooq.Record;
+import org.jooq.SQLDialect;
+import org.jooq.SelectJoinStep;
+import org.jooq.conf.ParamType;
+import org.jooq.impl.DSL;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.orient.repository.object.OrientObjectRepository;
+import org.springframework.data.orient.repository.object.query.QueryUtils;
 import org.springframework.orm.orient.OrientObjectTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.orientechnologies.orient.core.id.ORecordId;
+import com.orientechnologies.orient.core.sql.query.OSQLQuery;
+import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 
 /**
  * Default implementation of the {@link org.springframework.data.repository.CrudRepository} interface for OrientDB.
@@ -127,8 +140,43 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
         }
 	}
 
+    /* (non-Javadoc)
+     * @see org.springframework.data.orient.repository.OrientRepository#getDomainClass()
+     */
     @Override
     public Class<T> getDomainClass() {
         return domainClass;
+    }
+
+    /* (non-Javadoc)
+     * @see org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Sort)
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public Iterable<T> findAll(Sort sort) {
+        return (Iterable<T>) template.query(getQuery(sort));
+    }
+
+    /* (non-Javadoc)
+     * @see org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Pageable)
+     */
+    @Override
+    public Page<T> findAll(Pageable pageable) {
+        throw new UnsupportedOperationException("Not supported yet");
+    }
+    
+    /**
+     * Creates the query for the given {@link Sort}.
+     *
+     * @param sort the sort
+     * @return the query
+     */
+    private OSQLQuery<T> getQuery(Sort sort) {
+        DSLContext context = DSL.using(SQLDialect.MYSQL);
+        SelectJoinStep<? extends Record> joinStep = context.select().from(domainClass.getSimpleName());
+        
+        Query query = sort == null ? joinStep : joinStep.orderBy(QueryUtils.toOrders(sort));
+        
+        return new OSQLSynchQuery<T>(query.getSQL(ParamType.INLINED));
     }
 }
