@@ -17,12 +17,6 @@ import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
  */
 public abstract class AbstractOrientDatabaseFactory<T extends ODatabase> {
 
-    /** Default database username. */
-    public static final String DEFAULT_USERNAME = "admin";
-
-    /** Default database password. */
-    public static final String DEFAULT_PASSWORD = "admin";
-
     /** Default minimum pool size. */
     public static final int DEFAULT_MIN_POOL_SIZE = 1;
 
@@ -30,10 +24,10 @@ public abstract class AbstractOrientDatabaseFactory<T extends ODatabase> {
     public static final int DEFAULT_MAX_POOL_SIZE = 20;
 
     /** The username. */
-    private String username = DEFAULT_USERNAME;
+    private String username;
 
     /** The password. */
-    private String password = DEFAULT_PASSWORD;
+    private String password;
 
     /** The min pool size. */
     private int minPoolSize = DEFAULT_MIN_POOL_SIZE;
@@ -48,6 +42,8 @@ public abstract class AbstractOrientDatabaseFactory<T extends ODatabase> {
     @PostConstruct
     public void init() {
     	Assert.notNull(url);
+    	Assert.notNull(username);
+    	Assert.notNull(password);
         
         ODatabaseComplex<?> db = newDatabase();
         createDatabase(db);
