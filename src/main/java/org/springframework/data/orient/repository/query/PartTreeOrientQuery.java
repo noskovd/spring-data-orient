@@ -1,10 +1,10 @@
 package org.springframework.data.orient.repository.query;
 
+import org.springframework.data.orient.core.OrientObjectTemplate;
 import org.springframework.data.orient.core.OrientOperations;
 import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.ParametersParameterAccessor;
 import org.springframework.data.repository.query.parser.PartTree;
-import org.springframework.orm.orient.OrientObjectTemplate;
 
 import com.orientechnologies.orient.core.sql.query.OSQLQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;

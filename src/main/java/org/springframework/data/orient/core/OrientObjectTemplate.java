@@ -1,4 +1,4 @@
-package org.springframework.orm.orient;
+package org.springframework.data.orient.core;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
-import org.springframework.data.orient.core.OrientObjectOperations;
 import org.springframework.data.orient.object.repository.DetachMode;
+import org.springframework.orm.orient.OrientObjectDatabaseFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.orientechnologies.orient.core.cache.OLevel1RecordCache;
