@@ -14,6 +14,12 @@ import com.orientechnologies.orient.core.db.ODatabaseComplex;
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
 import com.orientechnologies.orient.core.db.record.ODatabaseRecord;
 
+/**
+ * {@link org.springframework.transaction.PlatformTransactionManager} implementation
+ * for OrientDB.
+ * 
+ * @author Dzmitry_Naskou
+ */
 public class OrientTransactionManager extends AbstractPlatformTransactionManager implements ResourceTransactionManager {
 
     private static final long serialVersionUID = 1L;
@@ -61,6 +67,9 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
         return tx.getTx() == null ? false : tx.getTx().isActive();
     }
 
+    /* (non-Javadoc)
+     * @see org.springframework.transaction.support.AbstractPlatformTransactionManager#doBegin(java.lang.Object, org.springframework.transaction.TransactionDefinition)
+     */
     @Override
     protected void doBegin(Object transaction, TransactionDefinition definition) throws TransactionException {
         OrientTransaction tx = (OrientTransaction) transaction;
@@ -139,18 +148,23 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
      * @see org.springframework.transaction.support.AbstractPlatformTransactionManager#doResume(java.lang.Object, java.lang.Object)
      */
     @Override
-    protected void doResume(Object transaction, Object suspendedResources)
-        throws TransactionException {
+    protected void doResume(Object transaction, Object suspendedResources) throws TransactionException {
         OrientTransaction tx = (OrientTransaction) transaction;
         ODatabaseComplex<?> db = tx.getDatabase();
+        
         if (!db.isClosed()) {
             db.close();
         }
+        
         ODatabaseComplex<?> oldDb = (ODatabaseComplex<?>) suspendedResources;
         TransactionSynchronizationManager.bindResource(dbf, oldDb);
         ODatabaseRecordThreadLocal.INSTANCE.set((ODatabaseRecord) oldDb.getUnderlying());
     }
 
+    /* (non-Javadoc)
+     * @see org.springframework.transaction.support.ResourceTransactionManager#getResourceFactory()
+     */
+    @Override
     public Object getResourceFactory() {
         return dbf;
     }
