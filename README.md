@@ -5,6 +5,7 @@ Spring Data implementation for OrientDB
 
 @Configuration
 @EnableTransactionManagement
+@EnableOrientRepositories(basePackages = "org.springframework.data.orient.object.person")
 public class OrientConfiguration {
 
     @Bean
