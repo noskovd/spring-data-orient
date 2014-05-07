@@ -2,7 +2,6 @@ package org.springframework.data.orient.object.person;
 
 import junit.framework.Assert;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,11 +19,6 @@ public class PersonRepositoryTests {
 
     @Autowired
     OrientObjectDatabaseFactory dbf;
-    
-    @Before
-    public void before() {
-        dbf.db().getEntityManager().registerEntityClass(Person.class);
-    }
     
     @Autowired
     PersonRepository repository;

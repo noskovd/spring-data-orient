@@ -1,5 +1,7 @@
 package org.springframework.data.orient.object.person;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.orient.core.OrientObjectTemplate;
@@ -32,5 +34,10 @@ public class PersonRepositoryTestConfiguration {
     @Bean
     public OrientTransactionManager transactionManager() {
         return new OrientTransactionManager(factory());
+    }
+    
+    @PostConstruct
+    public void registerEntities() {
+        factory().db().getEntityManager().registerEntityClass(Person.class);
     }
 }
