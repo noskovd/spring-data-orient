@@ -102,9 +102,8 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
 	    return template.query(getQuery((Sort) null));
 	}
 
-	public Iterable<T> findAll(Iterable<String> ids) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<T> findAll(Iterable<String> ids) {
+	    throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	/* (non-Javadoc)
@@ -162,9 +161,8 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
      * @see org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Sort)
      */
     @Override
-    @SuppressWarnings("unchecked")
-    public Iterable<T> findAll(Sort sort) {
-        return (Iterable<T>) template.query(getQuery(sort));
+    public List<T> findAll(Sort sort) {
+        return template.query(getQuery(sort));
     }
 
     /* (non-Javadoc)
