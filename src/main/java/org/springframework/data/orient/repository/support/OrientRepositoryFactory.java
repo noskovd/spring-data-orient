@@ -1,4 +1,4 @@
-package org.springframework.data.orient.object.repository.support;
+package org.springframework.data.orient.repository.support;
 
 import java.io.Serializable;
 
@@ -15,17 +15,17 @@ import org.springframework.data.repository.query.QueryLookupStrategy.Key;
  * 
  * @author Dzmitry_Naskou
  */
-public class OrientObjectRepositoryFactory extends RepositoryFactorySupport {
+public class OrientRepositoryFactory extends RepositoryFactorySupport {
 
     /** The orient template. */
     private final OrientOperations operations;
     
     /**
-     * Instantiates a new {@link OrientObjectRepositoryFactory}.
+     * Instantiates a new {@link OrientRepositoryFactory}.
      *
      * @param operations the orient object template
      */
-    public OrientObjectRepositoryFactory(OrientOperations operations) {
+    public OrientRepositoryFactory(OrientOperations operations) {
         super();
         this.operations = operations;
     }

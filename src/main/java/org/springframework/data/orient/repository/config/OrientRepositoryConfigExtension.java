@@ -1,6 +1,6 @@
-package org.springframework.data.orient.object.repository.config;
+package org.springframework.data.orient.repository.config;
 
-import org.springframework.data.orient.object.repository.support.OrientObjectRepositoryFactoryBean;
+import org.springframework.data.orient.repository.support.OrientRepositoryFactoryBean;
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
 import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
 
@@ -9,13 +9,13 @@ import org.springframework.data.repository.config.RepositoryConfigurationExtensi
  * 
  * @author Dzmitry_Naskou
  */
-public class OrientObjectRepositoryConfigExtension extends RepositoryConfigurationExtensionSupport {
+public class OrientRepositoryConfigExtension extends RepositoryConfigurationExtensionSupport {
 
     /* (non-Javadoc)
      * @see org.springframework.data.repository.config.RepositoryConfigurationExtension#getRepositoryFactoryClassName()
      */
     public String getRepositoryFactoryClassName() {
-        return OrientObjectRepositoryFactoryBean.class.getName();
+        return OrientRepositoryFactoryBean.class.getName();
     }
 
     /* (non-Javadoc)

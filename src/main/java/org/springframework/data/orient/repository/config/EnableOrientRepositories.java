@@ -1,4 +1,4 @@
-package org.springframework.data.orient.object.repository.config;
+package org.springframework.data.orient.repository.config;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.orient.object.repository.support.OrientObjectRepositoryFactoryBean;
+import org.springframework.data.orient.repository.support.OrientRepositoryFactoryBean;
 import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.data.repository.query.QueryLookupStrategy.Key;
 
@@ -24,8 +24,8 @@ import org.springframework.data.repository.query.QueryLookupStrategy.Key;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import(OrientObjectRepositoryRegistrar.class)
-public @interface EnableOrientObjectRepositories {
+@Import(OrientRepositoryRegistrar.class)
+public @interface EnableOrientRepositories {
     
     /**
      * Alias for the {@link #basePackages()} attribute. Allows for more concise annotation declarations e.g.:
@@ -50,7 +50,7 @@ public @interface EnableOrientObjectRepositories {
      * Specifies which types are eligible for component scanning. Further narrows the set of candidate components from
      * everything in {@link #basePackages()} to everything in the base packages that matches the given filter or filters.
      */
-    Filter[] includeFilters() default {};//{@Filter(type = FilterType.ASSIGNABLE_TYPE, value = OrientRepository.class)};
+    Filter[] includeFilters() default {};
 
     /**
      * Specifies which types are not eligible for component scanning.
@@ -76,9 +76,9 @@ public @interface EnableOrientObjectRepositories {
 
     /**
      * Returns the {@link FactoryBean} class to be used for each repository instance. Defaults to
-     * {@link OrientObjectRepositoryFactoryBean}.
+     * {@link OrientRepositoryFactoryBean}.
      * 
      * @return
      */
-    Class<?> repositoryFactoryBeanClass() default OrientObjectRepositoryFactoryBean.class;
+    Class<?> repositoryFactoryBeanClass() default OrientRepositoryFactoryBean.class;
 }

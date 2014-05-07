@@ -1,4 +1,4 @@
-package org.springframework.data.orient.object.repository.support;
+package org.springframework.data.orient.repository.support;
 
 import java.io.Serializable;
 
@@ -18,7 +18,7 @@ import org.springframework.data.repository.core.support.TransactionalRepositoryF
  * @param <S> the type of the entity to handle
  * @param <ID> the type of the entity identifier to handle
  */
-public class OrientObjectRepositoryFactoryBean<T extends Repository<S, ID>, S, ID extends Serializable> extends TransactionalRepositoryFactoryBeanSupport<T, S, ID> {
+public class OrientRepositoryFactoryBean<T extends Repository<S, ID>, S, ID extends Serializable> extends TransactionalRepositoryFactoryBeanSupport<T, S, ID> {
 
     /** The orient operations. */
     @Autowired
@@ -29,6 +29,6 @@ public class OrientObjectRepositoryFactoryBean<T extends Repository<S, ID>, S, I
      */
     @Override
     protected RepositoryFactorySupport doCreateRepositoryFactory() {
-        return new OrientObjectRepositoryFactory(operations);
+        return new OrientRepositoryFactory(operations);
     }
 }

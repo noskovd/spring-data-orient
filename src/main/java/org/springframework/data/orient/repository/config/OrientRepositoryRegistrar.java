@@ -1,4 +1,4 @@
-package org.springframework.data.orient.object.repository.config;
+package org.springframework.data.orient.repository.config;
 
 import java.lang.annotation.Annotation;
 
@@ -6,18 +6,18 @@ import org.springframework.data.repository.config.RepositoryBeanDefinitionRegist
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
 
 /**
- * {@link ImportBeanDefinitionRegistrar} to enable {@link EnableOrientObjectRepositories} annotation.
+ * {@link ImportBeanDefinitionRegistrar} to enable {@link EnableOrientRepositories} annotation.
  * 
  * @author Dzmitry_Naskou
  */
-public class OrientObjectRepositoryRegistrar extends RepositoryBeanDefinitionRegistrarSupport {
+public class OrientRepositoryRegistrar extends RepositoryBeanDefinitionRegistrarSupport {
 
     /* (non-Javadoc)
      * @see org.springframework.data.repository.config.RepositoryBeanDefinitionRegistrarSupport#getAnnotation()
      */
     @Override
     protected Class<? extends Annotation> getAnnotation() {
-        return EnableOrientObjectRepositories.class;
+        return EnableOrientRepositories.class;
     }
 
     /* (non-Javadoc)
@@ -25,6 +25,6 @@ public class OrientObjectRepositoryRegistrar extends RepositoryBeanDefinitionReg
      */
     @Override
     protected RepositoryConfigurationExtension getExtension() {
-        return new OrientObjectRepositoryConfigExtension();
+        return new OrientRepositoryConfigExtension();
     }
 }

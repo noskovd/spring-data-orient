@@ -1,4 +1,4 @@
-package org.springframework.data.orient.object.repository.support;
+package org.springframework.data.orient.repository.support;
 
 import java.util.ArrayList;
 import java.util.Collections;
