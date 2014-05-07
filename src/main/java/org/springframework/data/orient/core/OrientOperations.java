@@ -2,7 +2,7 @@ package org.springframework.data.orient.core;
 
 import java.util.List;
 
-import org.springframework.data.orient.repository.object.DetachMode;
+import org.springframework.data.orient.object.repository.DetachMode;
 
 import com.orientechnologies.orient.core.db.ODatabaseComplex;
 import com.orientechnologies.orient.core.db.object.ODatabaseObject;

@@ -2,7 +2,7 @@ package org.springframework.data.orient.object.person;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.orient.repository.object.config.EnableOrientObjectRepositories;
+import org.springframework.data.orient.object.repository.config.EnableOrientObjectRepositories;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
 import org.springframework.orm.orient.OrientObjectTemplate;
 import org.springframework.orm.orient.OrientTransactionManager;

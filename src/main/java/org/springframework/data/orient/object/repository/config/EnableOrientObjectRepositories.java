@@ -1,4 +1,4 @@
-package org.springframework.data.orient.repository.object.config;
+package org.springframework.data.orient.object.repository.config;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.orient.repository.object.support.OrientObjectRepositoryFactoryBean;
+import org.springframework.data.orient.object.repository.support.OrientObjectRepositoryFactoryBean;
 import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.data.repository.query.QueryLookupStrategy.Key;
 

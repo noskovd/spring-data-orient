@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
 import org.springframework.data.orient.core.OrientOperations;
-import org.springframework.data.orient.repository.object.DetachMode;
+import org.springframework.data.orient.object.repository.DetachMode;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.orientechnologies.orient.core.cache.OLevel1RecordCache;

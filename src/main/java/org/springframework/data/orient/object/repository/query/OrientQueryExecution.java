@@ -1,4 +1,4 @@
-package org.springframework.data.orient.repository.object.query;
+package org.springframework.data.orient.object.repository.query;
 
 import java.util.Collections;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.orient.core.OrientOperations;
-import org.springframework.data.orient.repository.object.DetachMode;
+import org.springframework.data.orient.object.repository.DetachMode;
 import org.springframework.data.repository.query.ParameterAccessor;
 import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.ParametersParameterAccessor;

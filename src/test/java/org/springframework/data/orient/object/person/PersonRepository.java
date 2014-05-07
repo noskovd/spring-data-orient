@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.orient.object.repository.Detach;
+import org.springframework.data.orient.object.repository.DetachMode;
+import org.springframework.data.orient.object.repository.OrientObjectRepository;
+import org.springframework.data.orient.object.repository.Query;
 import org.springframework.data.orient.repository.FetchPlan;
-import org.springframework.data.orient.repository.object.Detach;
-import org.springframework.data.orient.repository.object.DetachMode;
-import org.springframework.data.orient.repository.object.OrientObjectRepository;
-import org.springframework.data.orient.repository.object.Query;
 
 public interface PersonRepository extends OrientObjectRepository<Person> {
 

@@ -1,4 +1,4 @@
-package org.springframework.data.orient.repository.object.support;
+package org.springframework.data.orient.object.repository.support;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,8 +17,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.orient.core.OrientOperations;
-import org.springframework.data.orient.repository.object.OrientObjectRepository;
-import org.springframework.data.orient.repository.object.query.QueryUtils;
+import org.springframework.data.orient.object.repository.OrientObjectRepository;
+import org.springframework.data.orient.object.repository.query.QueryUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 

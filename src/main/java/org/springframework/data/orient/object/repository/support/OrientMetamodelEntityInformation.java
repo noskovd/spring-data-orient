@@ -1,4 +1,4 @@
-package org.springframework.data.orient.repository.object.support;
+package org.springframework.data.orient.object.repository.support;
 
 import org.springframework.data.repository.core.support.AbstractEntityInformation;
 

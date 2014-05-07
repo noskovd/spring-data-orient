@@ -1,6 +1,6 @@
-package org.springframework.data.orient.repository.object.config;
+package org.springframework.data.orient.object.repository.config;
 
-import org.springframework.data.orient.repository.object.support.OrientObjectRepositoryFactoryBean;
+import org.springframework.data.orient.object.repository.support.OrientObjectRepositoryFactoryBean;
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
 import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
 

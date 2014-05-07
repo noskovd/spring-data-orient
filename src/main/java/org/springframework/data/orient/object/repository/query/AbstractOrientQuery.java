@@ -1,11 +1,11 @@
-package org.springframework.data.orient.repository.object.query;
+package org.springframework.data.orient.object.repository.query;
 
 import org.springframework.data.orient.core.OrientOperations;
-import org.springframework.data.orient.repository.object.DetachMode;
-import org.springframework.data.orient.repository.object.query.OrientQueryExecution.CollectionExecution;
-import org.springframework.data.orient.repository.object.query.OrientQueryExecution.CountExecution;
-import org.springframework.data.orient.repository.object.query.OrientQueryExecution.PagedExecution;
-import org.springframework.data.orient.repository.object.query.OrientQueryExecution.SingleEntityExecution;
+import org.springframework.data.orient.object.repository.DetachMode;
+import org.springframework.data.orient.object.repository.query.OrientQueryExecution.CollectionExecution;
+import org.springframework.data.orient.object.repository.query.OrientQueryExecution.CountExecution;
+import org.springframework.data.orient.object.repository.query.OrientQueryExecution.PagedExecution;
+import org.springframework.data.orient.object.repository.query.OrientQueryExecution.SingleEntityExecution;
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
 

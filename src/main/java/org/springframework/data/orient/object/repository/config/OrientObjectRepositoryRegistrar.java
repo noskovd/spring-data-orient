@@ -1,4 +1,4 @@
-package org.springframework.data.orient.repository.object.config;
+package org.springframework.data.orient.object.repository.config;
 
 import java.lang.annotation.Annotation;
 
