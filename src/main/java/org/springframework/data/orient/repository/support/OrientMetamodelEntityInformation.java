@@ -4,15 +4,15 @@ import org.springframework.data.repository.core.support.AbstractEntityInformatio
 
 public class OrientMetamodelEntityInformation<T> extends AbstractEntityInformation<T, String> {
 
-	public OrientMetamodelEntityInformation(Class<T> domainClass) {
-		super(domainClass);
-	}
+        public OrientMetamodelEntityInformation(Class<T> domainClass) {
+                super(domainClass);
+        }
 
-	public String getId(T entity) {
-		throw new UnsupportedOperationException("Not implemented yet.");
-	}
+        public String getId(T entity) {
+                throw new UnsupportedOperationException("Not implemented yet.");
+        }
 
-	public Class<String> getIdType() {
-		return String.class;
-	}
+        public Class<String> getIdType() {
+                return String.class;
+        }
 }

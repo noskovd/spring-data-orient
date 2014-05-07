@@ -1,100 +1,100 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.springframework.data</groupId>
-	<artifactId>spring-data-orient</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	
+        <modelVersion>4.0.0</modelVersion>
+        <groupId>org.springframework.data</groupId>
+        <artifactId>spring-data-orient</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        
     <properties>
-    	<spring.version>4.0.3.RELEASE</spring.version>
+            <spring.version>4.0.3.RELEASE</spring.version>
         <orientdb.version>1.7-rc2</orientdb.version>
         <spring.data.commons.version>1.7.2.RELEASE</spring.data.commons.version>
         <junit.version>4.10</junit.version>
         <jooq.version>3.3.1</jooq.version>
     </properties>
-		
-	<dependencies>
-		<dependency>
-	        <groupId>com.orientechnologies</groupId>
-	        <artifactId>orientdb-core</artifactId>
-	        <version>${orientdb.version}</version>
+                
+        <dependencies>
+                <dependency>
+                <groupId>com.orientechnologies</groupId>
+                <artifactId>orientdb-core</artifactId>
+                <version>${orientdb.version}</version>
         </dependency>
         <dependency>
             <groupId>com.orientechnologies</groupId>
             <artifactId>orientdb-client</artifactId>
             <version>${orientdb.version}</version>
         </dependency>
- 		<dependency>
+                 <dependency>
             <groupId>com.orientechnologies</groupId>
             <artifactId>orientdb-object</artifactId>
             <version>${orientdb.version}</version>
         </dependency>
         <dependency>
-        	<groupId>org.springframework</groupId>
-        	<artifactId>spring-context</artifactId>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
         </dependency>        
         <dependency>
-        	<groupId>org.springframework</groupId>
-        	<artifactId>spring-tx</artifactId>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
         </dependency>
         <dependency>
-        	<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-commons</artifactId>
-			<version>${spring.data.commons.version}</version>
+                <groupId>org.springframework.data</groupId>
+                        <artifactId>spring-data-commons</artifactId>
+                        <version>${spring.data.commons.version}</version>
         </dependency>
-		<dependency>
-			<groupId>org.jooq</groupId>
-			<artifactId>jooq</artifactId>
-			<version>${jooq.version}</version>
-		</dependency>
+                <dependency>
+                        <groupId>org.jooq</groupId>
+                        <artifactId>jooq</artifactId>
+                        <version>${jooq.version}</version>
+                </dependency>
 
         <dependency>
-        	<groupId>junit</groupId>
-        	<artifactId>junit-dep</artifactId>
-        	<version>${junit.version}</version>
-        	<scope>test</scope>
+                <groupId>junit</groupId>
+                <artifactId>junit-dep</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
         </dependency>
         <dependency>
-        	<groupId>org.springframework</groupId>
-        	<artifactId>spring-test</artifactId>
-        	<scope>test</scope>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <scope>test</scope>
         </dependency>
         <dependency>
-        	<groupId>org.projectreactor</groupId>
-        	<artifactId>reactor-core</artifactId>
-        	<version>1.0.1.RELEASE</version>
+                <groupId>org.projectreactor</groupId>
+                <artifactId>reactor-core</artifactId>
+                <version>1.0.1.RELEASE</version>
         </dependency>
         <dependency>
-        	<groupId>org.springframework.boot</groupId>
-        	<artifactId>spring-boot-starter-thymeleaf</artifactId>
-        	<version>1.0.0.RELEASE</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-thymeleaf</artifactId>
+                <version>1.0.0.RELEASE</version>
         </dependency>
-	</dependencies>
-	
-	<dependencyManagement>
-	    <dependencies>
-	        <dependency>
-	            <groupId>org.springframework</groupId>
-	            <artifactId>spring-framework-bom</artifactId>
-	            <version>${spring.version}</version>
-	            <type>pom</type>
-	            <scope>import</scope>
-	        </dependency>
-	    </dependencies>
-	</dependencyManagement>
-	
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
-		</plugins>
-  	</build>
+        </dependencies>
+        
+        <dependencyManagement>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-framework-bom</artifactId>
+                    <version>${spring.version}</version>
+                    <type>pom</type>
+                    <scope>import</scope>
+                </dependency>
+            </dependencies>
+        </dependencyManagement>
+        
+        <build>
+                <plugins>
+                        <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-compiler-plugin</artifactId>
+                                <version>3.1</version>
+                                <configuration>
+                                        <source>1.7</source>
+                                        <target>1.7</target>
+                                </configuration>
+                        </plugin>
+                </plugins>
+          </build>
   
     <repositories>
         <repository>
@@ -114,5 +114,5 @@
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
-    </pluginRepositories>	
+    </pluginRepositories>        
 </project>

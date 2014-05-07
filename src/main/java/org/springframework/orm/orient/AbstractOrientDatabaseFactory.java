@@ -41,9 +41,9 @@ public abstract class AbstractOrientDatabaseFactory<T extends ODatabase> {
 
     @PostConstruct
     public void init() {
-    	Assert.notNull(url);
-    	Assert.notNull(username);
-    	Assert.notNull(password);
+            Assert.notNull(url);
+            Assert.notNull(username);
+            Assert.notNull(password);
         
         ODatabaseComplex<?> db = newDatabase();
         createDatabase(db);

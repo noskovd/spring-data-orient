@@ -32,11 +32,11 @@ public class OrientRepositoryFactory extends RepositoryFactorySupport {
         this.operations = operations;
     }
 
-	/* (non-Javadoc)
-	 * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getEntityInformation(java.lang.Class)
-	 */
-	@Override
-	@SuppressWarnings("unchecked")
+        /* (non-Javadoc)
+         * @see org.springframework.data.repository.core.support.RepositoryFactorySupport#getEntityInformation(java.lang.Class)
+         */
+        @Override
+        @SuppressWarnings("unchecked")
     public <T, ID extends Serializable> EntityInformation<T, ID> getEntityInformation(Class<T> domainClass) {
         return (EntityInformation<T, ID>) new OrientMetamodelEntityInformation<T>(domainClass);
     }
