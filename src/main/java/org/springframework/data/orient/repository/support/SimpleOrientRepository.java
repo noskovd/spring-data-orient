@@ -17,7 +17,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.orient.core.OrientOperations;
-import org.springframework.data.orient.object.repository.OrientObjectRepository;
+import org.springframework.data.orient.repository.OrientRepository;
 import org.springframework.data.orient.repository.query.QueryUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +35,7 @@ import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
  */
 @Repository
 @Transactional(readOnly = true)
-public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T> {
+public class SimpleOrientRepository<T> implements OrientRepository<T> {
 
 	/** The orient operations. */
 	private final OrientOperations operations;
@@ -44,12 +44,12 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
 	private final Class<T> domainClass;
 
 	/**
-	 * Instantiates a new {@link SimpleOrientObjectRepository}.
+	 * Instantiates a new {@link SimpleOrientRepository}.
 	 *
 	 * @param operations the template
 	 * @param domainClass the domain class
 	 */
-	public SimpleOrientObjectRepository(OrientOperations operations, Class<T> domainClass) {
+	public SimpleOrientRepository(OrientOperations operations, Class<T> domainClass) {
 		super();
 		this.operations = operations;
 		this.domainClass = domainClass;

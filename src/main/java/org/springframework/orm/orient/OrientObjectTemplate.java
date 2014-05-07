@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
-import org.springframework.data.orient.core.OrientOperations;
+import org.springframework.data.orient.core.OrientObjectOperations;
 import org.springframework.data.orient.object.repository.DetachMode;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,7 +58,7 @@ import com.orientechnologies.orient.object.iterator.OObjectIteratorCluster;
 import com.orientechnologies.orient.object.metadata.OMetadataObject;
 
 @Transactional
-public class OrientObjectTemplate implements OrientOperations {
+public class OrientObjectTemplate implements OrientObjectOperations {
 
     private final OrientObjectDatabaseFactory dbf;
 
