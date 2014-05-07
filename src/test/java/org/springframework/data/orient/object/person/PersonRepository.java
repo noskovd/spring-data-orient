@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.orient.repository.FetchPlan;
 import org.springframework.data.orient.repository.object.Detach;
 import org.springframework.data.orient.repository.object.DetachMode;
-import org.springframework.data.orient.repository.object.FetchPlan;
 import org.springframework.data.orient.repository.object.OrientObjectRepository;
 import org.springframework.data.orient.repository.object.Query;
 

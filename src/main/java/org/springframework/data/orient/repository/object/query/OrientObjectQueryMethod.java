@@ -3,9 +3,9 @@ package org.springframework.data.orient.repository.object.query;
 import java.lang.reflect.Method;
 
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.data.orient.repository.FetchPlan;
 import org.springframework.data.orient.repository.object.Detach;
 import org.springframework.data.orient.repository.object.DetachMode;
-import org.springframework.data.orient.repository.object.FetchPlan;
 import org.springframework.data.orient.repository.object.Query;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.QueryMethod;
