@@ -1,11 +1,11 @@
 package org.springframework.data.orient.repository.object.query;
 
+import org.springframework.data.orient.core.OrientOperations;
 import org.springframework.data.repository.core.NamedQueries;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.data.repository.query.QueryLookupStrategy.Key;
 import org.springframework.data.repository.query.RepositoryQuery;
-import org.springframework.orm.orient.OrientObjectTemplate;
 
 public final class OrientObjectQueryLookupStrategy {
 
@@ -15,10 +15,10 @@ public final class OrientObjectQueryLookupStrategy {
 
     private abstract static class AbstractQueryLookupStrategy implements QueryLookupStrategy {
 
-        private final OrientObjectTemplate template;
+        private final OrientOperations operations;
 
-        public AbstractQueryLookupStrategy(OrientObjectTemplate template) {
-            this.template = template;
+        public AbstractQueryLookupStrategy(OrientOperations template) {
+            this.operations = template;
         }
 
         /*
@@ -30,10 +30,10 @@ public final class OrientObjectQueryLookupStrategy {
          * org.springframework.data.repository.core.NamedQueries)
          */
         public final RepositoryQuery resolveQuery(java.lang.reflect.Method method, RepositoryMetadata metadata, NamedQueries namedQueries) {
-            return resolveQuery(new OrientObjectQueryMethod(method, metadata), template, namedQueries);
+            return resolveQuery(new OrientObjectQueryMethod(method, metadata), operations, namedQueries);
         }
 
-        protected abstract RepositoryQuery resolveQuery(OrientObjectQueryMethod method, OrientObjectTemplate template, NamedQueries namedQueries);
+        protected abstract RepositoryQuery resolveQuery(OrientObjectQueryMethod method, OrientOperations template, NamedQueries namedQueries);
     }
 
     private static class CreateQueryLookupStrategy extends AbstractQueryLookupStrategy {
@@ -43,7 +43,7 @@ public final class OrientObjectQueryLookupStrategy {
          *
          * @param db the application database service
          */
-        public CreateQueryLookupStrategy(OrientObjectTemplate template) {
+        public CreateQueryLookupStrategy(OrientOperations template) {
             super(template);
         }
 
@@ -51,9 +51,9 @@ public final class OrientObjectQueryLookupStrategy {
          * @see com.epam.e3s.data.repository.query.E3sQueryLookupStrategy.AbstractQueryLookupStrategy#resolveQuery(com.epam.e3s.data.repository.query.E3sQueryMethod, com.epam.e3s.core.db.AppDbService, org.springframework.data.repository.core.NamedQueries)
          */
         @Override
-        protected RepositoryQuery resolveQuery(OrientObjectQueryMethod method, OrientObjectTemplate template, NamedQueries namedQueries) {
+        protected RepositoryQuery resolveQuery(OrientObjectQueryMethod method, OrientOperations operations, NamedQueries namedQueries) {
             try {
-                return new PartTreeOrientQuery(method, template);
+                return new PartTreeOrientQuery(method, operations);
             } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException(String.format("Could not create query metamodel for method %s!", method.toString()), e);
             }
@@ -67,7 +67,7 @@ public final class OrientObjectQueryLookupStrategy {
          *
          * @param template the application database service
          */
-        public DeclaredQueryLookupStrategy(OrientObjectTemplate template) {
+        public DeclaredQueryLookupStrategy(OrientOperations template) {
             super(template);
         }
 
@@ -75,7 +75,7 @@ public final class OrientObjectQueryLookupStrategy {
          * @see com.epam.e3s.data.repository.query.E3sQueryLookupStrategy.AbstractQueryLookupStrategy#resolveQuery(com.epam.e3s.data.repository.query.E3sQueryMethod, com.epam.e3s.core.db.AppDbService, org.springframework.data.repository.core.NamedQueries)
          */
         @Override
-        protected RepositoryQuery resolveQuery(OrientObjectQueryMethod method, OrientObjectTemplate template, NamedQueries namedQueries) {
+        protected RepositoryQuery resolveQuery(OrientObjectQueryMethod method, OrientOperations template, NamedQueries namedQueries) {
             String query = method.getAnnotatedQuery();
 
             if (query != null) {
@@ -99,7 +99,7 @@ public final class OrientObjectQueryLookupStrategy {
          *
          * @param db the application database service
          */
-        public CreateIfNotFoundQueryLookupStrategy(OrientObjectTemplate db) {
+        public CreateIfNotFoundQueryLookupStrategy(OrientOperations db) {
             super(db);
             this.strategy = new DeclaredQueryLookupStrategy(db);
             this.createStrategy = new CreateQueryLookupStrategy(db);
@@ -109,7 +109,7 @@ public final class OrientObjectQueryLookupStrategy {
          * @see com.epam.e3s.data.repository.query.E3sQueryLookupStrategy.AbstractQueryLookupStrategy#resolveQuery(com.epam.e3s.data.repository.query.E3sQueryMethod, com.epam.e3s.core.db.AppDbService, org.springframework.data.repository.core.NamedQueries)
          */
         @Override
-        protected RepositoryQuery resolveQuery(OrientObjectQueryMethod method, OrientObjectTemplate template, NamedQueries namedQueries) {
+        protected RepositoryQuery resolveQuery(OrientObjectQueryMethod method, OrientOperations template, NamedQueries namedQueries) {
             try {
                 return strategy.resolveQuery(method, template, namedQueries);
             } catch (IllegalStateException e) {
@@ -118,18 +118,18 @@ public final class OrientObjectQueryLookupStrategy {
         }
     }
 
-    public static QueryLookupStrategy create(OrientObjectTemplate template, Key key) {
+    public static QueryLookupStrategy create(OrientOperations operations, Key key) {
         if (key == null) {
-            return new CreateIfNotFoundQueryLookupStrategy(template);
+            return new CreateIfNotFoundQueryLookupStrategy(operations);
         }
 
         switch (key) {
             case CREATE:
-                return new CreateQueryLookupStrategy(template);
+                return new CreateQueryLookupStrategy(operations);
             case USE_DECLARED_QUERY:
-                return new DeclaredQueryLookupStrategy(template);
+                return new DeclaredQueryLookupStrategy(operations);
             case CREATE_IF_NOT_FOUND:
-                return new CreateIfNotFoundQueryLookupStrategy(template);
+                return new CreateIfNotFoundQueryLookupStrategy(operations);
             default:
                 throw new IllegalArgumentException(String.format("Unsupported query lookup strategy %s!", key));
         }

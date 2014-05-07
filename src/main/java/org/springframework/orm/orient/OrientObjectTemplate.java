@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
+import org.springframework.data.orient.core.OrientOperations;
 import org.springframework.data.orient.repository.object.DetachMode;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,7 +58,7 @@ import com.orientechnologies.orient.object.iterator.OObjectIteratorCluster;
 import com.orientechnologies.orient.object.metadata.OMetadataObject;
 
 @Transactional
-public class OrientObjectTemplate {
+public class OrientObjectTemplate implements OrientOperations {
 
     private final OrientObjectDatabaseFactory dbf;
 
@@ -251,12 +252,14 @@ public class OrientObjectTemplate {
         return dbf.db().dropDataSegment(name);
     }
 
+    @Override
     public <RET extends List<?>> RET query(OQuery<?> iCommand, Object... iArgs) {
         return dbf.db().query(iCommand, iArgs);
     }
     
-    public <RET extends List<?>> RET query(OQuery<?> iCommand, DetachMode detachMode, Object... iArgs) {
-        RET result = query(iCommand, iArgs);
+    @Override
+    public <RET extends List<?>> RET query(OQuery<?> query, DetachMode detachMode, Object... args) {
+        RET result = query(query, args);
         
         switch (detachMode) {
             case ENTITY: return detach(result);
@@ -291,6 +294,7 @@ public class OrientObjectTemplate {
         return (RET) pojos;
     }
 
+    @Override
     public <RET> OObjectIteratorClass<RET> browseClass(Class<RET> iClusterClass) {
         return dbf.db().browseClass(iClusterClass);
     }
@@ -308,6 +312,7 @@ public class OrientObjectTemplate {
         return dbf.db().declareIntent(iIntent);
     }
 
+    @Override
     public ODatabaseComplex<Object> delete(ORecordInternal<?> iRecord) {
         return dbf.db().delete(iRecord);
     }
@@ -506,6 +511,7 @@ public class OrientObjectTemplate {
         return dbf.db().load(iPojo, iFetchPlan, iIgnoreCache);
     }
 
+    @Override
     public <RET> RET load(ORID iRecordId) {
         return dbf.db().load(iRecordId);
     }
@@ -518,6 +524,7 @@ public class OrientObjectTemplate {
         return dbf.db().load(iRecordId, iFetchPlan, iIgnoreCache);
     }
 
+    @Override
     public <RET> RET save(Object iContent) {
         return dbf.db().save(iContent);
     }
@@ -544,10 +551,12 @@ public class OrientObjectTemplate {
         return dbf.db().save(iPojo, iClusterName, iMode, iForceCreate, iRecordCreatedCallback, iRecordUpdatedCallback);
     }
 
+    @Override
     public ODatabaseObject delete(Object iPojo) {
         return dbf.db().delete(iPojo);
     }
 
+    @Override
     public ODatabaseObject delete(ORID iRID) {
         return dbf.db().delete(iRID);
     }
@@ -564,6 +573,7 @@ public class OrientObjectTemplate {
         return dbf.db().countClass(iClassName);
     }
 
+    @Override
     public long countClass(Class<?> iClass) {
         return dbf.db().countClass(iClass);
     }
@@ -714,6 +724,7 @@ public class OrientObjectTemplate {
         return list.isEmpty() ? null : list.get(0);
     }
     
+    @Override
     public <RET> RET queryForObject(OSQLQuery<?> query, DetachMode detachMode, Object... values) {
         RET result = queryForObject(query, values);
         
@@ -726,6 +737,7 @@ public class OrientObjectTemplate {
         return result;
     }
 
+    @Override
     public Long count(OSQLQuery<?> query, Object... values) {
         return ((ODocument) dbf.db().query(query, values).get(0)).field("count");
     }

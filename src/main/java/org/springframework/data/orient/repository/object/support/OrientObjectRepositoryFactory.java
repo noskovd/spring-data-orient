@@ -2,13 +2,13 @@ package org.springframework.data.orient.repository.object.support;
 
 import java.io.Serializable;
 
+import org.springframework.data.orient.core.OrientOperations;
 import org.springframework.data.orient.repository.object.query.OrientObjectQueryLookupStrategy;
 import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.data.repository.query.QueryLookupStrategy.Key;
-import org.springframework.orm.orient.OrientObjectTemplate;
 
 /**
  * Orient specific generic repository factory.
@@ -18,16 +18,16 @@ import org.springframework.orm.orient.OrientObjectTemplate;
 public class OrientObjectRepositoryFactory extends RepositoryFactorySupport {
 
     /** The orient template. */
-    private final OrientObjectTemplate template;
+    private final OrientOperations operations;
     
     /**
      * Instantiates a new {@link OrientObjectRepositoryFactory}.
      *
-     * @param template the orient object template
+     * @param operations the orient object template
      */
-    public OrientObjectRepositoryFactory(OrientObjectTemplate template) {
+    public OrientObjectRepositoryFactory(OrientOperations operations) {
         super();
-        this.template = template;
+        this.operations = operations;
     }
 
 	/* (non-Javadoc)
@@ -47,7 +47,7 @@ public class OrientObjectRepositoryFactory extends RepositoryFactorySupport {
     protected Object getTargetRepository(RepositoryMetadata metadata) {
         EntityInformation<?, Serializable> entityInformation = getEntityInformation(metadata.getDomainType());
         
-        return new SimpleOrientObjectRepository(template, entityInformation.getJavaType());
+        return new SimpleOrientObjectRepository(operations, entityInformation.getJavaType());
     }
 
     /* (non-Javadoc)
@@ -63,6 +63,6 @@ public class OrientObjectRepositoryFactory extends RepositoryFactorySupport {
      */
     @Override
     protected QueryLookupStrategy getQueryLookupStrategy(Key key) {
-        return OrientObjectQueryLookupStrategy.create(template, key);
+        return OrientObjectQueryLookupStrategy.create(operations, key);
     }
 }

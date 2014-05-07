@@ -1,13 +1,13 @@
 package org.springframework.data.orient.repository.object.query;
 
+import org.springframework.data.orient.core.OrientOperations;
 import org.springframework.data.orient.repository.object.DetachMode;
 import org.springframework.data.orient.repository.object.query.OrientQueryExecution.CollectionExecution;
-import org.springframework.data.orient.repository.object.query.OrientQueryExecution.SingleEntityExecution;
-import org.springframework.data.orient.repository.object.query.OrientQueryExecution.PagedExecution;
 import org.springframework.data.orient.repository.object.query.OrientQueryExecution.CountExecution;
+import org.springframework.data.orient.repository.object.query.OrientQueryExecution.PagedExecution;
+import org.springframework.data.orient.repository.object.query.OrientQueryExecution.SingleEntityExecution;
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
-import org.springframework.orm.orient.OrientObjectTemplate;
 
 import com.orientechnologies.orient.core.sql.query.OSQLQuery;
 
@@ -19,19 +19,19 @@ public abstract class AbstractOrientQuery implements RepositoryQuery {
     /** The query method. */
     private final OrientObjectQueryMethod method;
     
-    /** The object template. */
-    private final OrientObjectTemplate template;
+    /** The object operations. */
+    private final OrientOperations operations;
 
     /**
      * Instantiates a new {@link AbstractOrientQuery}.
      *
      * @param method the query method
-     * @param template the orient object template
+     * @param operations the orient operations
      */
-    public AbstractOrientQuery(OrientObjectQueryMethod method, OrientObjectTemplate template) {
+    public AbstractOrientQuery(OrientObjectQueryMethod method, OrientOperations operations) {
         super();
         this.method = method;
-        this.template = template;
+        this.operations = operations;
     }
 
     /* (non-Javadoc)
@@ -107,13 +107,13 @@ public abstract class AbstractOrientQuery implements RepositoryQuery {
      */
     protected OrientQueryExecution getExecution() {
         if (method.isCollectionQuery()) {
-            return new CollectionExecution(template);
+            return new CollectionExecution(operations);
         } else if (isCountQuery()) {
-            return new CountExecution(template);
+            return new CountExecution(operations);
         } else if (method.isPageQuery()) {
-            return new PagedExecution(template, method.getParameters());
+            return new PagedExecution(operations, method.getParameters());
         } else if (method.isQueryForEntity()) {
-            return new SingleEntityExecution(template);
+            return new SingleEntityExecution(operations);
         } 
         
         throw new IllegalArgumentException();

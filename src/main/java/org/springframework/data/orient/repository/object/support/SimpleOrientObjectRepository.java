@@ -16,9 +16,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.orient.core.OrientOperations;
 import org.springframework.data.orient.repository.object.OrientObjectRepository;
 import org.springframework.data.orient.repository.object.query.QueryUtils;
-import org.springframework.orm.orient.OrientObjectTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,8 +37,8 @@ import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 @Transactional(readOnly = true)
 public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T> {
 
-	/** The orient template. */
-	private final OrientObjectTemplate template;
+	/** The orient operations. */
+	private final OrientOperations operations;
 	
 	/** The domain class. */
 	private final Class<T> domainClass;
@@ -46,12 +46,12 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
 	/**
 	 * Instantiates a new {@link SimpleOrientObjectRepository}.
 	 *
-	 * @param template the template
+	 * @param operations the template
 	 * @param domainClass the domain class
 	 */
-	public SimpleOrientObjectRepository(OrientObjectTemplate template, Class<T> domainClass) {
+	public SimpleOrientObjectRepository(OrientOperations operations, Class<T> domainClass) {
 		super();
-		this.template = template;
+		this.operations = operations;
 		this.domainClass = domainClass;
 	}
 
@@ -60,7 +60,7 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
 	 */
 	@Transactional(readOnly = false)
 	public <S extends T> S save(S entity) {
-		return template.save(entity);
+		return operations.save(entity);
 	}
 
 	/* (non-Javadoc)
@@ -85,7 +85,7 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
 	 * @see org.springframework.data.repository.CrudRepository#findOne(java.io.Serializable)
 	 */
 	public T findOne(String id) {
-		return template.load(new ORecordId(id));
+		return operations.load(new ORecordId(id));
 	}
 
 	/* (non-Javadoc)
@@ -99,7 +99,7 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
 	 * @see org.springframework.data.orient.repository.OrientRepository#findAll()
 	 */
 	public List<T> findAll() {
-	    return template.query(getQuery((Sort) null));
+	    return operations.query(getQuery((Sort) null));
 	}
 
 	/* (non-Javadoc)
@@ -113,7 +113,7 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
 	 * @see org.springframework.data.repository.CrudRepository#count()
 	 */
 	public long count() {
-		return template.countClass(domainClass);
+		return operations.countClass(domainClass);
 	}
 
 	/* (non-Javadoc)
@@ -121,7 +121,7 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
 	 */
 	@Transactional(readOnly = false)
 	public void delete(String id) {
-		template.delete(new ORecordId(id));
+		operations.delete(new ORecordId(id));
 	}
 
 	/* (non-Javadoc)
@@ -129,7 +129,7 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
 	 */
 	@Transactional(readOnly = false)
 	public void delete(T entity) {
-		template.delete(entity);
+		operations.delete(entity);
 	}
 
 	/* (non-Javadoc)
@@ -147,8 +147,8 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
 	 */
 	@Transactional(readOnly = false)
 	public void deleteAll() {
-		for (T entity : template.browseClass(domainClass)) {
-            template.delete(entity);
+		for (T entity : operations.browseClass(domainClass)) {
+            operations.delete(entity);
         }
 	}
 
@@ -165,7 +165,7 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
      */
     @Override
     public List<T> findAll(Sort sort) {
-        return template.query(getQuery(sort));
+        return operations.query(getQuery(sort));
     }
 
     /* (non-Javadoc)
@@ -179,7 +179,7 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
         }
         
         Long total = count();
-        List<T> content = (List<T>) (total > pageable.getOffset() ? template.query(getQuery(pageable)) : Collections.<T> emptyList());
+        List<T> content = (List<T>) (total > pageable.getOffset() ? operations.query(getQuery(pageable)) : Collections.<T> emptyList());
         
         return new PageImpl<T>(content, pageable, total);
     }

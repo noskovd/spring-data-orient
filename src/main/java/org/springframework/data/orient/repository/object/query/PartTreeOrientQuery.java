@@ -1,5 +1,6 @@
 package org.springframework.data.orient.repository.object.query;
 
+import org.springframework.data.orient.core.OrientOperations;
 import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.ParametersParameterAccessor;
 import org.springframework.data.repository.query.parser.PartTree;
@@ -14,9 +15,6 @@ import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
  * @author Dzmitry_Naskou
  */
 public class PartTreeOrientQuery extends AbstractOrientQuery {
-
-    @SuppressWarnings("unused")
-    private final OrientObjectTemplate template;
     
     /** The domain class. */
     private final Class<?> domainClass;
@@ -31,12 +29,11 @@ public class PartTreeOrientQuery extends AbstractOrientQuery {
      * Instantiates a new {@link PartTreeOrientQuery} from given {@link OrientObjectQueryMethod} and {@link OrientObjectTemplate}.
      *
      * @param method the query method
-     * @param template the orient object template
+     * @param operations the orient object template
      */
-    public PartTreeOrientQuery(OrientObjectQueryMethod method, OrientObjectTemplate template) {
-        super(method, template);
-        
-        this.template = template;
+    public PartTreeOrientQuery(OrientObjectQueryMethod method, OrientOperations operations) {
+        super(method, operations);
+
         this.domainClass = method.getEntityInformation().getJavaType();
         this.tree = new PartTree(method.getName(), domainClass);
         this.parameters = method.getParameters();

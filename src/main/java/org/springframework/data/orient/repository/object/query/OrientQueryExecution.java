@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.orient.core.OrientOperations;
 import org.springframework.data.orient.repository.object.DetachMode;
 import org.springframework.data.repository.query.ParameterAccessor;
 import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.ParametersParameterAccessor;
-import org.springframework.orm.orient.OrientObjectTemplate;
 
 /**
  * Set of classes to contain query execution strategies. 
@@ -20,11 +20,11 @@ import org.springframework.orm.orient.OrientObjectTemplate;
 public abstract class OrientQueryExecution {
 
     /** The orient object template. */
-    protected final OrientObjectTemplate template;
+    protected final OrientOperations operations;
 
-    public OrientQueryExecution(OrientObjectTemplate template) {
+    public OrientQueryExecution(OrientOperations template) {
         super();
-        this.template = template;
+        this.operations = template;
     }
     
     /**
@@ -59,7 +59,7 @@ public abstract class OrientQueryExecution {
          *
          * @param template the template
          */
-        public CollectionExecution(OrientObjectTemplate template) {
+        public CollectionExecution(OrientOperations template) {
             super(template);
         }
 
@@ -68,7 +68,7 @@ public abstract class OrientQueryExecution {
          */
         @Override
         protected Object doExecute(AbstractOrientQuery query, DetachMode mode, Object[] values) {
-            return template.query(query.createQuery(values), mode, values);
+            return operations.query(query.createQuery(values), mode, values);
         }
     }
     
@@ -84,7 +84,7 @@ public abstract class OrientQueryExecution {
          *
          * @param template the template
          */
-        public SingleEntityExecution(OrientObjectTemplate template) {
+        public SingleEntityExecution(OrientOperations template) {
             super(template);
         }
 
@@ -93,7 +93,7 @@ public abstract class OrientQueryExecution {
          */
         @Override
         protected Object doExecute(AbstractOrientQuery query, DetachMode mode, Object[] values) {
-            return template.queryForObject(query.createQuery(values), mode, values);
+            return operations.queryForObject(query.createQuery(values), mode, values);
         }
     }
     
@@ -109,7 +109,7 @@ public abstract class OrientQueryExecution {
          *
          * @param template the template
          */
-        public CountExecution(OrientObjectTemplate template) {
+        public CountExecution(OrientOperations template) {
             super(template);
         }
 
@@ -118,7 +118,7 @@ public abstract class OrientQueryExecution {
          */
         @Override
         protected Object doExecute(AbstractOrientQuery query, DetachMode mode, Object[] values) {
-            return template.count(query.createQuery(values), values);
+            return operations.count(query.createQuery(values), values);
         }
     }
 
@@ -138,7 +138,7 @@ public abstract class OrientQueryExecution {
          * @param template the orient object template
          * @param parameters the parameters
          */
-        public PagedExecution(OrientObjectTemplate template, Parameters<?, ?> parameters) {
+        public PagedExecution(OrientOperations template, Parameters<?, ?> parameters) {
             super(template);
             this.parameters = parameters;
         }
@@ -152,14 +152,14 @@ public abstract class OrientQueryExecution {
             
             final Object[] queryParams = prepareForQuery(parameters, values);
             
-            Long total = template.count(query.createCountQuery(values), queryParams);
+            Long total = operations.count(query.createCountQuery(values), queryParams);
             
             Pageable pageable = accessor.getPageable();
             
             List<Object> content;
             
             if (pageable != null && total > pageable.getOffset()) {
-                content = template.query(query.createQuery(values), mode, queryParams);
+                content = operations.query(query.createQuery(values), mode, queryParams);
             } else {
                 content = Collections.emptyList();
             }
