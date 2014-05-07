@@ -3,10 +3,11 @@ spring-data-orient
 
 Spring Data implementation for OrientDB
 
+
 @Configuration
 @EnableTransactionManagement
 @EnableOrientRepositories(basePackages = "org.springframework.data.orient.object.person")
-public class OrientConfiguration {
+public class ApplicationConfiguration {
 
     @Bean
     public OrientObjectDatabaseFactory factory() {
