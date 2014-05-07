@@ -495,6 +495,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().getRecordById(iRecordId);
     }
 
+    @Override
     public <RET> RET detachAll(Object iPojo, boolean returnNonProxiedInstance) {
         return dbf.db().detachAll(iPojo, returnNonProxiedInstance);
     }
