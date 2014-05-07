@@ -3,7 +3,7 @@ spring-data-orient
 
 Spring Data implementation for OrientDB
 
-
+```java
 @Configuration
 @EnableTransactionManagement
 @EnableOrientRepositories(basePackages = "org.springframework.data.orient.object.person")
@@ -36,3 +36,4 @@ public class ApplicationConfiguration {
         factory().db().getEntityManager().registerEntityClass(Person.class);
     }
 }
+```java
