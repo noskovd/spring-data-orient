@@ -36,4 +36,4 @@ public class ApplicationConfiguration {
         factory().db().getEntityManager().registerEntityClass(Person.class);
     }
 }
-```java
+```
