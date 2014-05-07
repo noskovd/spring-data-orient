@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.springframework.data.orient.core.OrientOperations;
 import org.springframework.data.orient.object.repository.OrientObjectRepository;
+import org.springframework.data.orient.object.repository.support.SimpleOrientObjectRepository;
 import org.springframework.data.orient.repository.query.OrientQueryLookupStrategy;
 import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.data.repository.core.RepositoryMetadata;
@@ -48,7 +49,11 @@ public class OrientRepositoryFactory extends RepositoryFactorySupport {
     protected Object getTargetRepository(RepositoryMetadata metadata) {
         EntityInformation<?, Serializable> entityInformation = getEntityInformation(metadata.getDomainType());
         
-        return new SimpleOrientRepository(operations, entityInformation.getJavaType());
+        if (isObjectRepository(metadata.getRepositoryInterface())) {
+            return new SimpleOrientObjectRepository(operations, entityInformation.getJavaType());
+        } else {
+            return new SimpleOrientRepository(operations, entityInformation.getJavaType());
+        }
     }
 
     /* (non-Javadoc)
@@ -56,7 +61,11 @@ public class OrientRepositoryFactory extends RepositoryFactorySupport {
      */
     @Override
     protected Class<?> getRepositoryBaseClass(RepositoryMetadata metadata) {
-        return SimpleOrientRepository.class;
+        if (isObjectRepository(metadata.getRepositoryInterface())) {
+            return SimpleOrientObjectRepository.class;
+        } else {
+            return SimpleOrientRepository.class;
+        }
     }
 
     /* (non-Javadoc)
@@ -67,6 +76,12 @@ public class OrientRepositoryFactory extends RepositoryFactorySupport {
         return OrientQueryLookupStrategy.create(operations, key);
     }
 
+    /**
+     * Returns whether the given repository interface requires a {@link OrinetObjectRepository} specific implementation to be chosen.
+     *
+     * @param repositoryInterface the repository interface
+     * @return true, if is repository assignable from OrientObjectRepository
+     */
     private boolean isObjectRepository(Class<?>  repositoryInterface) {
         return OrientObjectRepository.class.isAssignableFrom(repositoryInterface);
     }

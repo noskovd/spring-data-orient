@@ -9,7 +9,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
  * The specific extension for {@link OObjectDatabaseTx} database.
  *
  * @author Dzmitry_Naskou
- * @param <T> the generic type
+ * @param <T> the generic type to handle
  */
 @NoRepositoryBean
 public interface OrientObjectRepository<T> extends OrientRepository<T> {

@@ -27,11 +27,10 @@ import com.orientechnologies.orient.core.sql.query.OSQLQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 
 /**
- * Default implementation of the {@link org.springframework.data.repository.CrudRepository} interface for OrientDB.
+ * Default implementation of the {@link org.springframework.data.repository.PagingAndSortingRepository} interface for OrientDB.
  * 
  * @author Dzmitry_Naskou
  * @param <T> the type of the entity to handle
- * @param <ID> the type of the entity's identifier
  */
 @Repository
 @Transactional(readOnly = true)
@@ -44,9 +43,9 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
 	private final Class<T> domainClass;
 
 	/**
-	 * Instantiates a new {@link SimpleOrientRepository}.
+	 * Instantiates a new {@link SimpleOrientRepository} from the given {@link OrientOperations} and domain class.
 	 *
-	 * @param operations the template
+	 * @param operations the orinet operations
 	 * @param domainClass the domain class
 	 */
 	public SimpleOrientRepository(OrientOperations operations, Class<T> domainClass) {
