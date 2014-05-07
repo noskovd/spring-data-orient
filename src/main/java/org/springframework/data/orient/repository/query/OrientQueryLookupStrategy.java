@@ -7,9 +7,9 @@ import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.data.repository.query.QueryLookupStrategy.Key;
 import org.springframework.data.repository.query.RepositoryQuery;
 
-public final class OrientObjectQueryLookupStrategy {
+public final class OrientQueryLookupStrategy {
 
-    private OrientObjectQueryLookupStrategy() {
+    private OrientQueryLookupStrategy() {
         super();
     }
 
@@ -30,10 +30,10 @@ public final class OrientObjectQueryLookupStrategy {
          * org.springframework.data.repository.core.NamedQueries)
          */
         public final RepositoryQuery resolveQuery(java.lang.reflect.Method method, RepositoryMetadata metadata, NamedQueries namedQueries) {
-            return resolveQuery(new OrientObjectQueryMethod(method, metadata), operations, namedQueries);
+            return resolveQuery(new OrientQueryMethod(method, metadata), operations, namedQueries);
         }
 
-        protected abstract RepositoryQuery resolveQuery(OrientObjectQueryMethod method, OrientOperations template, NamedQueries namedQueries);
+        protected abstract RepositoryQuery resolveQuery(OrientQueryMethod method, OrientOperations template, NamedQueries namedQueries);
     }
 
     private static class CreateQueryLookupStrategy extends AbstractQueryLookupStrategy {
@@ -51,7 +51,7 @@ public final class OrientObjectQueryLookupStrategy {
          * @see com.epam.e3s.data.repository.query.E3sQueryLookupStrategy.AbstractQueryLookupStrategy#resolveQuery(com.epam.e3s.data.repository.query.E3sQueryMethod, com.epam.e3s.core.db.AppDbService, org.springframework.data.repository.core.NamedQueries)
          */
         @Override
-        protected RepositoryQuery resolveQuery(OrientObjectQueryMethod method, OrientOperations operations, NamedQueries namedQueries) {
+        protected RepositoryQuery resolveQuery(OrientQueryMethod method, OrientOperations operations, NamedQueries namedQueries) {
             try {
                 return new PartTreeOrientQuery(method, operations);
             } catch (IllegalArgumentException e) {
@@ -75,7 +75,7 @@ public final class OrientObjectQueryLookupStrategy {
          * @see com.epam.e3s.data.repository.query.E3sQueryLookupStrategy.AbstractQueryLookupStrategy#resolveQuery(com.epam.e3s.data.repository.query.E3sQueryMethod, com.epam.e3s.core.db.AppDbService, org.springframework.data.repository.core.NamedQueries)
          */
         @Override
-        protected RepositoryQuery resolveQuery(OrientObjectQueryMethod method, OrientOperations template, NamedQueries namedQueries) {
+        protected RepositoryQuery resolveQuery(OrientQueryMethod method, OrientOperations template, NamedQueries namedQueries) {
             String query = method.getAnnotatedQuery();
 
             if (query != null) {
@@ -109,7 +109,7 @@ public final class OrientObjectQueryLookupStrategy {
          * @see com.epam.e3s.data.repository.query.E3sQueryLookupStrategy.AbstractQueryLookupStrategy#resolveQuery(com.epam.e3s.data.repository.query.E3sQueryMethod, com.epam.e3s.core.db.AppDbService, org.springframework.data.repository.core.NamedQueries)
          */
         @Override
-        protected RepositoryQuery resolveQuery(OrientObjectQueryMethod method, OrientOperations template, NamedQueries namedQueries) {
+        protected RepositoryQuery resolveQuery(OrientQueryMethod method, OrientOperations template, NamedQueries namedQueries) {
             try {
                 return strategy.resolveQuery(method, template, namedQueries);
             } catch (IllegalStateException e) {

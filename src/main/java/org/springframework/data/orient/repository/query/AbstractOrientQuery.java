@@ -17,7 +17,7 @@ import com.orientechnologies.orient.core.sql.query.OSQLQuery;
 public abstract class AbstractOrientQuery implements RepositoryQuery {
 
     /** The query method. */
-    private final OrientObjectQueryMethod method;
+    private final OrientQueryMethod method;
     
     /** The object operations. */
     private final OrientOperations operations;
@@ -28,7 +28,7 @@ public abstract class AbstractOrientQuery implements RepositoryQuery {
      * @param method the query method
      * @param operations the orient operations
      */
-    public AbstractOrientQuery(OrientObjectQueryMethod method, OrientOperations operations) {
+    public AbstractOrientQuery(OrientQueryMethod method, OrientOperations operations) {
         super();
         this.method = method;
         this.operations = operations;

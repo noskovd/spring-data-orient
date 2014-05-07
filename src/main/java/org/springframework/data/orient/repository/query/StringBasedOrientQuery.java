@@ -14,7 +14,7 @@ public class StringBasedOrientQuery extends AbstractOrientQuery {
     
     private final boolean isCountQuery;
     
-    public StringBasedOrientQuery(String query, OrientObjectQueryMethod method, OrientOperations operations) {
+    public StringBasedOrientQuery(String query, OrientQueryMethod method, OrientOperations operations) {
         super(method, operations);
         this.queryString = query;
         this.isCountQuery = method.hasAnnotatedQuery() ? method.getQueryAnnotation().count() : false;

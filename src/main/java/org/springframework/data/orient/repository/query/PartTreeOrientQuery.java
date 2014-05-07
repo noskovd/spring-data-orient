@@ -26,12 +26,12 @@ public class PartTreeOrientQuery extends AbstractOrientQuery {
     private final Parameters<?, ?> parameters;
     
     /**
-     * Instantiates a new {@link PartTreeOrientQuery} from given {@link OrientObjectQueryMethod} and {@link OrientObjectTemplate}.
+     * Instantiates a new {@link PartTreeOrientQuery} from given {@link OrientQueryMethod} and {@link OrientObjectTemplate}.
      *
      * @param method the query method
      * @param operations the orient object template
      */
-    public PartTreeOrientQuery(OrientObjectQueryMethod method, OrientOperations operations) {
+    public PartTreeOrientQuery(OrientQueryMethod method, OrientOperations operations) {
         super(method, operations);
 
         this.domainClass = method.getEntityInformation().getJavaType();

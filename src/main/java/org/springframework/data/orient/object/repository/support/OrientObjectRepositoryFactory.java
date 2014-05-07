@@ -3,7 +3,7 @@ package org.springframework.data.orient.object.repository.support;
 import java.io.Serializable;
 
 import org.springframework.data.orient.core.OrientOperations;
-import org.springframework.data.orient.repository.query.OrientObjectQueryLookupStrategy;
+import org.springframework.data.orient.repository.query.OrientQueryLookupStrategy;
 import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
@@ -63,6 +63,6 @@ public class OrientObjectRepositoryFactory extends RepositoryFactorySupport {
      */
     @Override
     protected QueryLookupStrategy getQueryLookupStrategy(Key key) {
-        return OrientObjectQueryLookupStrategy.create(operations, key);
+        return OrientQueryLookupStrategy.create(operations, key);
     }
 }

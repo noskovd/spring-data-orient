@@ -16,18 +16,18 @@ import org.springframework.util.StringUtils;
  * 
  * @author Dzmitry_Naskou
  */
-public class OrientObjectQueryMethod extends QueryMethod {
+public class OrientQueryMethod extends QueryMethod {
 
     /** The method. */
     private final Method method;
     
     /**
-     * Instantiates a new {@link OrientObjectQueryMethod}.
+     * Instantiates a new {@link OrientQueryMethod}.
      *
      * @param method the method
      * @param metadata the metadata
      */
-    public OrientObjectQueryMethod(Method method, RepositoryMetadata metadata) {
+    public OrientQueryMethod(Method method, RepositoryMetadata metadata) {
         super(method, metadata);
         this.method = method;
     }
