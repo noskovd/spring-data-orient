@@ -1,4 +1,4 @@
-package org.springframework.data.orient.object.repository.query;
+package org.springframework.data.orient.repository.query;
 
 import static org.jooq.impl.DSL.field;
 
