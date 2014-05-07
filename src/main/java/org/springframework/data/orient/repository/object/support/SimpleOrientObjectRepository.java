@@ -102,6 +102,9 @@ public class SimpleOrientObjectRepository<T> implements OrientObjectRepository<T
 	    return template.query(getQuery((Sort) null));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.data.orient.repository.OrientRepository#findAll(java.lang.Iterable)
+	 */
 	public List<T> findAll(Iterable<String> ids) {
 	    throw new UnsupportedOperationException("Not supported yet.");
 	}
