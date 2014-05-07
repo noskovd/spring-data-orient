@@ -1,4 +1,4 @@
-package org.springframework.data.orient.repository;
+package org.springframework.data.orient.repository.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
