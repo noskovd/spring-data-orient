@@ -37,10 +37,10 @@ import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 public class SimpleOrientRepository<T> implements OrientRepository<T> {
 
         /** The orient operations. */
-        private final OrientOperations operations;
+        protected final OrientOperations operations;
         
         /** The domain class. */
-        private final Class<T> domainClass;
+        protected final Class<T> domainClass;
 
         /**
          * Instantiates a new {@link SimpleOrientRepository} from the given {@link OrientOperations} and domain class.

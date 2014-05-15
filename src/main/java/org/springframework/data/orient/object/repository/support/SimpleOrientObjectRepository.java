@@ -1,5 +1,6 @@
 package org.springframework.data.orient.object.repository.support;
 
+import org.springframework.data.orient.core.OrientObjectOperations;
 import org.springframework.data.orient.core.OrientOperations;
 import org.springframework.data.orient.object.repository.OrientObjectRepository;
 import org.springframework.data.orient.repository.support.SimpleOrientRepository;
@@ -20,5 +21,9 @@ public class SimpleOrientObjectRepository<T> extends SimpleOrientRepository<T> i
      */
     public SimpleOrientObjectRepository(OrientOperations operations, Class<T> domainClass) {
         super(operations, domainClass);
+    }
+    
+    public T detachAll(T entity) {
+        return ((OrientObjectOperations) super.operations).detachAll(entity, true);
     }
 }

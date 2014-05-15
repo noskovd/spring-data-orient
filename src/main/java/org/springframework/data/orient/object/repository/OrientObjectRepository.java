@@ -13,5 +13,6 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
  */
 @NoRepositoryBean
 public interface OrientObjectRepository<T> extends OrientRepository<T> {
-
+    
+    T detachAll(T entity);
 }
