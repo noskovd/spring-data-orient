@@ -36,120 +36,120 @@ import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 @Transactional(readOnly = true)
 public class SimpleOrientRepository<T> implements OrientRepository<T> {
 
-        /** The orient operations. */
-        protected final OrientOperations operations;
-        
-        /** The domain class. */
-        protected final Class<T> domainClass;
+    /** The orient operations. */
+    protected final OrientOperations operations;
+    
+    /** The domain class. */
+    protected final Class<T> domainClass;
 
-        /**
-         * Instantiates a new {@link SimpleOrientRepository} from the given {@link OrientOperations} and domain class.
-         *
-         * @param operations the orinet operations
-         * @param domainClass the domain class
-         */
-        public SimpleOrientRepository(OrientOperations operations, Class<T> domainClass) {
-                super();
-                this.operations = operations;
-                this.domainClass = domainClass;
-        }
+    /**
+     * Instantiates a new {@link SimpleOrientRepository} from the given {@link OrientOperations} and domain class.
+     *
+     * @param operations the orinet operations
+     * @param domainClass the domain class
+     */
+    public SimpleOrientRepository(OrientOperations operations, Class<T> domainClass) {
+        super();
+        this.operations = operations;
+        this.domainClass = domainClass;
+    }
 
-        /* (non-Javadoc)
-         * @see org.springframework.data.repository.CrudRepository#save(S)
-         */
-        @Transactional(readOnly = false)
-        public <S extends T> S save(S entity) {
-                return operations.save(entity);
-        }
+    /* (non-Javadoc)
+     * @see org.springframework.data.repository.CrudRepository#save(S)
+     */
+    @Transactional(readOnly = false)
+    public <S extends T> S save(S entity) {
+        return operations.save(entity);
+    }
 
-        /* (non-Javadoc)
-         * @see org.springframework.data.repository.CrudRepository#save(java.lang.Iterable)
-         */
-        @Transactional(readOnly = false)
-        public <S extends T> Iterable<S> save(Iterable<S> entities) {
+    /* (non-Javadoc)
+     * @see org.springframework.data.repository.CrudRepository#save(java.lang.Iterable)
+     */
+    @Transactional(readOnly = false)
+    public <S extends T> Iterable<S> save(Iterable<S> entities) {
         if (entities == null) {
             return Collections.emptyList();
         }
-
+    
         List<S> result = new ArrayList<S>();
-
+    
         for (S entity : entities) {
             result.add(save(entity));
         }
-
+    
         return result;
-        }
+    }
 
-        /* (non-Javadoc)
-         * @see org.springframework.data.repository.CrudRepository#findOne(java.io.Serializable)
-         */
-        public T findOne(String id) {
-                return operations.load(new ORecordId(id));
-        }
+    /* (non-Javadoc)
+     * @see org.springframework.data.repository.CrudRepository#findOne(java.io.Serializable)
+     */
+    public T findOne(String id) {
+        return operations.load(new ORecordId(id));
+    }
 
-        /* (non-Javadoc)
-         * @see org.springframework.data.repository.CrudRepository#exists(java.io.Serializable)
-         */
-        public boolean exists(String id) {
-                return findOne(id) != null;
-        }
+    /* (non-Javadoc)
+     * @see org.springframework.data.repository.CrudRepository#exists(java.io.Serializable)
+     */
+    public boolean exists(String id) {
+        return findOne(id) != null;
+    }
 
-        /* (non-Javadoc)
-         * @see org.springframework.data.orient.repository.OrientRepository#findAll()
-         */
-        public List<T> findAll() {
-            return operations.query(getQuery((Sort) null));
-        }
+    /* (non-Javadoc)
+     * @see org.springframework.data.orient.repository.OrientRepository#findAll()
+     */
+    public List<T> findAll() {
+        return operations.query(getQuery((Sort) null));
+    }
 
-        /* (non-Javadoc)
-         * @see org.springframework.data.orient.repository.OrientRepository#findAll(java.lang.Iterable)
-         */
-        public List<T> findAll(Iterable<String> ids) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
+    /* (non-Javadoc)
+     * @see org.springframework.data.orient.repository.OrientRepository#findAll(java.lang.Iterable)
+     */
+    public List<T> findAll(Iterable<String> ids) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-        /* (non-Javadoc)
-         * @see org.springframework.data.repository.CrudRepository#count()
-         */
-        public long count() {
-                return operations.countClass(domainClass);
-        }
+    /* (non-Javadoc)
+     * @see org.springframework.data.repository.CrudRepository#count()
+     */
+    public long count() {
+        return operations.countClass(domainClass);
+    }
 
-        /* (non-Javadoc)
-         * @see org.springframework.data.repository.CrudRepository#delete(java.io.Serializable)
-         */
-        @Transactional(readOnly = false)
-        public void delete(String id) {
-                operations.delete(new ORecordId(id));
-        }
+    /* (non-Javadoc)
+     * @see org.springframework.data.repository.CrudRepository#delete(java.io.Serializable)
+     */
+    @Transactional(readOnly = false)
+    public void delete(String id) {
+        operations.delete(new ORecordId(id));
+    }
 
-        /* (non-Javadoc)
-         * @see org.springframework.data.repository.CrudRepository#delete(java.lang.Object)
-         */
-        @Transactional(readOnly = false)
-        public void delete(T entity) {
-                operations.delete(entity);
-        }
+    /* (non-Javadoc)
+     * @see org.springframework.data.repository.CrudRepository#delete(java.lang.Object)
+     */
+    @Transactional(readOnly = false)
+    public void delete(T entity) {
+        operations.delete(entity);
+    }
 
-        /* (non-Javadoc)
-         * @see org.springframework.data.repository.CrudRepository#delete(java.lang.Iterable)
-         */
-        @Transactional(readOnly = false)
-        public void delete(Iterable<? extends T> entities) {
-                for (T entity : entities) {
-                        delete(entity);
-                }
+    /* (non-Javadoc)
+     * @see org.springframework.data.repository.CrudRepository#delete(java.lang.Iterable)
+     */
+    @Transactional(readOnly = false)
+    public void delete(Iterable<? extends T> entities) {
+        for (T entity : entities) {
+                delete(entity);
         }
+    }
 
-        /* (non-Javadoc)
-         * @see org.springframework.data.repository.CrudRepository#deleteAll()
-         */
-        @Transactional(readOnly = false)
-        public void deleteAll() {
-                for (T entity : operations.browseClass(domainClass)) {
+    /* (non-Javadoc)
+     * @see org.springframework.data.repository.CrudRepository#deleteAll()
+     */
+    @Transactional(readOnly = false)
+    public void deleteAll() {
+        for (T entity : operations.browseClass(domainClass)) {
             operations.delete(entity);
         }
-        }
+    }
 
     /* (non-Javadoc)
      * @see org.springframework.data.orient.repository.OrientRepository#getDomainClass()
