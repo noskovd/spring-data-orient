@@ -62,6 +62,11 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
         return operations.save(entity);
     }
 
+    @Override
+    public T save(T entity, String cluster) {
+        return operations.save(entity, cluster);
+    }
+
     /* (non-Javadoc)
      * @see org.springframework.data.repository.CrudRepository#save(java.lang.Iterable)
      */
@@ -99,6 +104,11 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
      */
     public List<T> findAll() {
         return operations.query(getQuery((Sort) null));
+    }
+
+    @Override
+    public List<T> findAll(String cluster) {
+        return operations.query(getQuery(cluster, (Sort) null));
     }
 
     /* (non-Javadoc)
@@ -190,8 +200,18 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
      * @return the query
      */
     private OSQLQuery<T> getQuery(Sort sort) {
+        return getQuery(getSource(), sort);
+    }
+    
+    /**
+     * Creates the query for the given source (class or cluster) and {@link Sort}.
+     *
+     * @param sort the sort
+     * @return the query
+     */
+    private OSQLQuery<T> getQuery(String source, Sort sort) {
         DSLContext context = DSL.using(SQLDialect.MYSQL);
-        SelectJoinStep<? extends Record> joinStep = context.select().from(domainClass.getSimpleName());
+        SelectJoinStep<? extends Record> joinStep = context.select().from(source);
         
         Query query = sort == null ? joinStep : joinStep.orderBy(QueryUtils.toOrders(sort));
         
@@ -214,4 +234,9 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
         
         return new OSQLSynchQuery<T>(query.getSQL(ParamType.INLINED));
     }
+    
+    private String getSource() {
+        return domainClass.getSimpleName();
+    }
+    
 }

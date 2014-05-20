@@ -530,13 +530,11 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().save(iContent);
     }
 
-    public <RET> RET save(Object iContent, OPERATION_MODE iMode,
-            boolean iForceCreate,
-            ORecordCallback<? extends Number> iRecordCreatedCallback,
-            ORecordCallback<ORecordVersion> iRecordUpdatedCallback) {
+    public <RET> RET save(Object iContent, OPERATION_MODE iMode, boolean iForceCreate, ORecordCallback<? extends Number> iRecordCreatedCallback, ORecordCallback<ORecordVersion> iRecordUpdatedCallback) {
         return dbf.db().save(iContent, iMode, iForceCreate, iRecordCreatedCallback, iRecordUpdatedCallback);
     }
 
+    @Override
     public <RET> RET save(Object iPojo, String iClusterName) {
         return dbf.db().save(iPojo, iClusterName);
     }

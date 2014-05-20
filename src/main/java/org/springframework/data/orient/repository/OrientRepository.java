@@ -15,6 +15,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 @NoRepositoryBean
 public interface OrientRepository<T> extends PagingAndSortingRepository<T, String> {
     
+    T save(T entity, String cluster);
+    
     /**
      * Gets the domain class for repository.
      *
@@ -27,6 +29,14 @@ public interface OrientRepository<T> extends PagingAndSortingRepository<T, Strin
      */
     @Override
     List<T> findAll();
+    
+    /**
+     * Returns all instances of the type with the given cluster.
+     *
+     * @param cluster the cluster name
+     * @return the list
+     */
+    List<T> findAll(String cluster);
     
     /* (non-Javadoc)
      * @see org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Sort)

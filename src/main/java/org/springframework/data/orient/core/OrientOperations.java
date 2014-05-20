@@ -18,6 +18,8 @@ public interface OrientOperations {
     
     <RET> RET save(Object entity);
     
+    <RET> RET save(Object iPojo, String iClusterName);
+    
     Long count(OSQLQuery<?> query, Object... values);
     
     long countClass(Class<?> iClass);
