@@ -64,7 +64,7 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
 
     @Override
     public T save(T entity, String cluster) {
-        return operations.save(entity, cluster);
+        return operations.save(entity, clusterToSource(cluster));
     }
 
     /* (non-Javadoc)
@@ -123,6 +123,11 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
      */
     public long count() {
         return operations.countClass(domainClass);
+    }
+
+    @Override
+    public long count(String cluster) {
+        return operations.countClusterElements(cluster);
     }
 
     /* (non-Javadoc)
@@ -200,7 +205,7 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
      * @return the query
      */
     private OSQLQuery<T> getQuery(Sort sort) {
-        return getQuery(getSource(), sort);
+        return getQuery(getDefaultSource(), sort);
     }
     
     /**
@@ -235,8 +240,11 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
         return new OSQLSynchQuery<T>(query.getSQL(ParamType.INLINED));
     }
     
-    private String getSource() {
+    private String getDefaultSource() {
         return domainClass.getSimpleName();
     }
     
+    private String clusterToSource(String cluster) {
+        return "cluster:" + cluster;
+    }
 }

@@ -1,8 +1,12 @@
 package org.springframework.data.orient.object.person.cluster;
 
+import java.lang.reflect.Method;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.data.orient.repository.annotation.Cluster;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -71,5 +75,17 @@ public class PersonRepositoryTests {
         }
         
         db.close();
+    }
+    
+    @Test
+    public void checkClusterNameOnInterface() {
+        for (Method method : PersonRepository.class.getMethods()) {
+            Cluster cluster = AnnotationUtils.findAnnotation(method, Cluster.class);
+            if (cluster == null) {
+                cluster = AnnotationUtils.findAnnotation(PersonRepository.class, Cluster.class);
+            }
+            
+            System.out.println(cluster);
+        }
     }
 }

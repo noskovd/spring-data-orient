@@ -24,6 +24,8 @@ public interface OrientOperations {
     
     long countClass(Class<?> iClass);
     
+    long countClusterElements(String iClusterName);
+    
     <RET extends List<?>> RET query(OQuery<?> query, Object... values);
     
     <RET> RET queryForObject(OSQLQuery<?> query, DetachMode detachMode, Object... values);

@@ -17,6 +17,8 @@ public interface OrientRepository<T> extends PagingAndSortingRepository<T, Strin
     
     T save(T entity, String cluster);
     
+    long count(String cluster);
+    
     /**
      * Gets the domain class for repository.
      *

@@ -131,6 +131,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().countClusterElements(iClusterIds);
     }
 
+    @Override
     public long countClusterElements(String iClusterName) {
         return dbf.db().countClusterElements(iClusterName);
     }
