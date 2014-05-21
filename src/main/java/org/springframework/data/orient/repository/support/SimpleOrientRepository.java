@@ -66,9 +66,13 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
         return operations.save(entity);
     }
 
+    /* (non-Javadoc)
+     * @see org.springframework.data.orient.repository.OrientRepository#save(java.lang.Object, java.lang.String)
+     */
     @Override
-    public T save(T entity, String cluster) {
-        return operations.save(entity, clusterToSource(cluster));
+    @Transactional(readOnly = false)
+    public <S extends T> S save(S entity, String cluster) {
+        return operations.save(entity, getStorage(cluster));
     }
 
     /* (non-Javadoc)
@@ -88,7 +92,22 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
     
         return result;
     }
-
+    
+    @Transactional(readOnly = false)
+    public <S extends T> Iterable<S> save(Iterable<S> entities, String cluster) {
+        if (entities == null) {
+            return Collections.emptyList();
+        }
+    
+        List<S> result = new ArrayList<S>();
+    
+        for (S entity : entities) {
+            result.add(save(entity, cluster));
+        }
+    
+        return result;
+    }
+    
     /* (non-Javadoc)
      * @see org.springframework.data.repository.CrudRepository#findOne(java.io.Serializable)
      */
@@ -112,7 +131,7 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
 
     @Override
     public List<T> findAll(String cluster) {
-        return operations.query(getQuery(cluster, (Sort) null));
+        return operations.query(getQuery(getStorage(cluster), (Sort) null));
     }
 
     /* (non-Javadoc)
@@ -196,6 +215,10 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
         return operations.query(getQuery(sort));
     }
 
+    public List<T> findAll(String cluster, Sort sort) {
+        return operations.query(getQuery(getStorage(cluster), sort));
+    }
+    
     /* (non-Javadoc)
      * @see org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Pageable)
      */
@@ -219,7 +242,7 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
      * @return the query
      */
     private OSQLQuery<T> getQuery(Sort sort) {
-        return getQuery(getDefaultSource(), sort);
+        return getQuery(getDefaultStorage(), sort);
     }
     
     /**
@@ -254,11 +277,11 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
         return new OSQLSynchQuery<T>(query.getSQL(ParamType.INLINED));
     }
     
-    private String getDefaultSource() {
+    private String getDefaultStorage() {
         return domainClass.getSimpleName();
     }
     
-    private String clusterToSource(String cluster) {
+    private String getStorage(String cluster) {
         return "cluster:" + cluster;
     }
 }

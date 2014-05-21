@@ -15,7 +15,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 @NoRepositoryBean
 public interface OrientRepository<T> extends PagingAndSortingRepository<T, String> {
     
-    T save(T entity, String cluster);
+    <S extends T> S save(S entity, String cluster);
     
     long count(String cluster);
     
