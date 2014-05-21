@@ -40,6 +40,8 @@ public interface OrientOperations {
     
     <RET> OObjectIteratorClass<RET> browseClass(Class<RET> iClusterClass);
     
+    int getDefaultClusterId(Class<?> domainClass);
+    
     String getClusterNameById(int iClusterId);
     
     String getClusterNameByRid(String rid);

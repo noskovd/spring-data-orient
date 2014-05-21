@@ -311,8 +311,11 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().getDefaultClusterId();
     }
 
-    public <RET> OObjectIteratorClass<RET> browseClass(
-            Class<RET> iClusterClass, boolean iPolymorphic) {
+    public int getDefaultClusterId(Class<?> domainClass) {
+        return dbf.db().getMetadata().getSchema().getClass(domainClass).getDefaultClusterId();
+    }
+    
+    public <RET> OObjectIteratorClass<RET> browseClass(Class<RET> iClusterClass, boolean iPolymorphic) {
         return dbf.db().browseClass(iClusterClass, iPolymorphic);
     }
 
