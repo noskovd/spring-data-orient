@@ -21,6 +21,9 @@ public class OrientQueryMethod extends QueryMethod {
     /** The method. */
     private final Method method;
     
+    /** The repository interface. */
+    private final Class<?> repositoryInterface;
+    
     /**
      * Instantiates a new {@link OrientQueryMethod}.
      *
@@ -30,8 +33,27 @@ public class OrientQueryMethod extends QueryMethod {
     public OrientQueryMethod(Method method, RepositoryMetadata metadata) {
         super(method, metadata);
         this.method = method;
+        this.repositoryInterface = metadata.getRepositoryInterface();
     }
     
+    /**
+     * Gets the target method.
+     *
+     * @return the method
+     */
+    public Method getMethod() {
+        return method;
+    }
+
+    /**
+     * Gets the repository interface.
+     *
+     * @return the repository interface
+     */
+    public Class<?> getRepositoryInterface() {
+        return repositoryInterface;
+    }
+
     /**
      * Returns whether the method has an annotated query.
      * 

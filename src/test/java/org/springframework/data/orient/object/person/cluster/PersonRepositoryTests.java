@@ -56,6 +56,11 @@ public class PersonRepositoryTests {
     }
     
     @Test
+    public void findByLastNameTest() {
+        System.out.println(repository.findByLastName("Naskou"));
+    }
+    
+    @Test
     public void checkClasses() {
         OObjectDatabaseTx db = dbf.openDatabase();
         

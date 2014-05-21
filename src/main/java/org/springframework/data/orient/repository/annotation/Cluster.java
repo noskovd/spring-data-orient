@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 public @interface Cluster {
 
     /**
-     * Defines the Orient cluster.
+     * Defines the Orient cluster name.
      */
     String value() default "";
 }

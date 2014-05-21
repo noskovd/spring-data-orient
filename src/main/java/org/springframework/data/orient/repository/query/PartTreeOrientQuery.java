@@ -1,7 +1,11 @@
 package org.springframework.data.orient.repository.query;
 
+import java.lang.reflect.Method;
+
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.orient.core.OrientObjectTemplate;
 import org.springframework.data.orient.core.OrientOperations;
+import org.springframework.data.orient.repository.annotation.Cluster;
 import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.ParametersParameterAccessor;
 import org.springframework.data.repository.query.parser.PartTree;
@@ -25,6 +29,10 @@ public class PartTreeOrientQuery extends AbstractOrientQuery {
     /** The parameters. */
     private final Parameters<?, ?> parameters;
     
+    private final Class<?> repositoryInterface;
+    
+    private Method method;
+    
     /**
      * Instantiates a new {@link PartTreeOrientQuery} from given {@link OrientQueryMethod} and {@link OrientObjectTemplate}.
      *
@@ -37,6 +45,8 @@ public class PartTreeOrientQuery extends AbstractOrientQuery {
         this.domainClass = method.getEntityInformation().getJavaType();
         this.tree = new PartTree(method.getName(), domainClass);
         this.parameters = method.getParameters();
+        this.method = method.getMethod();
+        this.repositoryInterface = method.getRepositoryInterface();
     }
 
     /* (non-Javadoc)
@@ -47,7 +57,7 @@ public class PartTreeOrientQuery extends AbstractOrientQuery {
     protected OSQLQuery doCreateQuery(Object[] values) {
         ParametersParameterAccessor accessor = new ParametersParameterAccessor(parameters, values);
         
-        OrientQueryCreator creator = new OrientQueryCreator(tree, domainClass, accessor);
+        OrientQueryCreator creator = new OrientQueryCreator(tree, getStorage(), accessor);
         
         return new OSQLSynchQuery(creator.createQuery());
     }
@@ -60,7 +70,7 @@ public class PartTreeOrientQuery extends AbstractOrientQuery {
     protected OSQLQuery doCreateCountQuery(Object[] values) {
         ParametersParameterAccessor accessor = new ParametersParameterAccessor(parameters, values);
         
-        OrientQueryCreator creator = new OrientCountQueryCreator(tree, domainClass, accessor);
+        OrientQueryCreator creator = new OrientCountQueryCreator(tree, getStorage(), accessor);
         
         return new OSQLSynchQuery(creator.createQuery());
     }
@@ -71,5 +81,15 @@ public class PartTreeOrientQuery extends AbstractOrientQuery {
     @Override
     protected boolean isCountQuery() {
         return tree.isCountProjection();
+    }
+    
+    private String getStorage() {
+        Cluster cluster = AnnotationUtils.findAnnotation(method, Cluster.class);
+        
+        if (cluster == null) {
+            cluster = AnnotationUtils.findAnnotation(repositoryInterface, Cluster.class);
+        }
+        
+        return cluster == null ? domainClass.getSimpleName() : "cluster:" + cluster.value();
     }
 }

@@ -31,7 +31,7 @@ import org.springframework.data.repository.query.parser.PartTree;
 
 public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> {
 
-    private final Class<?> domainClass;
+    private final String storage;
     
     private final DSLContext context;
     
@@ -41,14 +41,14 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
     
     private final ParamType paramType;
     
-    public OrientQueryCreator(PartTree tree, Class<?> domainClass, ParameterAccessor parameters) {
-        this(tree, domainClass, parameters, ParamType.NAMED);
+    public OrientQueryCreator(PartTree tree, String storage, ParameterAccessor parameters) {
+        this(tree, storage, parameters, ParamType.NAMED);
     }
 
-    public OrientQueryCreator(PartTree tree, Class<?> domainClass, ParameterAccessor parameters, ParamType paramType) {
+    public OrientQueryCreator(PartTree tree, String storage, ParameterAccessor parameters, ParamType paramType) {
         super(tree, parameters);
         
-        this.domainClass = domainClass;
+        this.storage = storage;
         this.context = DSL.using(SQLDialect.MYSQL);
         this.tree = tree;
         this.accessor = parameters;
@@ -88,7 +88,7 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
             selectStep = context.select();
         }
 
-        SelectConditionStep<? extends Record> conditionStep = selectStep.from(domainClass.getSimpleName()).where(criteria);        
+        SelectConditionStep<? extends Record> conditionStep = selectStep.from(storage).where(criteria);        
 
         SelectLimitStep<? extends Record> limitStep = orderByIfRequired(conditionStep, pageable, sort);
 
