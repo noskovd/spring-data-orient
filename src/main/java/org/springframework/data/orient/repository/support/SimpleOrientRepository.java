@@ -41,17 +41,21 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
     
     /** The domain class. */
     protected final Class<T> domainClass;
+    
+    protected final Class<?> repositoryInterface;
 
     /**
      * Instantiates a new {@link SimpleOrientRepository} from the given {@link OrientOperations} and domain class.
      *
      * @param operations the orinet operations
      * @param domainClass the domain class
+     * @param repositoryInterface the target repository interface
      */
-    public SimpleOrientRepository(OrientOperations operations, Class<T> domainClass) {
+    public SimpleOrientRepository(OrientOperations operations, Class<T> domainClass, Class<?> repositoryInterface) {
         super();
         this.operations = operations;
         this.domainClass = domainClass;
+        this.repositoryInterface = repositoryInterface; 
     }
 
     /* (non-Javadoc)
@@ -162,6 +166,16 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
     @Transactional(readOnly = false)
     public void deleteAll() {
         for (T entity : operations.browseClass(domainClass)) {
+            operations.delete(entity);
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.springframework.data.orient.repository.OrientRepository#deleteAll(java.lang.String)
+     */
+    @Override
+    public void deleteAll(String cluster) {
+        for (T entity : findAll(cluster)) {
             operations.delete(entity);
         }
     }

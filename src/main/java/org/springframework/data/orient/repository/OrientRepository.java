@@ -51,4 +51,6 @@ public interface OrientRepository<T> extends PagingAndSortingRepository<T, Strin
      */
     @Override
     List<T> findAll(Iterable<String> ids);
+    
+    void deleteAll(String cluster);
 }

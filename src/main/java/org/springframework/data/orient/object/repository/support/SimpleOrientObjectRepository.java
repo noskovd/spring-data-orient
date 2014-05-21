@@ -14,13 +14,14 @@ import org.springframework.data.orient.repository.support.SimpleOrientRepository
 public class SimpleOrientObjectRepository<T> extends SimpleOrientRepository<T> implements OrientObjectRepository<T> {
 
     /**
-     * Instantiates a new {@link SimpleOrientObjectRepository} from the given {@link OrientOperations} and domain class.
+     * Instantiates a new {@link SimpleOrientObjectRepository} from the given {@link OrientOperations}, domain class and Repository Interface .
      *
      * @param operations the orient operations
      * @param domainClass the domain class
+     * @param repositoryInterface the target repository interface
      */
-    public SimpleOrientObjectRepository(OrientOperations operations, Class<T> domainClass) {
-        super(operations, domainClass);
+    public SimpleOrientObjectRepository(OrientOperations operations, Class<T> domainClass, Class<?> repositoryInterface) {
+        super(operations, domainClass, repositoryInterface);
     }
     
     public T detachAll(T entity) {

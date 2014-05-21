@@ -48,11 +48,13 @@ public class OrientRepositoryFactory extends RepositoryFactorySupport {
     @SuppressWarnings({ "rawtypes", "unchecked"})
     protected Object getTargetRepository(RepositoryMetadata metadata) {
         EntityInformation<?, Serializable> entityInformation = getEntityInformation(metadata.getDomainType());
+        Class<?> repositoryInterface = metadata.getRepositoryInterface();
+        Class<?> javaType = entityInformation.getJavaType();
         
         if (isObjectRepository(metadata.getRepositoryInterface())) {
-            return new SimpleOrientObjectRepository(operations, entityInformation.getJavaType());
+            return new SimpleOrientObjectRepository(operations, javaType, repositoryInterface);
         } else {
-            return new SimpleOrientRepository(operations, entityInformation.getJavaType());
+            return new SimpleOrientRepository(operations, javaType, repositoryInterface);
         }
     }
 
