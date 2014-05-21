@@ -36,6 +36,7 @@ import com.orientechnologies.orient.core.hook.ORecordHook.HOOK_POSITION;
 import com.orientechnologies.orient.core.hook.ORecordHook.RESULT;
 import com.orientechnologies.orient.core.hook.ORecordHook.TYPE;
 import com.orientechnologies.orient.core.id.ORID;
+import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.intent.OIntent;
 import com.orientechnologies.orient.core.metadata.security.OUser;
 import com.orientechnologies.orient.core.query.OQuery;
@@ -205,8 +206,14 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         dbf.db().setInternal(attribute, iValue);
     }
 
+    @Override
     public String getClusterNameById(int iClusterId) {
         return dbf.db().getClusterNameById(iClusterId);
+    }
+    
+    @Override
+    public String getClusterNameByRid(String rid) {
+        return getClusterNameById(new ORecordId(rid).getClusterId());
     }
 
     public long getClusterRecordSizeById(int iClusterId) {

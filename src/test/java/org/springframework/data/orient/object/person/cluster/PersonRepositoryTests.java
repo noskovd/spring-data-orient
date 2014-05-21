@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.data.orient.core.OrientObjectOperations;
 import org.springframework.data.orient.repository.annotation.Cluster;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,11 +28,21 @@ public class PersonRepositoryTests {
     @Autowired
     PersonRepository repository;
     
+    @Autowired
+    OrientObjectOperations operations;
+    
     @Test
     public void findAll() {
         System.out.println(repository.findAll());
     }
 
+    @Test
+    public void findAll2() {
+        for (Person person : repository.findAll()) {
+            System.out.println(operations.getClusterNameByRid(person.getRid()));
+        }
+    }
+    
     @Test
     public void savePersonToDefaultClusterTest() {
         Person person = new Person();

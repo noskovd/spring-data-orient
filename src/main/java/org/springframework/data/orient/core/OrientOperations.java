@@ -39,4 +39,8 @@ public interface OrientOperations {
     ODatabaseObject delete(Object iPojo);
     
     <RET> OObjectIteratorClass<RET> browseClass(Class<RET> iClusterClass);
+    
+    String getClusterNameById(int iClusterId);
+    
+    String getClusterNameByRid(String rid);
 }
