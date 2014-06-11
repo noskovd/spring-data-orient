@@ -7,7 +7,6 @@ import org.springframework.data.orient.core.OrientObjectTemplate;
 import org.springframework.data.orient.core.OrientOperations;
 import org.springframework.data.orient.repository.annotation.Cluster;
 import org.springframework.data.repository.query.Parameters;
-import org.springframework.data.repository.query.ParametersParameterAccessor;
 import org.springframework.data.repository.query.parser.PartTree;
 
 import com.orientechnologies.orient.core.sql.query.OSQLQuery;
@@ -55,7 +54,7 @@ public class PartTreeOrientQuery extends AbstractOrientQuery {
     @Override
     @SuppressWarnings("rawtypes")
     protected OSQLQuery doCreateQuery(Object[] values) {
-        ParametersParameterAccessor accessor = new ParametersParameterAccessor(parameters, values);
+        OrientParameterAccessor accessor = new OrientParametersParameterAccessor(parameters, values);
         
         OrientQueryCreator creator = new OrientQueryCreator(tree, getStorage(), accessor);
         
@@ -68,7 +67,7 @@ public class PartTreeOrientQuery extends AbstractOrientQuery {
     @Override
     @SuppressWarnings("rawtypes")
     protected OSQLQuery doCreateCountQuery(Object[] values) {
-        ParametersParameterAccessor accessor = new ParametersParameterAccessor(parameters, values);
+        OrientParameterAccessor accessor = new OrientParametersParameterAccessor(parameters, values);
         
         OrientQueryCreator creator = new OrientCountQueryCreator(tree, getStorage(), accessor);
         

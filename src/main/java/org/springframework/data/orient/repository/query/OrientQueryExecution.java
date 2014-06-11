@@ -9,7 +9,6 @@ import org.springframework.data.orient.core.OrientOperations;
 import org.springframework.data.orient.object.repository.DetachMode;
 import org.springframework.data.repository.query.ParameterAccessor;
 import org.springframework.data.repository.query.Parameters;
-import org.springframework.data.repository.query.ParametersParameterAccessor;
 
 /**
  * Set of classes to contain query execution strategies. 
@@ -148,7 +147,7 @@ public abstract class OrientQueryExecution {
          */
         @Override
         protected Object doExecute(AbstractOrientQuery query, DetachMode mode, Object[] values) {
-            ParameterAccessor accessor = new ParametersParameterAccessor(parameters, values);
+            OrientParameterAccessor accessor = new OrientParametersParameterAccessor(parameters, values);
             
             final Object[] queryParams = prepareForQuery(parameters, values);
             
