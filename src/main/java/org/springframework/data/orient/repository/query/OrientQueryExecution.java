@@ -129,7 +129,7 @@ public abstract class OrientQueryExecution {
     static class PagedExecution extends OrientQueryExecution {
 
         /** The parameters. */
-        private final Parameters<?, ?> parameters;
+        private final OrientParameters parameters;
         
         /**
          * Instantiates a new {@link PagedExecution}.
@@ -137,7 +137,7 @@ public abstract class OrientQueryExecution {
          * @param template the orient object template
          * @param parameters the parameters
          */
-        public PagedExecution(OrientOperations template, Parameters<?, ?> parameters) {
+        public PagedExecution(OrientOperations template, OrientParameters parameters) {
             super(template);
             this.parameters = parameters;
         }

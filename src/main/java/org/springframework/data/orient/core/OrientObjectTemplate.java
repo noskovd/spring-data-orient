@@ -545,6 +545,9 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().save(iContent, iMode, iForceCreate, iRecordCreatedCallback, iRecordUpdatedCallback);
     }
 
+    /* (non-Javadoc)
+     * @see org.springframework.data.orient.core.OrientOperations#save(java.lang.Object, java.lang.String)
+     */
     @Override
     public <RET> RET save(Object iPojo, String iClusterName) {
         return dbf.db().save(iPojo, iClusterName);

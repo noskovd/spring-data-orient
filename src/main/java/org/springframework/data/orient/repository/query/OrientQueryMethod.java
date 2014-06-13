@@ -16,7 +16,7 @@ import org.springframework.util.StringUtils;
  * 
  * @author Dzmitry_Naskou
  */
-public class OrientQueryMethod extends QueryMethod {
+public final class OrientQueryMethod extends QueryMethod {
 
     /** The method. */
     private final Method method;
@@ -36,6 +36,19 @@ public class OrientQueryMethod extends QueryMethod {
         this.repositoryInterface = metadata.getRepositoryInterface();
     }
     
+    /* (non-Javadoc)
+     * @see org.springframework.data.repository.query.QueryMethod#createParameters(java.lang.reflect.Method)
+     */
+    @Override
+    protected OrientParameters createParameters(Method method) {
+        return new OrientParameters(method);
+    }
+
+    @Override
+    public OrientParameters getParameters() {
+        return (OrientParameters) super.getParameters();
+    }
+
     /**
      * Gets the target method.
      *

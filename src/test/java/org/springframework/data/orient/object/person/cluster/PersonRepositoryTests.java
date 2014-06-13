@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.orient.core.OrientObjectOperations;
+import org.springframework.data.orient.repository.DefaultCluster;
 import org.springframework.data.orient.repository.annotation.Cluster;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
 import org.springframework.test.context.ContextConfiguration;
@@ -63,7 +64,7 @@ public class PersonRepositoryTests {
     
     @Test
     public void findAllByCluster() {
-        System.out.println(repository.findAll("cluster:person_temp"));
+        System.out.println(repository.findAll("person_temp"));
     }
     
     @Test
@@ -94,6 +95,17 @@ public class PersonRepositoryTests {
     }
     
     @Test
+    public void getPersonClusters() {
+        OObjectDatabaseTx db = dbf.openDatabase();
+        
+        for (int i : db.getMetadata().getSchema().getClass(Person.class).getClusterIds()) {
+            System.out.println(i);
+        };
+        
+        db.close();
+    }
+    
+    @Test
     public void checkClusterNameOnInterface() {
         for (Method method : PersonRepository.class.getMethods()) {
             Cluster cluster = AnnotationUtils.findAnnotation(method, Cluster.class);
@@ -103,5 +115,10 @@ public class PersonRepositoryTests {
             
             System.out.println(cluster);
         }
+    }
+    
+    @Test
+    public void findByFirstNameByCluster() {
+        repository.findByFirstName("Dzmitry", new DefaultCluster("person_temp"));
     }
 }

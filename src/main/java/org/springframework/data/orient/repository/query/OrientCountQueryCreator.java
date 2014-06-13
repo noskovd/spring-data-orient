@@ -1,12 +1,11 @@
 package org.springframework.data.orient.repository.query;
 
-import org.springframework.data.repository.query.ParameterAccessor;
 import org.springframework.data.repository.query.parser.PartTree;
 
 public class OrientCountQueryCreator extends OrientQueryCreator {
 
-    public OrientCountQueryCreator(PartTree tree, String storage, ParameterAccessor parameters) {
-        super(tree, storage, parameters);
+    public OrientCountQueryCreator(PartTree tree, OrientQueryMethod method, OrientParameterAccessor parameters) {
+        super(tree, method, parameters);
     }
 
     /* (non-Javadoc)

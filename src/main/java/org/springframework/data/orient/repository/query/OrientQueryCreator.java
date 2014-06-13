@@ -20,39 +20,43 @@ import org.jooq.SortField;
 import org.jooq.SortOrder;
 import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
-import org.springframework.data.repository.query.ParameterAccessor;
+import org.springframework.data.orient.repository.annotation.Cluster;
 import org.springframework.data.repository.query.parser.AbstractQueryCreator;
 import org.springframework.data.repository.query.parser.Part;
 import org.springframework.data.repository.query.parser.PartTree;
 
 public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> {
-
-    private final String storage;
     
     private final DSLContext context;
     
     private final PartTree tree;
     
-    private final ParameterAccessor accessor;
+    private final OrientParameterAccessor accessor;
+    
+    private final OrientQueryMethod method;
     
     private final ParamType paramType;
+        
+    private final Class<?> domainClass;
     
-    public OrientQueryCreator(PartTree tree, String storage, ParameterAccessor parameters) {
-        this(tree, storage, parameters, ParamType.NAMED);
+    public OrientQueryCreator(PartTree tree, OrientQueryMethod method, OrientParameterAccessor parameters) {
+        this(tree, method, parameters, ParamType.NAMED);
     }
 
-    public OrientQueryCreator(PartTree tree, String storage, ParameterAccessor parameters, ParamType paramType) {
+    public OrientQueryCreator(PartTree tree, OrientQueryMethod method, OrientParameterAccessor parameters, ParamType paramType) {
         super(tree, parameters);
         
-        this.storage = storage;
+        this.method = method;
         this.context = DSL.using(SQLDialect.MYSQL);
         this.tree = tree;
         this.accessor = parameters;
         this.paramType = paramType;
+        this.domainClass = method.getEntityInformation().getJavaType();
     }
     
     @Override
@@ -88,7 +92,7 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
             selectStep = context.select();
         }
 
-        SelectConditionStep<? extends Record> conditionStep = selectStep.from(storage).where(criteria);        
+        SelectConditionStep<? extends Record> conditionStep = selectStep.from(getSource()).where(criteria);        
 
         SelectLimitStep<? extends Record> limitStep = orderByIfRequired(conditionStep, pageable, sort);
 
@@ -130,6 +134,24 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
             case FALSE: return field.isFalse();
             default: throw new IllegalArgumentException("Unsupported keyword!");
         }
+    }
+    
+    protected String getSource() {
+        String clusterName = accessor.getClusterName();
+        
+        if (clusterName == null) {
+            Cluster cluster = AnnotationUtils.findAnnotation(method.getMethod(), Cluster.class);
+            
+            if (cluster == null) {
+                cluster = AnnotationUtils.findAnnotation(method.getRepositoryInterface(), Cluster.class);
+            }
+            
+            if (cluster != null) {
+                clusterName = cluster.value();
+            }
+        }
+        
+        return clusterName == null ? domainClass.getSimpleName() : "cluster:" + clusterName;
     }
     
     @SuppressWarnings("incomplete-switch")

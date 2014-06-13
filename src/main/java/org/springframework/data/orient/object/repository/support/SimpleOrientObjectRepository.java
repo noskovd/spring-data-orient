@@ -4,6 +4,8 @@ import org.springframework.data.orient.core.OrientObjectOperations;
 import org.springframework.data.orient.core.OrientOperations;
 import org.springframework.data.orient.object.repository.OrientObjectRepository;
 import org.springframework.data.orient.repository.support.SimpleOrientRepository;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Default implementation of the {@link org.springframework.data.repository.PagingAndSortingRepository} interface for Orient Object Database.
@@ -11,6 +13,8 @@ import org.springframework.data.orient.repository.support.SimpleOrientRepository
  * @author Dzmitry_Naskou
  * @param <T> the type of the entity to handle
  */
+@Repository
+@Transactional(readOnly = true)
 public class SimpleOrientObjectRepository<T> extends SimpleOrientRepository<T> implements OrientObjectRepository<T> {
 
     /**

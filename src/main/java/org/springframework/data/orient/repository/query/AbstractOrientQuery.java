@@ -6,7 +6,6 @@ import org.springframework.data.orient.repository.query.OrientQueryExecution.Col
 import org.springframework.data.orient.repository.query.OrientQueryExecution.CountExecution;
 import org.springframework.data.orient.repository.query.OrientQueryExecution.PagedExecution;
 import org.springframework.data.orient.repository.query.OrientQueryExecution.SingleEntityExecution;
-import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
 
 import com.orientechnologies.orient.core.sql.query.OSQLQuery;
@@ -37,7 +36,7 @@ public abstract class AbstractOrientQuery implements RepositoryQuery {
     /* (non-Javadoc)
      * @see org.springframework.data.repository.query.RepositoryQuery#getQueryMethod()
      */
-    public QueryMethod getQueryMethod() {
+    public OrientQueryMethod getQueryMethod() {
         return method;
     }
 

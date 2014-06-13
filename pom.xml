@@ -2,11 +2,11 @@
         <modelVersion>4.0.0</modelVersion>
         <groupId>org.springframework.data</groupId>
         <artifactId>spring-data-orient</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-SNAPSHOT</version>
         
     <properties>
 		<spring.version>4.0.5.RELEASE</spring.version>
-        <orientdb.version>1.7-rc2</orientdb.version>
+        <orientdb.version>1.7.3</orientdb.version>
         <spring.data.commons.version>1.8.0.RELEASE</spring.data.commons.version>
         <junit.version>4.10</junit.version>
         <jooq.version>3.3.2</jooq.version>
