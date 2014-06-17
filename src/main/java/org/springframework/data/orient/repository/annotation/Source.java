@@ -6,16 +6,25 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.springframework.data.orient.repository.SourceType;
+
 /**
- * The annotation to declare orient cluster.
+ * The annotation to declare orient source (class or cluster).
  * 
  * @author Dzmitry_Naskou
  */
 @Documented
-@Target({ElementType.METHOD, ElementType.TYPE})
+@Target({ElementType.METHOD, ElementType.TYPE, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Cluster {
+public @interface Source {
 
+    /**
+     * Defines the Orient source type. Defaults to {@link SourceType#CLUSTER}.
+     *
+     * @return the source type
+     */
+    SourceType type() default SourceType.CLUSTER;
+    
     /**
      * Defines the Orient cluster name.
      */

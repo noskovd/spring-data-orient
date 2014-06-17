@@ -6,7 +6,7 @@ package org.springframework.data.orient.repository;
  * 
  * @author Dzmitry_Naskou
  */
-public interface Cluster {
+public interface OrientCluster {
 
     /**
      * Gets the Orient cluster name.

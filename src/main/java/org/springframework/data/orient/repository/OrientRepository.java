@@ -40,6 +40,14 @@ public interface OrientRepository<T> extends PagingAndSortingRepository<T, Strin
     long count(Class<? extends T> domainClass);
     
     /**
+     * Returns the number of entities available with the given {@link OrientSource}.
+     *
+     * @param source the source
+     * @return the long
+     */
+    long count(OrientSource source);
+    
+    /**
      * Gets the domain class for repository.
      *
      * @return the domain class
@@ -59,6 +67,14 @@ public interface OrientRepository<T> extends PagingAndSortingRepository<T, Strin
      * @return the list
      */
     List<T> findAll(String cluster);
+    
+    /**
+     * Returns all instances of the type with the given source.
+     *
+     * @param source the source
+     * @return the list
+     */
+    List<T> findAll(OrientSource source);
     
     /**
      * Returns all instances with the given type.

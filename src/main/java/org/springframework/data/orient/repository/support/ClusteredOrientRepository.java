@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.orient.core.OrientOperations;
-import org.springframework.data.orient.repository.annotation.Cluster;
+import org.springframework.data.orient.repository.query.QueryUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -85,5 +85,13 @@ public class ClusteredOrientRepository<T> extends SimpleOrientRepository<T> {
     @Override
     public Page<T> findAll(Pageable pageable) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /* (non-Javadoc)
+     * @see org.springframework.data.orient.repository.support.SimpleOrientRepository#getDefaultSource()
+     */
+    @Override
+    protected String getDefaultSource() {
+        return QueryUtils.clusterToSource(cluster);
     }
 }

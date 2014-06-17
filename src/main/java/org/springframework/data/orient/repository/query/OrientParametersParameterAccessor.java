@@ -1,6 +1,6 @@
 package org.springframework.data.orient.repository.query;
 
-import org.springframework.data.orient.repository.Cluster;
+import org.springframework.data.orient.repository.OrientSource;
 import org.springframework.data.repository.query.ParametersParameterAccessor;
 
 public class OrientParametersParameterAccessor extends ParametersParameterAccessor implements OrientParameterAccessor {
@@ -17,24 +17,14 @@ public class OrientParametersParameterAccessor extends ParametersParameterAccess
     }
 
     /* (non-Javadoc)
-     * @see org.springframework.data.orient.repository.query.OrientParameterAccessor#getCluster()
+     * @see org.springframework.data.orient.repository.query.OrientParameterAccessor#getSource()
      */
     @Override
-    public Cluster getCluster() {
-        if (!parameters.hasClusterParameter()) {
+    public OrientSource getSource() {
+        if (!parameters.hasSourceParameter()) {
             return null;
         }
         
-        return (Cluster) values[parameters.getClusterIndex()];
-    }
-
-    /* (non-Javadoc)
-     * @see org.springframework.data.orient.repository.query.OrientParameterAccessor#getClusterName()
-     */
-    @Override
-    public String getClusterName() {
-        Cluster cluster = getCluster();
-                
-        return cluster == null ? null : cluster.getName();
+        return (OrientSource) values[parameters.getSourceIndex()];
     }
 }

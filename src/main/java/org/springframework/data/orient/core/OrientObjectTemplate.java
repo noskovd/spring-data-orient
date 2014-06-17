@@ -582,10 +582,17 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().cleanOutRecord(iRID, iVersion);
     }
 
+    /* (non-Javadoc)
+     * @see org.springframework.data.orient.core.OrientOperations#countClass(java.lang.String)
+     */
+    @Override
     public long countClass(String iClassName) {
         return dbf.db().countClass(iClassName);
     }
 
+    /* (non-Javadoc)
+     * @see org.springframework.data.orient.core.OrientOperations#countClass(java.lang.Class)
+     */
     @Override
     public long countClass(Class<?> iClass) {
         return dbf.db().countClass(iClass);

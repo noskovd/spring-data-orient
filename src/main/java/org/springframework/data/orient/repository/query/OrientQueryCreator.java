@@ -2,6 +2,7 @@ package org.springframework.data.orient.repository.query;
 
 import static org.jooq.impl.DSL.field;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -25,7 +26,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.data.orient.repository.DefaultSource;
+import org.springframework.data.orient.repository.OrientSource;
 import org.springframework.data.orient.repository.annotation.Cluster;
+import org.springframework.data.orient.repository.annotation.Source;
 import org.springframework.data.repository.query.parser.AbstractQueryCreator;
 import org.springframework.data.repository.query.parser.Part;
 import org.springframework.data.repository.query.parser.PartTree;
@@ -92,7 +96,7 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
             selectStep = context.select();
         }
 
-        SelectConditionStep<? extends Record> conditionStep = selectStep.from(getSource()).where(criteria);        
+        SelectConditionStep<? extends Record> conditionStep = selectStep.from(QueryUtils.toSource(getSource())).where(criteria);        
 
         SelectLimitStep<? extends Record> limitStep = orderByIfRequired(conditionStep, pageable, sort);
 
@@ -136,22 +140,24 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
         }
     }
     
-    protected String getSource() {
-        String clusterName = accessor.getClusterName();
+    protected OrientSource getSource() {
+        OrientSource orientSource = accessor.getSource();
         
-        if (clusterName == null) {
-            Cluster cluster = AnnotationUtils.findAnnotation(method.getMethod(), Cluster.class);
-            
-            if (cluster == null) {
-                cluster = AnnotationUtils.findAnnotation(method.getRepositoryInterface(), Cluster.class);
-            }
-            
-            if (cluster != null) {
-                clusterName = cluster.value();
-            }
+        if (orientSource != null) {
+            return orientSource;
         }
         
-        return clusterName == null ? domainClass.getSimpleName() : "cluster:" + clusterName;
+        Source source = findAnnotation(Source.class);
+        if (source != null) {
+            new DefaultSource(source.type(), source.value());
+        }
+        
+        Cluster cluster = findAnnotation(Cluster.class);
+        if (cluster != null) {
+            orientSource = new DefaultSource(cluster.value());
+        }
+
+        return new DefaultSource(domainClass);
     }
     
     @SuppressWarnings("incomplete-switch")
@@ -205,5 +211,15 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
         } else {
             return limitStep.limit(pageable.getPageSize()).offset(pageable.getOffset());
         }
+    }
+    
+    private <A extends Annotation> A findAnnotation(Class<A> annotationType) {
+        A annotation = AnnotationUtils.findAnnotation(method.getMethod(), annotationType);
+        
+        if (annotation == null) {
+            annotation = AnnotationUtils.findAnnotation(method.getRepositoryInterface(), annotationType);
+        }
+        
+        return annotation;
     }
 }

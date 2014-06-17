@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.orient.core.OrientOperations;
 import org.springframework.data.orient.repository.OrientRepository;
+import org.springframework.data.orient.repository.OrientSource;
 import org.springframework.data.orient.repository.query.QueryUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -144,7 +145,15 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
      */
     @Override
     public List<T> findAll(String cluster) {
-        return operations.query(getQuery(getSource(cluster), (Sort) null));
+        return operations.query(getQuery(QueryUtils.clusterToSource(cluster), (Sort) null));
+    }
+
+    /* (non-Javadoc)
+     * @see org.springframework.data.orient.repository.OrientRepository#findAll(org.springframework.data.orient.repository.Source)
+     */
+    @Override
+    public List<T> findAll(OrientSource source) {
+        return operations.query(getQuery(QueryUtils.toSource(source), (Sort) null));
     }
 
     /* (non-Javadoc)
@@ -180,6 +189,19 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
     }
 
     /* (non-Javadoc)
+     * @see org.springframework.data.orient.repository.OrientRepository#count(org.springframework.data.orient.repository.OrientSource)
+     */
+    @Override
+    public long count(OrientSource source) {
+        switch (source.getSourceType()) {
+            case CLUSTER: return count(source.getName());
+            case CLASS: return operations.countClass(source.getName());
+        }
+        
+        return 0;
+    }
+
+    /* (non-Javadoc)
      * @see org.springframework.data.repository.CrudRepository#delete(java.io.Serializable)
      */
     @Transactional(readOnly = false)
@@ -201,7 +223,7 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
     @Transactional(readOnly = false)
     public void delete(Iterable<? extends T> entities) {
         for (T entity : entities) {
-                delete(entity);
+            delete(entity);
         }
     }
 
@@ -252,7 +274,7 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
     }
 
     public List<T> findAll(String cluster, Sort sort) {
-        return operations.query(getQuery(getSource(cluster), sort));
+        return operations.query(getQuery(QueryUtils.clusterToSource(cluster), sort));
     }
     
     /* (non-Javadoc)
@@ -282,17 +304,15 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
     }
     
     /**
-     * Creates the query for the given source (class or cluster) and {@link Sort}.
+     * Creates the query for the given {@link OrientSource} and {@link Sort}.
      *
+     * @param source the source
      * @param sort the sort
      * @return the query
      */
     private OSQLQuery<T> getQuery(String source, Sort sort) {
-        DSLContext context = DSL.using(SQLDialect.MYSQL);
-        SelectJoinStep<? extends Record> joinStep = context.select().from(source);
-        
-        Query query = sort == null ? joinStep : joinStep.orderBy(QueryUtils.toOrders(sort));
-        
+        Query query = DSL.using(SQLDialect.MYSQL).select().from(source).orderBy(QueryUtils.toOrders(sort));
+
         return new OSQLSynchQuery<T>(query.getSQL(ParamType.INLINED));
     }
     
@@ -313,11 +333,7 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
         return new OSQLSynchQuery<T>(query.getSQL(ParamType.INLINED));
     }
     
-    private String getDefaultSource() {
-        return domainClass.getSimpleName();
-    }
-    
-    private String getSource(String cluster) {
-        return "cluster:" + cluster;
+    protected String getDefaultSource() {
+        return QueryUtils.toSource(domainClass);
     }
 }

@@ -3,6 +3,7 @@ package org.springframework.data.orient.repository.query;
 import static org.jooq.impl.DSL.field;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jooq.SortField;
@@ -10,6 +11,7 @@ import org.jooq.SortOrder;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.data.orient.repository.OrientSource;
 import org.springframework.util.Assert;
 
 /**
@@ -47,6 +49,10 @@ public final class QueryUtils {
      * @return the list of {@link SortField}s.
      */
     public static List<SortField<?>> toOrders(Sort sort) {
+        if (sort == null) {
+            return Collections.emptyList();
+        }
+        
         List<SortField<?>> orders = new ArrayList<SortField<?>>();
         
         for (Order order : sort) {
@@ -54,5 +60,24 @@ public final class QueryUtils {
         }
 
         return orders;
+    }
+    
+    public static String clusterToSource(String clusterName) {
+        return new StringBuilder("cluster:").append(clusterName).toString();
+    }
+    
+    public static String toSource(Class<?> domainClass) {
+        return domainClass.getSimpleName();
+    }
+    
+    public static String toSource(OrientSource source) {
+        if (source != null) {        
+            switch (source.getSourceType()) {
+                case CLUSTER: return clusterToSource(source.getName());
+                case CLASS: return source.getName();
+            }
+        }
+        
+        return null;
     }
 }

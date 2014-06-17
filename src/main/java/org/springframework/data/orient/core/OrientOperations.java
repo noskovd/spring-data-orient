@@ -22,6 +22,8 @@ public interface OrientOperations {
     
     Long count(OSQLQuery<?> query, Object... values);
     
+    long countClass(String iClassName);
+    
     long countClass(Class<?> iClass);
     
     long countClusterElements(String iClusterName);

@@ -1,11 +1,11 @@
 package org.springframework.data.orient.repository;
 
 /**
- * Default implementation of the {@link Cluster}.
+ * Default implementation of the {@link OrientCluster}.
  * 
  * @author Dzmitry_Naskou
  */
-public final class DefaultCluster implements Cluster {
+public final class DefaultCluster implements OrientCluster {
     
     /** The cluster name. */
     private final String clusterName;

@@ -5,12 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.core.MethodParameter;
-import org.springframework.data.orient.repository.Cluster;
+import org.springframework.data.orient.repository.OrientSource;
 import org.springframework.data.repository.query.Parameters;
 
 public class OrientParameters extends Parameters<OrientParameters, OrientParameter> {
 
-    private final int clusterIndex;
+    private final int sourceIndex;
     
     private OrientParameters(List<OrientParameter> originals) {
         super(originals);
@@ -19,10 +19,10 @@ public class OrientParameters extends Parameters<OrientParameters, OrientParamet
 
         for (int i = 0; i < originals.size(); i++) {
             OrientParameter original = originals.get(i);
-            clusterIndexTemp = original.isCluster() ? i : -1;
+            clusterIndexTemp = original.isSource() ? i : -1;
         }
         
-        clusterIndex = clusterIndexTemp;
+        sourceIndex = clusterIndexTemp;
     }
 
     public OrientParameters(Method method) {
@@ -30,7 +30,7 @@ public class OrientParameters extends Parameters<OrientParameters, OrientParamet
         
         List<Class<?>> types = Arrays.asList(method.getParameterTypes());
         
-        clusterIndex = types.indexOf(Cluster.class);
+        sourceIndex = types.indexOf(OrientSource.class);
     }
 
     /* (non-Javadoc)
@@ -49,11 +49,11 @@ public class OrientParameters extends Parameters<OrientParameters, OrientParamet
         return new OrientParameters(parameters);
     }
     
-    public int getClusterIndex() {
-        return clusterIndex;
+    public int getSourceIndex() {
+        return sourceIndex;
     }
     
-    public boolean hasClusterParameter() {
-        return clusterIndex != -1;
+    public boolean hasSourceParameter() {
+        return sourceIndex != -1;
     }
 }
