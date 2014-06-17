@@ -6,6 +6,7 @@
         
     <properties>
 		<spring.version>4.0.5.RELEASE</spring.version>
+		<spring.boot.version>1.1.1.RELEASE</spring.boot.version>
         <orientdb.version>1.7.3</orientdb.version>
         <spring.data.commons.version>1.8.0.RELEASE</spring.data.commons.version>
         <junit.version>4.10</junit.version>
@@ -27,6 +28,7 @@
             <groupId>com.orientechnologies</groupId>
             <artifactId>orientdb-object</artifactId>
             <version>${orientdb.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
 	        <groupId>org.springframework</groupId>
@@ -40,7 +42,19 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 			<optional>true</optional>
-		</dependency>        
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot</artifactId>
+			<version>${spring.boot.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+			<version>${spring.boot.version}</version>
+			<optional>true</optional>
+		</dependency>
         <dependency>
 	        <groupId>org.springframework.data</groupId>
 	        <artifactId>spring-data-commons</artifactId>
