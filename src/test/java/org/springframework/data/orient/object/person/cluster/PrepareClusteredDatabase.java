@@ -6,7 +6,7 @@ import org.test.data.Person;
 import com.orientechnologies.orient.core.storage.OStorage.CLUSTER_TYPE;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
-public class PrepareDatabase {
+public class PrepareClusteredDatabase {
 
     public static void main(String[] args) {
         

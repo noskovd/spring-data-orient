@@ -16,14 +16,14 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @TransactionConfiguration(defaultRollback = false)
-@ContextConfiguration(classes = PersonRepositoryTestConfiguration.class)
-public class PersonRepositoryTests {
+@ContextConfiguration(classes = PersonClusteredRepositoryTestConfiguration.class)
+public class PersonClusteredRepositoryTests {
 
     @Autowired
     OrientObjectDatabaseFactory dbf;
     
     @Autowired
-    PersonRepository repository;
+    PersonClusteredRepository repository;
     
     @Autowired
     OrientObjectOperations operations;

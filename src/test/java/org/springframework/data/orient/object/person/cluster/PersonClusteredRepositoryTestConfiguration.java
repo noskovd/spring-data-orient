@@ -18,7 +18,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 @Configuration
 @EnableTransactionManagement
 @EnableOrientRepositories(basePackages = "org.springframework.data.orient.object.person.cluster")
-public class PersonRepositoryTestConfiguration {
+public class PersonClusteredRepositoryTestConfiguration {
 
     @Bean
     public OrientObjectDatabaseFactory factory() {

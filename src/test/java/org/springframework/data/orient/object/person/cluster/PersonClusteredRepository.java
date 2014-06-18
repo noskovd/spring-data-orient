@@ -6,7 +6,7 @@ import org.springframework.data.orient.object.repository.OrientObjectRepository;
 import org.springframework.data.orient.repository.OrientCluster;
 import org.test.data.Person;
 
-public interface PersonRepository extends OrientObjectRepository<Person> {
+public interface PersonClusteredRepository extends OrientObjectRepository<Person> {
 
     List<Person> findByLastName(String lastName);
     

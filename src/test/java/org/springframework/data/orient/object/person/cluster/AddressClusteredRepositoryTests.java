@@ -1,5 +1,5 @@
 package org.springframework.data.orient.object.person.cluster;
 
-public class AddressRepositoryTests {
+public class AddressClusteredRepositoryTests {
 
 }
