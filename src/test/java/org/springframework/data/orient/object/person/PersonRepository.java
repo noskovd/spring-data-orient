@@ -9,6 +9,7 @@ import org.springframework.data.orient.object.repository.DetachMode;
 import org.springframework.data.orient.object.repository.OrientObjectRepository;
 import org.springframework.data.orient.repository.annotation.FetchPlan;
 import org.springframework.data.orient.repository.annotation.Query;
+import org.test.data.Person;
 
 public interface PersonRepository extends OrientObjectRepository<Person> {
 

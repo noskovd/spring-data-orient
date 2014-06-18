@@ -11,6 +11,9 @@ import org.springframework.orm.orient.OrientObjectDatabaseFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.test.data.Address;
+import org.test.data.Employee;
+import org.test.data.Person;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @TransactionConfiguration(defaultRollback = false)
@@ -24,6 +27,7 @@ public class PersonRepositoryLinkTests {
     public void before() {
         dbf.db().getEntityManager().registerEntityClass(Person.class);
         dbf.db().getEntityManager().registerEntityClass(Address.class);
+        dbf.db().getEntityManager().registerEntityClass(Employee.class);
     }
     
     @Autowired

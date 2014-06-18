@@ -8,6 +8,8 @@ import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.test.data.Employee;
+import org.test.data.Person;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
@@ -23,6 +25,7 @@ public class TestDatabase {
     public void before() {
         db = new OObjectDatabaseTx("local:D:/orientdb/spring-data-test").open("admin", "admin");
         db.getEntityManager().registerEntityClass(Person.class);
+        db.getEntityManager().registerEntityClass(Employee.class);
     }
     
     @After

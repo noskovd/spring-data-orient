@@ -9,6 +9,8 @@ import org.springframework.data.orient.repository.config.EnableOrientRepositorie
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
 import org.springframework.orm.orient.OrientTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.test.data.Employee;
+import org.test.data.Person;
 
 @Configuration
 @EnableTransactionManagement
@@ -39,5 +41,6 @@ public class PersonRepositoryTestConfiguration {
     @PostConstruct
     public void registerEntities() {
         factory().db().getEntityManager().registerEntityClass(Person.class);
+        factory().db().getEntityManager().registerEntityClass(Employee.class);
     }
 }
