@@ -37,7 +37,7 @@ public class TestDatabase {
     @SuppressWarnings("rawtypes")
     public void dbQuery() {
         for (Object o : db.query(new OSQLSynchQuery("select from person"))) {
-            Assert.assertEquals(Person.class, o.getClass().getSuperclass());
+            Assert.assertTrue(Person.class.isAssignableFrom(o.getClass().getSuperclass()));
         }
     }
     
