@@ -1,5 +1,6 @@
 package org.springframework.data.orient.repository.query;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -7,8 +8,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.orient.core.OrientOperations;
 import org.springframework.data.orient.object.repository.DetachMode;
-import org.springframework.data.repository.query.ParameterAccessor;
-import org.springframework.data.repository.query.Parameters;
 
 /**
  * Set of classes to contain query execution strategies. 
@@ -20,10 +19,14 @@ public abstract class OrientQueryExecution {
 
     /** The orient object template. */
     protected final OrientOperations operations;
+    
+    /** The parameters. */
+    protected final OrientParameters parameters;
 
-    public OrientQueryExecution(OrientOperations template) {
+    public OrientQueryExecution(OrientOperations template, OrientParameters parameters) {
         super();
         this.operations = template;
+        this.parameters = parameters;
     }
     
     /**
@@ -58,8 +61,8 @@ public abstract class OrientQueryExecution {
          *
          * @param template the template
          */
-        public CollectionExecution(OrientOperations template) {
-            super(template);
+        public CollectionExecution(OrientOperations template, OrientParameters parameters) {
+            super(template, parameters);
         }
 
         /* (non-Javadoc)
@@ -67,7 +70,7 @@ public abstract class OrientQueryExecution {
          */
         @Override
         protected Object doExecute(AbstractOrientQuery query, DetachMode mode, Object[] values) {
-            return operations.query(query.createQuery(values), mode, values);
+            return operations.query(query.createQuery(values), mode, prepareParameters(parameters, values));
         }
     }
     
@@ -83,8 +86,8 @@ public abstract class OrientQueryExecution {
          *
          * @param template the template
          */
-        public SingleEntityExecution(OrientOperations template) {
-            super(template);
+        public SingleEntityExecution(OrientOperations template, OrientParameters parameters) {
+            super(template, parameters);
         }
 
         /* (non-Javadoc)
@@ -92,7 +95,7 @@ public abstract class OrientQueryExecution {
          */
         @Override
         protected Object doExecute(AbstractOrientQuery query, DetachMode mode, Object[] values) {
-            return operations.queryForObject(query.createQuery(values), mode, values);
+            return operations.queryForObject(query.createQuery(values), mode, prepareParameters(parameters, values));
         }
     }
     
@@ -108,8 +111,8 @@ public abstract class OrientQueryExecution {
          *
          * @param template the template
          */
-        public CountExecution(OrientOperations template) {
-            super(template);
+        public CountExecution(OrientOperations template, OrientParameters parameters) {
+            super(template, parameters);
         }
 
         /* (non-Javadoc)
@@ -117,7 +120,7 @@ public abstract class OrientQueryExecution {
          */
         @Override
         protected Object doExecute(AbstractOrientQuery query, DetachMode mode, Object[] values) {
-            return operations.count(query.createQuery(values), values);
+            return operations.count(query.createQuery(values), prepareParameters(parameters, values));
         }
     }
 
@@ -127,9 +130,6 @@ public abstract class OrientQueryExecution {
      * @author Dzmitry_Naskou
      */
     static class PagedExecution extends OrientQueryExecution {
-
-        /** The parameters. */
-        private final OrientParameters parameters;
         
         /**
          * Instantiates a new {@link PagedExecution}.
@@ -138,8 +138,7 @@ public abstract class OrientQueryExecution {
          * @param parameters the parameters
          */
         public PagedExecution(OrientOperations template, OrientParameters parameters) {
-            super(template);
-            this.parameters = parameters;
+            super(template, parameters);
         }
 
         /* (non-Javadoc)
@@ -149,7 +148,7 @@ public abstract class OrientQueryExecution {
         protected Object doExecute(AbstractOrientQuery query, DetachMode mode, Object[] values) {
             OrientParameterAccessor accessor = new OrientParametersParameterAccessor(parameters, values);
             
-            final Object[] queryParams = prepareForQuery(parameters, values);
+            final Object[] queryParams = prepareParameters(parameters, values);
             
             Long total = operations.count(query.createCountQuery(values), queryParams);
             
@@ -167,45 +166,18 @@ public abstract class OrientQueryExecution {
         }
     }
     
-    Object[] prepareForQuery(Parameters<?, ?> parameters, Object[] values) {
-        if (parameters.hasPageableParameter()) {
-            //TODO: Also implement for Sort parameter!!!
-            int index = parameters.getPageableIndex() >= 0 ? parameters.getPageableIndex() : parameters.getSortIndex();
-            
-            Object[] result = new Object[values.length -1];
-            
-            System.arraycopy(values, 0, result, 0, index);
-            
-            if (values.length != index) {
-                System.arraycopy(values, index + 1, result, index, values.length - index - 1);
+    Object[] prepareParameters(OrientParameters parameters, Object[] values) {
+        int index = 0;
+        List<Object> params = new ArrayList<Object>();
+        
+        for (OrientParameter parameter : parameters) {
+            if (parameter.isBindable()) {
+                params.add(values[index]);
             }
             
-            return result;
+            ++index;
         }
         
-        return values;
-    }
-    
-    @Deprecated
-    Object[] prepareForPagedQuery(ParameterAccessor accessor, Parameters<?, ?> parameters, Object[] values) {
-        if (parameters.hasSpecialParameter()) {
-            int index = parameters.getPageableIndex();
-            Pageable pageable = accessor.getPageable();
-            
-            Object[] result = new Object[values.length + 1];
-            
-            System.arraycopy(values, 0, result, 0, index);
-            
-            result[index] = pageable.getPageSize();
-            result[index + 1] = pageable.getOffset();
-            
-            if (values.length != index) {
-                System.arraycopy(values, index + 1, result, index + 2, values.length - index - 1);
-            }
-            
-            return result;
-        }
-        
-        return values;
+        return params.toArray();
     }
 }

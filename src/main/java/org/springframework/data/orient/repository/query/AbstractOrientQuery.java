@@ -105,14 +105,16 @@ public abstract class AbstractOrientQuery implements RepositoryQuery {
      * @return the execution
      */
     protected OrientQueryExecution getExecution() {
+        final OrientParameters parameters = method.getParameters();
+        
         if (method.isCollectionQuery()) {
-            return new CollectionExecution(operations);
+            return new CollectionExecution(operations, parameters);
         } else if (isCountQuery()) {
-            return new CountExecution(operations);
+            return new CountExecution(operations, parameters);
         } else if (method.isPageQuery()) {
-            return new PagedExecution(operations, method.getParameters());
+            return new PagedExecution(operations, parameters);
         } else if (method.isQueryForEntity()) {
-            return new SingleEntityExecution(operations);
+            return new SingleEntityExecution(operations, parameters);
         } 
         
         throw new IllegalArgumentException();
