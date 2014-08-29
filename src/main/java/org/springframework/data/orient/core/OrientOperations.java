@@ -14,7 +14,9 @@ import com.orientechnologies.orient.object.iterator.OObjectIteratorClass;
 
 public interface OrientOperations {
 
-    <RET> RET load(ORID iRecordId);
+    <RET> RET load(ORID recordId);
+    
+    <RET> RET load(String recordId);
     
     <RET> RET save(Object entity);
     

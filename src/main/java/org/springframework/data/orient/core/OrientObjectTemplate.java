@@ -524,8 +524,13 @@ public class OrientObjectTemplate implements OrientObjectOperations {
     }
 
     @Override
-    public <RET> RET load(ORID iRecordId) {
-        return dbf.db().load(iRecordId);
+    public <RET> RET load(ORID recordId) {
+        return dbf.db().load(recordId);
+    }
+
+    @Override
+    public final <RET> RET load(String recordId) {
+        return load(new ORecordId(recordId));
     }
 
     public <RET> RET load(ORID iRecordId, String iFetchPlan) {
