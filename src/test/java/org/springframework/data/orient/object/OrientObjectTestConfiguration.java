@@ -1,5 +1,6 @@
 package org.springframework.data.orient.object;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.orient.core.OrientObjectTemplate;
@@ -15,7 +16,7 @@ public class OrientObjectTestConfiguration {
     public OrientObjectDatabaseFactory factory() {
         OrientObjectDatabaseFactory factory =  new OrientObjectDatabaseFactory();
         
-        factory.setUrl("local:/D:/orientdb/spring-data-test");
+        factory.setUrl("plocal:test/spring-data-test");
         factory.setUsername("admin");
         factory.setPassword("admin");
         
@@ -26,8 +27,9 @@ public class OrientObjectTestConfiguration {
     public OrientTransactionManager transactionManager() {
         return new OrientTransactionManager(factory());
     }
-    
+
     @Bean
+    @Qualifier("contextTemplate")
     public OrientObjectTemplate objectTemplate() {
         return new OrientObjectTemplate(factory());
     }

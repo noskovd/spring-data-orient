@@ -13,7 +13,7 @@ public class ApplicationConfiguration {
     public OrientObjectDatabaseFactory factory() {
         OrientObjectDatabaseFactory factory =  new OrientObjectDatabaseFactory();
         
-        factory.setUrl("local:/D:/orientdb/spring-data-test");
+        factory.setUrl("plocal:test/spring-data-test");
         factory.setUsername("admin");
         factory.setPassword("admin");
         
