@@ -5,15 +5,18 @@
         <version>0.0.4-SNAPSHOT</version>
         
     <properties>
-		<spring.version>4.0.5.RELEASE</spring.version>
-		<spring.boot.version>1.1.1.RELEASE</spring.boot.version>
-        <orientdb.version>1.7.3</orientdb.version>
+		<spring.version>4.1.0.RELEASE</spring.version>
+		<spring.boot.version>1.1.7.RELEASE</spring.boot.version>
+        <orientdb.version>2.0-M1</orientdb.version>
         <spring.data.commons.version>1.8.0.RELEASE</spring.data.commons.version>
         <junit.version>4.10</junit.version>
         <jooq.version>3.3.2</jooq.version>
     </properties>
                 
     <dependencies>
+
+        <!--ORIENTDB-->
+
     	<dependency>
             <groupId>com.orientechnologies</groupId>
             <artifactId>orientdb-core</artifactId>
@@ -36,6 +39,9 @@
    			<version>${orientdb.version}</version>
    			<optional>true</optional>
  		</dependency>
+
+        <!--SPRING FRAMEWORK-->
+
         <dependency>
 	        <groupId>org.springframework</groupId>
 	        <artifactId>spring-context</artifactId>
@@ -66,21 +72,29 @@
 	        <artifactId>spring-data-commons</artifactId>
 	        <version>${spring.data.commons.version}</version>
         </dependency>
+
+        <!--TEST-->
         <dependency>
 	        <groupId>org.jooq</groupId>
 	        <artifactId>jooq</artifactId>
 	        <version>${jooq.version}</version>
         </dependency>
         <dependency>
-	        <groupId>junit</groupId>
-	        <artifactId>junit-dep</artifactId>
-	        <version>${junit.version}</version>
-	        <scope>test</scope>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.8.7</version>
+            <scope>test</scope>
         </dependency>
+
         <dependency>
 	        <groupId>org.springframework</groupId>
 	        <artifactId>spring-test</artifactId>
 	        <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.6</version>
         </dependency>
     </dependencies>
         
@@ -110,6 +124,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
