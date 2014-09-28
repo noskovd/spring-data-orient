@@ -1,55 +1,60 @@
 package org.springframework.data.orient.object.person;
 
 import junit.framework.Assert;
-
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.test.data.Address;
+import org.test.data.Employee;
 import org.test.data.Person;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @TransactionConfiguration(defaultRollback = false)
 @ContextConfiguration(classes = PersonRepositoryTestConfiguration.class)
-public class PersonRepositoryTests {
+public class PersonRepositoryTests extends AbstractTestNGSpringContextTests {
 
     @Autowired
     OrientObjectDatabaseFactory dbf;
     
     @Autowired
     PersonRepository repository;
-    
-    @Test
-    public void checkRepository() {
-        Assert.assertNotNull(repository);
+
+    @BeforeMethod
+    public void before() {
+        dbf.db().getEntityManager().registerEntityClass(Person.class);
+        dbf.db().getEntityManager().registerEntityClass(Address.class);
+        dbf.db().getEntityManager().registerEntityClass(Employee.class);
+        saveTest();
     }
-    
-    @Test
-    public void countTest() {
-        Assert.assertNotNull(repository.count());
-    }
-    
-    @Test
-    public void countByFirstName() {
-        Assert.assertTrue(repository.countByFirstName("Dzmitry") > 0);
-    }
-    
-    @Test
+
     public void saveTest() {
         Person person = new Person();
         person.setFirstName("Dzmitry");
         person.setLastName("Naskou");
-        
+
         Assert.assertNotNull(repository.save(person).getRid());
     }
-    
+
     @Test
-    @Ignore
+    public void checkRepository() {
+        Assert.assertNotNull(repository);
+    }
+
+    @Test
+    public void countTest() {
+        Assert.assertNotNull(repository.count());
+    }
+
+    @Test
+    public void countByFirstName() {
+        Assert.assertTrue(repository.countByFirstName("Dzmitry") > 0);
+    }
+
+    @Test(enabled = false)
     public void deleteAllTest() {
         repository.deleteAll();
         Assert.assertEquals(0, repository.count());

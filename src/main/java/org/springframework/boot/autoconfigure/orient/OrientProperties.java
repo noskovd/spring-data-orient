@@ -1,6 +1,5 @@
 package org.springframework.boot.autoconfigure.orient;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.orm.orient.AbstractOrientDatabaseFactory;
 
@@ -16,9 +15,6 @@ public class OrientProperties {
     private int minPoolSize = AbstractOrientDatabaseFactory.DEFAULT_MIN_POOL_SIZE;
     
     private int maxPoolSize = AbstractOrientDatabaseFactory.DEFAULT_MAX_POOL_SIZE;
-    
-    @Value("${spring.data.orient.cache.level1.enabled:false}")
-    private boolean cacheLevel1Enabled;
 
     public String getUrl() {
         return url;
@@ -60,11 +56,4 @@ public class OrientProperties {
         this.maxPoolSize = maxPoolSize;
     }
 
-    public boolean isCacheLevel1Enabled() {
-        return cacheLevel1Enabled;
-    }
-
-    public void setCacheLevel1Enabled(boolean cacheLevel1Enabled) {
-        this.cacheLevel1Enabled = cacheLevel1Enabled;
-    }
 }

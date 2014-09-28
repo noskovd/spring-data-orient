@@ -11,12 +11,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
+import com.orientechnologies.orient.core.cache.OLocalRecordCache;
 import org.springframework.data.orient.object.repository.DetachMode;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.orientechnologies.orient.core.cache.OLevel1RecordCache;
-import com.orientechnologies.orient.core.cache.OLevel2RecordCache;
 import com.orientechnologies.orient.core.command.OCommandOutputListener;
 import com.orientechnologies.orient.core.command.OCommandRequest;
 import com.orientechnologies.orient.core.db.ODatabase;
@@ -46,7 +46,6 @@ import com.orientechnologies.orient.core.sql.query.OSQLQuery;
 import com.orientechnologies.orient.core.storage.ORecordCallback;
 import com.orientechnologies.orient.core.storage.ORecordMetadata;
 import com.orientechnologies.orient.core.storage.OStorage;
-import com.orientechnologies.orient.core.storage.OStorage.CLUSTER_TYPE;
 import com.orientechnologies.orient.core.storage.OStorage.LOCKING_STRATEGY;
 import com.orientechnologies.orient.core.tx.OTransaction;
 import com.orientechnologies.orient.core.tx.OTransaction.TXTYPE;
@@ -100,16 +99,12 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().getTransaction();
     }
 
-    public OLevel1RecordCache getLevel1Cache() {
-        return dbf.db().getLevel1Cache();
-    }
-
     public ODatabaseComplex<Object> begin() {
         return dbf.db().begin();
     }
 
-    public OLevel2RecordCache getLevel2Cache() {
-        return dbf.db().getLevel2Cache();
+    public OLocalRecordCache getLevel2Cache() {
+        return dbf.db().getLocalCache();
     }
 
     public ODatabaseComplex<Object> begin(TXTYPE iType) {
@@ -177,10 +172,6 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().getMetadata();
     }
 
-    public String getClusterType(String iClusterName) {
-        return dbf.db().getClusterType(iClusterName);
-    }
-
     public void unsetDirty(Object iPojo) {
         dbf.db().unsetDirty(iPojo);
     }
@@ -188,14 +179,6 @@ public class OrientObjectTemplate implements OrientObjectOperations {
     public <RET> RET newInstance(String iClassName, Object iEnclosingClass,
             Object... iArgs) {
         return dbf.db().newInstance(iClassName, iEnclosingClass, iArgs);
-    }
-
-    public int getDataSegmentIdByName(String iDataSegmentName) {
-        return dbf.db().getDataSegmentIdByName(iDataSegmentName);
-    }
-
-    public String getDataSegmentNameById(int iDataSegmentId) {
-        return dbf.db().getDataSegmentNameById(iDataSegmentId);
     }
 
     public int getClusterIdByName(String iClusterName) {
@@ -240,8 +223,8 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().getUser();
     }
 
-    public int addCluster(String iClusterName, CLUSTER_TYPE iType, Object... iParameters) {
-        return dbf.db().addCluster(iClusterName, iType, iParameters);
+    public int addCluster(String iClusterName, Object... iParameters) {
+        return dbf.db().addCluster(iClusterName, iParameters);
     }
 
     public void setUser(OUser user) {
@@ -252,12 +235,8 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().command(iCommand);
     }
 
-    public int addCluster(String iClusterName, CLUSTER_TYPE iType) {
-        return dbf.db().addCluster(iClusterName, iType);
-    }
-
-    public boolean dropDataSegment(String name) {
-        return dbf.db().dropDataSegment(name);
+    public int addCluster(String iClusterName) {
+        return dbf.db().addCluster(iClusterName);
     }
 
     @Override
@@ -558,9 +537,6 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().save(iPojo, iClusterName);
     }
 
-    public boolean updatedReplica(Object iPojo) {
-        return dbf.db().updatedReplica(iPojo);
-    }
 
     public <RET> RET save(Object iPojo, String iClusterName,
             OPERATION_MODE iMode, boolean iForceCreate,

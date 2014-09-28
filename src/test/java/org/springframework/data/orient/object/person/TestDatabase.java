@@ -1,29 +1,33 @@
 package org.springframework.data.orient.object.person;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import junit.framework.Assert;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.test.data.Employee;
-import org.test.data.Person;
-
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import junit.framework.Assert;
+import org.junit.After;
+import org.junit.Test;
+import org.test.data.Employee;
+import org.test.data.Person;
+import org.testng.annotations.BeforeMethod;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TestDatabase {
 
     
     OObjectDatabaseTx db;
     
-    @Before
+    @BeforeMethod
     @SuppressWarnings("resource")
     public void before() {
-        db = new OObjectDatabaseTx("local:D:/orientdb/spring-data-test").open("admin", "admin");
+        //create before open it
+        db = new OObjectDatabaseTx("plocal:test/spring-data-test");
+        if (!db.exists()) {
+            db.create();
+        } else {
+            db.open("admin", "admin");
+        }
         db.getEntityManager().registerEntityClass(Person.class);
         db.getEntityManager().registerEntityClass(Employee.class);
     }

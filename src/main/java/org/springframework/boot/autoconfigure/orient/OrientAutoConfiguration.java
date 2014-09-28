@@ -68,7 +68,5 @@ public class OrientAutoConfiguration {
         factory.setPassword(properties.getPassword());
         factory.setMaxPoolSize(properties.getMinPoolSize());
         factory.setMaxPoolSize(properties.getMaxPoolSize());
-        
-        OGlobalConfiguration.CACHE_LEVEL1_ENABLED.setValue(properties.isCacheLevel1Enabled());
     }
 }
