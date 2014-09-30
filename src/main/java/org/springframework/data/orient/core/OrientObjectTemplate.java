@@ -11,12 +11,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
-import com.orientechnologies.orient.core.cache.OLocalRecordCache;
+import com.orientechnologies.orient.core.db.ODatabaseComplexInternal;
+import com.orientechnologies.orient.core.record.ORecord;
 import org.springframework.data.orient.object.repository.DetachMode;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.orientechnologies.orient.core.cache.OLocalRecordCache;
 import com.orientechnologies.orient.core.command.OCommandOutputListener;
 import com.orientechnologies.orient.core.command.OCommandRequest;
 import com.orientechnologies.orient.core.db.ODatabase;
@@ -303,7 +304,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
     }
 
     @Override
-    public ODatabaseComplex<Object> delete(ORecordInternal<?> iRecord) {
+    public ODatabaseComplex<Object> delete(ORecordInternal iRecord) {
         return dbf.db().delete(iRecord);
     }
 
@@ -319,7 +320,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().browseClass(iClassName, iPolymorphic);
     }
 
-    public ODatabaseComplex<?> setDatabaseOwner(ODatabaseComplex<?> iOwner) {
+    public ODatabaseComplex<?> setDatabaseOwner(ODatabaseComplexInternal<?> iOwner) {
         return dbf.db().setDatabaseOwner(iOwner);
     }
 
@@ -671,11 +672,11 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().getUserObjectByRecord(iRecord, iFetchPlan, iCreate);
     }
 
-    public void registerUserObject(Object iObject, ORecordInternal<?> iRecord) {
+    public void registerUserObject(Object iObject, ORecord iRecord) {
         dbf.db().registerUserObject(iObject, iRecord);
     }
 
-    public void registerUserObjectAfterLinkSave(ORecordInternal<?> iRecord) {
+    public void registerUserObjectAfterLinkSave(ORecord iRecord) {
         dbf.db().registerUserObjectAfterLinkSave(iRecord);
     }
 
@@ -741,5 +742,15 @@ public class OrientObjectTemplate implements OrientObjectOperations {
     @Override
     public Long count(OSQLQuery<?> query, Object... values) {
         return ((ODocument) dbf.db().query(query, values).get(0)).field("count");
+    }
+
+    @Override
+    public boolean existsClass(Class<?> clazz) {
+        return existsClass(clazz.getSimpleName());
+    }
+
+    @Override
+    public boolean existsClass(String className) {
+        return dbf.db().getMetadata().getSchema().existsClass(className);
     }
 }

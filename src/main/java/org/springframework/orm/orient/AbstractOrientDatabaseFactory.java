@@ -2,12 +2,8 @@ package org.springframework.orm.orient;
 
 import javax.annotation.PostConstruct;
 
+import com.orientechnologies.orient.core.db.*;
 import org.springframework.util.Assert;
-
-import com.orientechnologies.orient.core.db.ODatabase;
-import com.orientechnologies.orient.core.db.ODatabaseComplex;
-import com.orientechnologies.orient.core.db.ODatabasePoolBase;
-import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
 
 /**
  * A base factory for creating {@link ODatabase} objects.
@@ -15,7 +11,7 @@ import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
  * @author Dzmitry_Naskou
  * @param <T> the type of database to handle
  */
-public abstract class AbstractOrientDatabaseFactory<T extends ODatabase> {
+public abstract class AbstractOrientDatabaseFactory<T extends ODatabaseInternal> {
 
     /** Default minimum pool size. */
     public static final int DEFAULT_MIN_POOL_SIZE = 1;

@@ -36,7 +36,7 @@ public interface OrientOperations {
     
     <RET extends List<?>> RET query(OQuery<?> query, DetachMode detachMode, Object... values);
     
-    ODatabaseComplex<Object> delete(ORecordInternal<?> iRecord);
+    ODatabaseComplex<Object> delete(ORecordInternal iRecord);
     
     ODatabaseObject delete(ORID iRID);
     
@@ -49,4 +49,20 @@ public interface OrientOperations {
     String getClusterNameById(int iClusterId);
     
     String getClusterNameByRid(String rid);
+
+    /**
+     * Is Class registered in OrientDb
+     *
+     * @param clazz class to check
+     * @return Is Class registered in OrientDb
+     */
+    boolean existsClass(Class<?> clazz);
+
+    /**
+     * Is Class registered in OrientDb
+     *
+     * @param className simple class name (clazz.getSimpleName())
+     * @return Is Class registered in OrientDb
+     */
+    boolean existsClass(String className);
 }
