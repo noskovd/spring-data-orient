@@ -11,12 +11,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
-import com.orientechnologies.orient.core.cache.OLocalRecordCache;
 import org.springframework.data.orient.object.repository.DetachMode;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.orientechnologies.orient.core.cache.OLocalRecordCache;
 import com.orientechnologies.orient.core.command.OCommandOutputListener;
 import com.orientechnologies.orient.core.command.OCommandRequest;
 import com.orientechnologies.orient.core.db.ODatabase;
@@ -741,5 +740,15 @@ public class OrientObjectTemplate implements OrientObjectOperations {
     @Override
     public Long count(OSQLQuery<?> query, Object... values) {
         return ((ODocument) dbf.db().query(query, values).get(0)).field("count");
+    }
+
+    @Override
+    public boolean existsClass(Class<?> clazz) {
+        return existsClass(clazz.getSimpleName());
+    }
+
+    @Override
+    public boolean existsClass(String className) {
+        return dbf.db().getMetadata().getSchema().existsClass(className);
     }
 }
