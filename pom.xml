@@ -2,12 +2,12 @@
         <modelVersion>4.0.0</modelVersion>
         <groupId>org.springframework.data</groupId>
         <artifactId>spring-data-orient</artifactId>
-        <version>0.0.5-SNAPSHOT</version>
+        <version>0.0.6-SNAPSHOT</version>
         
     <properties>
 		<spring.version>4.1.0.RELEASE</spring.version>
 		<spring.boot.version>1.1.7.RELEASE</spring.boot.version>
-        <orientdb.version>2.0-M1</orientdb.version>
+        <orientdb.version>2.0-M2</orientdb.version>
         <spring.data.commons.version>1.8.0.RELEASE</spring.data.commons.version>
         <junit.version>4.10</junit.version>
         <jooq.version>3.3.2</jooq.version>
@@ -91,12 +91,6 @@
 	        <artifactId>spring-test</artifactId>
 	        <scope>test</scope>
         </dependency>
-        <!--<dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.6</version>
-            <scope>test</scope>
-        </dependency>-->
     </dependencies>
         
     <dependencyManagement>

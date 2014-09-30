@@ -1,5 +1,7 @@
 package org.springframework.orm.orient;
 
+import com.orientechnologies.orient.core.db.*;
+import com.orientechnologies.orient.core.db.record.ODatabaseRecordInternal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionDefinition;
@@ -9,9 +11,6 @@ import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.ResourceTransactionManager;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import com.orientechnologies.orient.core.db.ODatabase;
-import com.orientechnologies.orient.core.db.ODatabaseComplex;
-import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
 import com.orientechnologies.orient.core.db.record.ODatabaseRecord;
 
 /**
@@ -64,7 +63,7 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
     protected boolean isExistingTransaction(Object transaction) throws TransactionException {
         OrientTransaction tx = (OrientTransaction) transaction;
         
-        return tx.getTx() == null ? false : tx.getTx().isActive();
+        return tx.getTx() != null && tx.getTx().isActive();
     }
 
     /* (non-Javadoc)
@@ -155,10 +154,10 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
         if (!db.isClosed()) {
             db.close();
         }
-        
-        ODatabaseComplex<?> oldDb = (ODatabaseComplex<?>) suspendedResources;
+
+        ODatabaseComplexInternal<?> oldDb = (ODatabaseComplexInternal<?>) suspendedResources;
         TransactionSynchronizationManager.bindResource(dbf, oldDb);
-        ODatabaseRecordThreadLocal.INSTANCE.set((ODatabaseRecord) oldDb.getUnderlying());
+        ODatabaseRecordThreadLocal.INSTANCE.set((ODatabaseRecordInternal) oldDb.getUnderlying());
     }
 
     /* (non-Javadoc)
@@ -183,7 +182,7 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
      * 
      * @param databaseFactory the database to set
      */
-    public void setDatabaseManager(AbstractOrientDatabaseFactory<ODatabase> databaseFactory) {
+    public void setDatabaseManager(AbstractOrientDatabaseFactory<ODatabaseInternal> databaseFactory) {
         this.dbf = databaseFactory;
     }
 }

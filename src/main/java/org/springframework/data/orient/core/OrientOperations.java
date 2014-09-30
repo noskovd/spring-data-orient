@@ -36,7 +36,7 @@ public interface OrientOperations {
     
     <RET extends List<?>> RET query(OQuery<?> query, DetachMode detachMode, Object... values);
     
-    ODatabaseComplex<Object> delete(ORecordInternal<?> iRecord);
+    ODatabaseComplex<Object> delete(ORecordInternal iRecord);
     
     ODatabaseObject delete(ORID iRID);
     

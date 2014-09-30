@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
+import com.orientechnologies.orient.core.db.ODatabaseComplexInternal;
+import com.orientechnologies.orient.core.record.ORecord;
 import org.springframework.data.orient.object.repository.DetachMode;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -302,7 +304,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
     }
 
     @Override
-    public ODatabaseComplex<Object> delete(ORecordInternal<?> iRecord) {
+    public ODatabaseComplex<Object> delete(ORecordInternal iRecord) {
         return dbf.db().delete(iRecord);
     }
 
@@ -318,7 +320,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().browseClass(iClassName, iPolymorphic);
     }
 
-    public ODatabaseComplex<?> setDatabaseOwner(ODatabaseComplex<?> iOwner) {
+    public ODatabaseComplex<?> setDatabaseOwner(ODatabaseComplexInternal<?> iOwner) {
         return dbf.db().setDatabaseOwner(iOwner);
     }
 
@@ -670,11 +672,11 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().getUserObjectByRecord(iRecord, iFetchPlan, iCreate);
     }
 
-    public void registerUserObject(Object iObject, ORecordInternal<?> iRecord) {
+    public void registerUserObject(Object iObject, ORecord iRecord) {
         dbf.db().registerUserObject(iObject, iRecord);
     }
 
-    public void registerUserObjectAfterLinkSave(ORecordInternal<?> iRecord) {
+    public void registerUserObjectAfterLinkSave(ORecord iRecord) {
         dbf.db().registerUserObjectAfterLinkSave(iRecord);
     }
 
