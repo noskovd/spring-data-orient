@@ -15,7 +15,6 @@ import org.springframework.orm.orient.OrientObjectDatabaseFactory;
 import org.springframework.orm.orient.OrientTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.orientechnologies.orient.core.config.OGlobalConfiguration;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 @Configuration

@@ -1,17 +1,19 @@
 package org.springframework.data.orient.object.person;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.Assert;
+
 import org.junit.After;
 import org.junit.Test;
 import org.test.data.Employee;
 import org.test.data.Person;
 import org.testng.annotations.BeforeMethod;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 public class TestDatabase {
 
@@ -19,7 +21,6 @@ public class TestDatabase {
     OObjectDatabaseTx db;
     
     @BeforeMethod
-    @SuppressWarnings("resource")
     public void before() {
         //create before open it
         db = new OObjectDatabaseTx("plocal:test/spring-data-test");

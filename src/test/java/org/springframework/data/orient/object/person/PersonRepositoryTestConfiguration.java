@@ -9,7 +9,6 @@ import org.springframework.data.orient.core.OrientObjectTemplate;
 import org.springframework.data.orient.repository.config.EnableOrientRepositories;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
 import org.springframework.orm.orient.OrientTransactionManager;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.test.data.Employee;
 import org.test.data.Person;

@@ -8,6 +8,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 public class PrepareDatabase {
 
+    @SuppressWarnings("resource")
     public static void main(String[] args) {
 
         try (OObjectDatabaseTx db = new OObjectDatabaseTx("plocal:test/spring-data-test").open("admin", "admin")) {
