@@ -5,14 +5,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
-import com.orientechnologies.orient.core.db.ODatabaseComplexInternal;
-import com.orientechnologies.orient.core.record.ORecord;
 import org.springframework.data.orient.object.repository.DetachMode;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +25,7 @@ import com.orientechnologies.orient.core.db.ODatabase.ATTRIBUTES;
 import com.orientechnologies.orient.core.db.ODatabase.STATUS;
 import com.orientechnologies.orient.core.db.ODatabaseComplex;
 import com.orientechnologies.orient.core.db.ODatabaseComplex.OPERATION_MODE;
+import com.orientechnologies.orient.core.db.ODatabaseComplexInternal;
 import com.orientechnologies.orient.core.db.ODatabaseListener;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.db.object.ODatabaseObject;
@@ -39,8 +40,10 @@ import com.orientechnologies.orient.core.hook.ORecordHook.TYPE;
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.intent.OIntent;
+import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.security.OUser;
 import com.orientechnologies.orient.core.query.OQuery;
+import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.ORecordInternal;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.query.OSQLQuery;
@@ -63,11 +66,13 @@ public class OrientObjectTemplate implements OrientObjectOperations {
 
     private final OrientObjectDatabaseFactory dbf;
 
+    private Set<String> defaultClusters;
+
     public OrientObjectTemplate(OrientObjectDatabaseFactory dbf) {
         super();
         this.dbf = dbf;
     }
-    
+
     public OObjectDatabaseTx database() {
         return dbf.db();
     }
@@ -178,7 +183,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
     }
 
     public <RET> RET newInstance(String iClassName, Object iEnclosingClass,
-            Object... iArgs) {
+                                 Object... iArgs) {
         return dbf.db().newInstance(iClassName, iEnclosingClass, iArgs);
     }
 
@@ -194,7 +199,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
     public String getClusterNameById(int iClusterId) {
         return dbf.db().getClusterNameById(iClusterId);
     }
-    
+
     @Override
     public String getClusterNameByRid(String rid) {
         return getClusterNameById(new ORecordId(rid).getClusterId());
@@ -244,17 +249,19 @@ public class OrientObjectTemplate implements OrientObjectOperations {
     public <RET extends List<?>> RET query(OQuery<?> iCommand, Object... iArgs) {
         return dbf.db().query(iCommand, iArgs);
     }
-    
+
     @Override
     public <RET extends List<?>> RET query(OQuery<?> query, DetachMode detachMode, Object... args) {
         RET result = query(query, args);
-        
+
         switch (detachMode) {
-            case ENTITY: return detach(result);
-            case ALL: return detachAll(result);
+            case ENTITY:
+                return detach(result);
+            case ALL:
+                return detachAll(result);
             case NONE:
         }
-        
+
         return result;
     }
 
@@ -262,23 +269,23 @@ public class OrientObjectTemplate implements OrientObjectOperations {
     public <RET extends List<?>> RET detach(RET list) {
         final OObjectDatabaseTx db = dbf.db();
         List<Object> pojos = new ArrayList<Object>(list.size());
-        
+
         for (Object object : list) {
             pojos.add(db.detach(object, true));
         }
-        
+
         return (RET) pojos;
     }
-    
+
     @SuppressWarnings("unchecked")
     public <RET extends List<?>> RET detachAll(RET list) {
         final OObjectDatabaseTx db = dbf.db();
         List<Object> pojos = new ArrayList<Object>(list.size());
-        
+
         for (Object object : list) {
             pojos.add(db.detachAll(object, true));
         }
-        
+
         return (RET) pojos;
     }
 
@@ -294,7 +301,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
     public int getDefaultClusterId(Class<?> domainClass) {
         return dbf.db().getMetadata().getSchema().getClass(domainClass).getDefaultClusterId();
     }
-    
+
     public <RET> OObjectIteratorClass<RET> browseClass(Class<RET> iClusterClass, boolean iPolymorphic) {
         return dbf.db().browseClass(iClusterClass, iPolymorphic);
     }
@@ -422,7 +429,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
     }
 
     public <V> V callInRecordLock(Callable<V> iCallable, ORID rid,
-            boolean iExclusiveLock) {
+                                  boolean iExclusiveLock) {
         return dbf.db().callInRecordLock(iCallable, rid, iExclusiveLock);
     }
 
@@ -540,9 +547,9 @@ public class OrientObjectTemplate implements OrientObjectOperations {
 
 
     public <RET> RET save(Object iPojo, String iClusterName,
-            OPERATION_MODE iMode, boolean iForceCreate,
-            ORecordCallback<? extends Number> iRecordCreatedCallback,
-            ORecordCallback<ORecordVersion> iRecordUpdatedCallback) {
+                          OPERATION_MODE iMode, boolean iForceCreate,
+                          ORecordCallback<? extends Number> iRecordCreatedCallback,
+                          ORecordCallback<ORecordVersion> iRecordUpdatedCallback) {
         return dbf.db().save(iPojo, iClusterName, iMode, iForceCreate, iRecordCreatedCallback, iRecordUpdatedCallback);
     }
 
@@ -722,20 +729,22 @@ public class OrientObjectTemplate implements OrientObjectOperations {
 
     public <RET> RET queryForObject(OSQLQuery<?> query, Object... values) {
         List<RET> list = query(query, values);
-        
+
         return list.isEmpty() ? null : list.get(0);
     }
-    
+
     @Override
     public <RET> RET queryForObject(OSQLQuery<?> query, DetachMode detachMode, Object... values) {
         RET result = queryForObject(query, values);
-        
+
         switch (detachMode) {
-            case ENTITY: return dbf.db().detach(result, true);
-            case ALL: return dbf.db().detachAll(result, true);
+            case ENTITY:
+                return dbf.db().detach(result, true);
+            case ALL:
+                return dbf.db().detachAll(result, true);
             case NONE:
         }
-        
+
         return result;
     }
 
@@ -753,4 +762,40 @@ public class OrientObjectTemplate implements OrientObjectOperations {
     public boolean existsClass(String className) {
         return dbf.db().getMetadata().getSchema().existsClass(className);
     }
+
+    @Override
+    public List<String> getClusterNamesByClass(Class entityClass, boolean showDefault) {
+        int[] clusterIds = dbf.db().getMetadata().getSchema().getClass(entityClass).getClusterIds();
+        int defaultCluster = getDefaultClusterId(entityClass);
+
+        List<String> clusters = new ArrayList<>(clusterIds.length);
+        for (int clusterId : clusterIds) {
+            if (showDefault || clusterId != defaultCluster) {
+                clusters.add(getClusterNameById(clusterId));
+            }
+        }
+
+        return clusters;
+    }
+
+    @Override
+    public boolean isDefault(String clusterName) {
+        loadDefaultClusters();
+        return defaultClusters.contains(clusterName);
+    }
+
+    private void loadDefaultClusters() {
+        if (defaultClusters == null) {
+            synchronized (this) {
+                if (defaultClusters == null) {
+                    defaultClusters = new HashSet<>();
+                    for (OClass oClass : dbf.db().getMetadata().getSchema().getClasses()) {
+                        String defaultCluster = getClusterNameById(oClass.getDefaultClusterId());
+                        defaultClusters.add(defaultCluster);
+                    }
+                }
+            }
+        }
+    }
+
 }

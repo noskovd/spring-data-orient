@@ -37,18 +37,22 @@ public interface OrientOperations {
     <RET extends List<?>> RET query(OQuery<?> query, DetachMode detachMode, Object... values);
     
     ODatabaseComplex<Object> delete(ORecordInternal iRecord);
-    
+
     ODatabaseObject delete(ORID iRID);
-    
+
     ODatabaseObject delete(Object iPojo);
-    
+
     <RET> OObjectIteratorClass<RET> browseClass(Class<RET> iClusterClass);
-    
+
     int getDefaultClusterId(Class<?> domainClass);
-    
+
     String getClusterNameById(int iClusterId);
-    
+
     String getClusterNameByRid(String rid);
+
+    List<String> getClusterNamesByClass(Class entityClass, boolean includeDefault);
+
+    boolean isDefault(String clusterName);
 
     /**
      * Is Class registered in OrientDb
