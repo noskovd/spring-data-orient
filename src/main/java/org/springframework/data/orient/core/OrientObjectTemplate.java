@@ -17,6 +17,7 @@ import org.springframework.data.orient.object.repository.DetachMode;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.cache.OLocalRecordCache;
 import com.orientechnologies.orient.core.command.OCommandOutputListener;
 import com.orientechnologies.orient.core.command.OCommandRequest;
@@ -198,6 +199,17 @@ public class OrientObjectTemplate implements OrientObjectOperations {
     @Override
     public String getClusterNameById(int iClusterId) {
         return dbf.db().getClusterNameById(iClusterId);
+    }
+
+    @Override
+    public int getClusterIdByName(String clusterName, Class aClass) {
+        OClass oClass = dbf.db().getMetadata().getSchema().getClass(aClass);
+        for(int clusterId : oClass.getClusterIds()){
+            if(getClusterNameById(clusterId).equals(clusterName)){
+                return clusterId;
+            }
+        }
+        throw new OException("Cluster " + clusterName + " not found");
     }
 
     @Override
