@@ -1,7 +1,5 @@
 package org.springframework.data.orient.repository.query;
 
-import static org.jooq.impl.DSL.field;
-
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +31,8 @@ import org.springframework.data.orient.repository.annotation.Source;
 import org.springframework.data.repository.query.parser.AbstractQueryCreator;
 import org.springframework.data.repository.query.parser.Part;
 import org.springframework.data.repository.query.parser.PartTree;
+
+import static org.jooq.impl.DSL.field;
 
 public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> {
     
@@ -149,12 +149,12 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
         
         Source source = findAnnotation(Source.class);
         if (source != null) {
-            new DefaultSource(source.type(), source.value());
+            return new DefaultSource(source.type(), source.value());
         }
         
         Cluster cluster = findAnnotation(Cluster.class);
         if (cluster != null) {
-            orientSource = new DefaultSource(cluster.value());
+            return new DefaultSource(cluster.value());
         }
 
         return new DefaultSource(domainClass);
