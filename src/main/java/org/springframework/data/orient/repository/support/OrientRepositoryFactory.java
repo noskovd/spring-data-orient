@@ -77,10 +77,20 @@ public class OrientRepositoryFactory extends RepositoryFactorySupport {
      */
     @Override
     protected Class<?> getRepositoryBaseClass(RepositoryMetadata metadata) {
-        if (isObjectRepository(metadata.getRepositoryInterface())) {
-            return SimpleOrientObjectRepository.class;
+        String customClusterName = getCustomCluster(metadata);
+
+        if(customClusterName != null){
+            if (isObjectRepository(metadata.getRepositoryInterface())) {
+                return ClusteredOrientObjectRepository.class;
+            } else {
+                return ClusteredOrientRepository.class;
+            }
         } else {
-            return SimpleOrientRepository.class;
+            if (isObjectRepository(metadata.getRepositoryInterface())) {
+                return SimpleOrientObjectRepository.class;
+            } else {
+                return SimpleOrientRepository.class;
+            }
         }
     }
 
