@@ -2,9 +2,14 @@ package org.springframework.data.orient.repository.support;
 
 import java.io.Serializable;
 
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.orient.core.OrientOperations;
 import org.springframework.data.orient.object.repository.OrientObjectRepository;
+import org.springframework.data.orient.object.repository.support.ClusteredOrientObjectRepository;
 import org.springframework.data.orient.object.repository.support.SimpleOrientObjectRepository;
+import org.springframework.data.orient.repository.SourceType;
+import org.springframework.data.orient.repository.annotation.Cluster;
+import org.springframework.data.orient.repository.annotation.Source;
 import org.springframework.data.orient.repository.query.OrientQueryLookupStrategy;
 import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.data.repository.core.RepositoryMetadata;
@@ -50,11 +55,20 @@ public class OrientRepositoryFactory extends RepositoryFactorySupport {
         EntityInformation<?, Serializable> entityInformation = getEntityInformation(metadata.getDomainType());
         Class<?> repositoryInterface = metadata.getRepositoryInterface();
         Class<?> javaType = entityInformation.getJavaType();
-        
-        if (isObjectRepository(metadata.getRepositoryInterface())) {
-            return new SimpleOrientObjectRepository(operations, javaType, repositoryInterface);
+        String customClusterName = getCustomCluster(metadata);
+
+        if(customClusterName != null){
+            if (isObjectRepository(metadata.getRepositoryInterface())) {
+                return new ClusteredOrientObjectRepository(operations, javaType, customClusterName, repositoryInterface);
+            } else {
+                return new ClusteredOrientRepository(operations, javaType, customClusterName, repositoryInterface);
+            }
         } else {
-            return new SimpleOrientRepository(operations, javaType, repositoryInterface);
+            if (isObjectRepository(metadata.getRepositoryInterface())) {
+                return new SimpleOrientObjectRepository(operations, javaType, repositoryInterface);
+            } else {
+                return new SimpleOrientRepository(operations, javaType, repositoryInterface);
+            }
         }
     }
 
@@ -79,12 +93,39 @@ public class OrientRepositoryFactory extends RepositoryFactorySupport {
     }
 
     /**
-     * Returns whether the given repository interface requires a {@link OrinetObjectRepository} specific implementation to be chosen.
+     * Returns whether the given repository interface requires a {@link org.springframework.data.orient.object.repository.OrientObjectRepository} specific implementation to be chosen.
      *
      * @param repositoryInterface the repository interface
      * @return true, if is repository assignable from OrientObjectRepository
      */
     private boolean isObjectRepository(Class<?>  repositoryInterface) {
         return OrientObjectRepository.class.isAssignableFrom(repositoryInterface);
+    }
+
+    /**
+     * Get Custom Cluster Name.
+     * Method looks for {@link Source} and {@link Cluster} annotation.
+     *
+     * If {@link Source} is not null and {@link org.springframework.data.orient.repository.annotation.Source#type()} equals to
+     * {@link org.springframework.data.orient.repository.SourceType#CLUSTER} then returns {@link org.springframework.data.orient.repository.annotation.Source#value()}
+     *
+     * If {@link Cluster} is not null then returns {@link org.springframework.data.orient.repository.annotation.Cluster#value()}
+     *
+     * @param metadata
+     * @return cluster name or null if it's not defined
+     */
+    private String getCustomCluster(RepositoryMetadata metadata){
+        Class repositoryInterface = metadata.getRepositoryInterface();
+
+        Source source = AnnotationUtils.getAnnotation(repositoryInterface, Source.class);
+        if(source != null && SourceType.CLUSTER.equals(source.type())){
+            return source.value();
+        }
+
+        Cluster cluster = AnnotationUtils.getAnnotation(repositoryInterface, Cluster.class);
+        if (cluster != null){
+            return cluster.value();
+        }
+        return null;
     }
 }
