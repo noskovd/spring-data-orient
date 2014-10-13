@@ -1,10 +1,8 @@
-package org.springframework.data.orient.object.test;
+package org.springframework.data.orient.object.person;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.data.orient.core.OrientOperations;
-import org.springframework.data.orient.object.person.PersonRepository;
-import org.springframework.data.orient.object.person.PersonTmpRepository;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -23,7 +21,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @TransactionConfiguration(defaultRollback = true)
 @SpringApplicationConfiguration(classes = TestConfiguration.class)
-public class PersonRepositoryTests2 extends AbstractTestNGSpringContextTests {
+public class PersonClusteredRepositoryTests extends AbstractTestNGSpringContextTests {
 
     @Autowired
     PersonRepository repository;

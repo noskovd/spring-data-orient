@@ -1,4 +1,4 @@
-package org.springframework.data.orient.object.test;
+package org.springframework.data.orient.object.person;
 
 import java.util.List;
 
@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.orient.core.OrientOperations;
-import org.springframework.data.orient.object.person.PersonRepository;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;

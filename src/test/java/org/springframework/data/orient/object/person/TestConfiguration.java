@@ -1,4 +1,4 @@
-package org.springframework.data.orient.object.test;
+package org.springframework.data.orient.object.person;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
