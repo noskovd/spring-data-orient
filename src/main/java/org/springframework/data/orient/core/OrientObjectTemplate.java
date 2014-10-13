@@ -203,7 +203,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
     }
 
     @Override
-    public int getClusterIdByName(String clusterName, Class aClass) {
+    public int getClusterIdByName(String clusterName, Class<?> aClass) {
         OClass oClass = dbf.db().getMetadata().getSchema().getClass(aClass);
         for(int clusterId : oClass.getClusterIds()){
             if(getClusterNameById(clusterId).equals(clusterName)){
@@ -777,7 +777,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
     }
 
     @Override
-    public List<String> getClusterNamesByClass(Class entityClass, boolean showDefault) {
+    public List<String> getClusterNamesByClass(Class<?> entityClass, boolean showDefault) {
         int[] clusterIds = dbf.db().getMetadata().getSchema().getClass(entityClass).getClusterIds();
         int defaultCluster = getDefaultClusterId(entityClass);
 

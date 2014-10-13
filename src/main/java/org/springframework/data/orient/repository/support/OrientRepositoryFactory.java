@@ -125,7 +125,7 @@ public class OrientRepositoryFactory extends RepositoryFactorySupport {
      * @return cluster name or null if it's not defined
      */
     private String getCustomCluster(RepositoryMetadata metadata){
-        Class repositoryInterface = metadata.getRepositoryInterface();
+        Class<?> repositoryInterface = metadata.getRepositoryInterface();
 
         Source source = AnnotationUtils.getAnnotation(repositoryInterface, Source.class);
         if(source != null && SourceType.CLUSTER.equals(source.type())){

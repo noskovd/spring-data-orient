@@ -49,11 +49,11 @@ public interface OrientOperations {
 
     String getClusterNameById(int iClusterId);
 
-    int getClusterIdByName(String clusterName, Class aClass);
+    int getClusterIdByName(String clusterName, Class<?> aClass);
 
     String getClusterNameByRid(String rid);
 
-    List<String> getClusterNamesByClass(Class entityClass, boolean includeDefault);
+    List<String> getClusterNamesByClass(Class<?> entityClass, boolean includeDefault);
 
     boolean isDefault(String clusterName);
 
