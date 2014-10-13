@@ -1,5 +1,7 @@
 package org.springframework.data.orient.object.test;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.data.domain.PageRequest;
@@ -42,8 +44,10 @@ public class PersonRepositoryTests extends AbstractTestNGSpringContextTests {
             manager.registerEntityClass(Address.class);
             manager.registerEntityClass(Employee.class);
         }
+
+        Address esenina = operations.command("insert into Address (country, city, street) values ('Belarus', 'Minsk', 'Esenina')");
         
-        operations.command("insert into Person (firstName, lastName, active) values ('Dzmitry', 'Naskou', true)");
+        operations.command("insert into Person (firstName, lastName, active, address) values (?, ?, ?, ?)", "Dzmitry", "Naskou", true, esenina);
         operations.command("insert into Person (firstName, lastName, active) values ('Koby', 'Eliot', true)");
         operations.command("insert into Person (firstName, lastName, active) values ('Ronny', 'Carlisle', true)");
         operations.command("insert into Person (firstName, lastName, active) values ('Jameson', 'Matthew', true)");
@@ -147,6 +151,17 @@ public class PersonRepositoryTests extends AbstractTestNGSpringContextTests {
     public void findByActiveIsFalse() {
         for (Person person : repository.findByActiveIsFalse()) {
             Assert.assertFalse(person.getActive());
+        }
+    }
+    
+    @Test
+    public void findByCityTest() {
+        List<Person> persons = repository.findByAddress_City("Minsk");
+        
+        Assert.assertFalse(persons.isEmpty());
+        
+        for (Person person : persons) {
+            Assert.assertEquals(person.getAddress().getCity(), "Minsk");
         }
     }
 }
