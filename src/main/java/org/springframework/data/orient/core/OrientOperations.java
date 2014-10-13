@@ -9,6 +9,7 @@ import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.query.OQuery;
 import com.orientechnologies.orient.core.record.ORecordInternal;
+import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLQuery;
 import com.orientechnologies.orient.object.iterator.OObjectIteratorClass;
 
@@ -20,7 +21,7 @@ public interface OrientOperations {
     
     <RET> RET save(Object entity);
     
-    <RET> RET save(Object iPojo, String iClusterName);
+    <RET> RET save(Object entity, String cluster);
     
     Long count(OSQLQuery<?> query, Object... values);
     
@@ -71,4 +72,10 @@ public interface OrientOperations {
      * @return Is Class registered in OrientDb
      */
     boolean existsClass(String className);
+    
+    void registerEntityClass(Class<?> domainClass);
+    
+    <RET> RET command(OCommandSQL command, Object... args);
+    
+    <RET> RET command(String sql, Object... args);
 }

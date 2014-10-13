@@ -47,6 +47,7 @@ import com.orientechnologies.orient.core.query.OQuery;
 import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.ORecordInternal;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLQuery;
 import com.orientechnologies.orient.core.storage.ORecordCallback;
 import com.orientechnologies.orient.core.storage.ORecordMetadata;
@@ -810,4 +811,17 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         }
     }
 
+    public void registerEntityClass(Class<?> domainClass) {
+        try (OObjectDatabaseTx db = dbf.openDatabase()) {
+            db.getEntityManager().registerEntityClass(domainClass);
+        }
+    }
+    
+    public <RET> RET command(OCommandSQL command, Object... args) {
+        return dbf.db().command(command).execute(args);
+    }
+    
+    public <RET> RET command(String sql, Object... args) {
+        return command(new OCommandSQL(sql), args);
+    }
 }

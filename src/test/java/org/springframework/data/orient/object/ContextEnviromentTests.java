@@ -1,22 +1,24 @@
 package org.springframework.data.orient.object;
 
 import junit.framework.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
 import org.springframework.aop.SpringProxy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.orient.core.OrientObjectOperations;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.testng.annotations.Test;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@TransactionConfiguration
-@ContextConfiguration(classes = OrientObjectTestConfiguration.class)
-public class ContextEnviromentTests {
+@Configuration
+@EnableAutoConfiguration
+@EnableTransactionManagement
+@SpringApplicationConfiguration(classes = ContextEnviromentTests.class)
+public class ContextEnviromentTests extends AbstractTestNGSpringContextTests{
 
     @Autowired
     ApplicationContext context;
@@ -25,8 +27,7 @@ public class ContextEnviromentTests {
     OrientObjectDatabaseFactory dbf;
 
     @Autowired
-    @Qualifier("contextTemplate")
-    OrientObjectOperations template;
+    OrientObjectOperations operations;
 
     @Test
     public void checkApplicationContext() {
@@ -39,12 +40,12 @@ public class ContextEnviromentTests {
     }
 
     @Test
-    public void checkOrientObjectTemplate() {
-        Assert.assertNotNull(template);
+    public void checkOrientOperations() {
+        Assert.assertNotNull(operations);
     }
 
     @Test
     public void checkTransactionalOrientObjectTemplate() {
-        Assert.assertTrue(SpringProxy.class.isAssignableFrom(template.getClass()));
+        Assert.assertTrue(SpringProxy.class.isAssignableFrom(operations.getClass()));
     }
 }

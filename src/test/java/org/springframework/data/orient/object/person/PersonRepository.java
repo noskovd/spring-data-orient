@@ -37,4 +37,8 @@ public interface PersonRepository extends OrientObjectRepository<Person> {
 
     @FetchPlan("*:-1")
     List<Person> findByAddress_Country(String city);
+
+    List<Person> findByActiveIsTrue();
+
+    List<Person> findByActiveIsFalse();
 }

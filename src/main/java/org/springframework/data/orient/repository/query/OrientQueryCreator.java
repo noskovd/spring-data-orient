@@ -134,8 +134,8 @@ public class OrientQueryCreator extends AbstractQueryCreator<String, Condition> 
             case CONTAINING: return field.contains(iterator.next());
             case SIMPLE_PROPERTY: return field.eq(iterator.next());
             case NEGATING_SIMPLE_PROPERTY: return field.ne(iterator.next());
-            case TRUE: return field.isTrue();
-            case FALSE: return field.isFalse();
+            case TRUE: return field.eq(true);
+            case FALSE: return field.eq(false);
             default: throw new IllegalArgumentException("Unsupported keyword!");
         }
     }

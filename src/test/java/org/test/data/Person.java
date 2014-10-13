@@ -16,6 +16,8 @@ public class Person {
     private String lastName;
     
     private Address address;
+    
+    private Boolean active;
 
     public String getRid() {
         return rid;
@@ -47,5 +49,13 @@ public class Person {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }
