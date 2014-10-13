@@ -6,6 +6,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.orient.core.OrientOperations;
 import org.springframework.data.orient.object.person.PersonRepository;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.test.data.Address;
@@ -18,6 +20,7 @@ import org.testng.annotations.Test;
 import com.orientechnologies.orient.core.entity.OEntityManager;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
+@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @TransactionConfiguration(defaultRollback = true)
 @SpringApplicationConfiguration(classes = TestConfiguration.class)
 public class PersonRepositoryTests extends AbstractTestNGSpringContextTests {
