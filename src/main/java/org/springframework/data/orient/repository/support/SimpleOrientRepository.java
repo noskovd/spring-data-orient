@@ -43,8 +43,12 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
     /** The domain class. */
     protected final Class<T> domainClass;
     
+    protected final String source;
+    
     /** The repository interface. */
     protected final Class<?> repositoryInterface;
+    
+    private final OrientStrategy<T> strategy;
 
     /**
      * Instantiates a new {@link SimpleOrientRepository} from the given {@link OrientOperations} and domain class.
@@ -54,10 +58,35 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
      * @param repositoryInterface the target repository interface
      */
     public SimpleOrientRepository(OrientOperations operations, Class<T> domainClass, Class<?> repositoryInterface) {
-        super();
+        this(operations, domainClass, repositoryInterface, new SimpleOrientStrategy<T>(operations, domainClass));
+    }
+    
+    /**
+     * Instantiates a new simple orient repository.
+     *
+     * @param operations the operations
+     * @param domainClass the domain class
+     * @param cluster the cluster
+     * @param repositoryInterface the repository interface
+     */
+    public SimpleOrientRepository(OrientOperations operations, Class<T> domainClass, String cluster, Class<?> repositoryInterface) {
+        this(operations, domainClass, repositoryInterface, new ClusteredOrientStrategy<T>(operations, cluster));
+    }
+    
+    /**
+     * Instantiates a new simple orient repository.
+     *
+     * @param operations the operations
+     * @param domainClass the domain class
+     * @param repositoryInterface the repository interface
+     * @param strategy the strategy
+     */
+    private SimpleOrientRepository(OrientOperations operations, Class<T> domainClass, Class<?> repositoryInterface, OrientStrategy<T> strategy) {
         this.operations = operations;
         this.domainClass = domainClass;
         this.repositoryInterface = repositoryInterface;
+        this.strategy = strategy;
+        this.source = strategy.getSource();
     }
 
     /* (non-Javadoc)
@@ -65,7 +94,7 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
      */
     @Transactional(readOnly = false)
     public <S extends T> S save(S entity) {
-        return operations.save(entity);
+        return strategy.save(entity);
     }
 
     /* (non-Javadoc)
@@ -169,7 +198,7 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
      */
     @Override
     public long count() {
-        return operations.countClass(domainClass);
+        return strategy.count();
     }
 
     /* (non-Javadoc)
@@ -196,9 +225,8 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
         switch (source.getSourceType()) {
             case CLUSTER: return count(source.getName());
             case CLASS: return operations.countClass(source.getName());
+            default: throw new IllegalArgumentException();
         }
-        
-        return 0;
     }
 
     /* (non-Javadoc)
@@ -232,7 +260,7 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
      */
     @Transactional(readOnly = false)
     public void deleteAll() {
-        for (T entity : operations.browseClass(domainClass)) {
+        for (T entity : findAll()) {
             operations.delete(entity);
         }
     }
@@ -300,7 +328,7 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
      * @return the query
      */
     private OSQLQuery<T> getQuery(Sort sort) {
-        return getQuery(getDefaultSource(), sort);
+        return getQuery(source, sort);
     }
     
     /**
@@ -331,9 +359,5 @@ public class SimpleOrientRepository<T> implements OrientRepository<T> {
         Query query = pageable == null ? limitStep : limitStep.limit(pageable.getPageSize()).offset(pageable.getOffset());
         
         return new OSQLSynchQuery<T>(query.getSQL(ParamType.INLINED));
-    }
-    
-    protected String getDefaultSource() {
-        return QueryUtils.toSource(domainClass);
     }
 }

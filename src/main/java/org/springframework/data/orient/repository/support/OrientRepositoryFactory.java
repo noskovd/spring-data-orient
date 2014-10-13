@@ -5,7 +5,6 @@ import java.io.Serializable;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.orient.core.OrientOperations;
 import org.springframework.data.orient.object.repository.OrientObjectRepository;
-import org.springframework.data.orient.object.repository.support.ClusteredOrientObjectRepository;
 import org.springframework.data.orient.object.repository.support.SimpleOrientObjectRepository;
 import org.springframework.data.orient.repository.SourceType;
 import org.springframework.data.orient.repository.annotation.Cluster;
@@ -55,17 +54,17 @@ public class OrientRepositoryFactory extends RepositoryFactorySupport {
         EntityInformation<?, Serializable> entityInformation = getEntityInformation(metadata.getDomainType());
         Class<?> repositoryInterface = metadata.getRepositoryInterface();
         Class<?> javaType = entityInformation.getJavaType();
-        String customClusterName = getCustomCluster(metadata);
+        String cluster = getCustomCluster(metadata);
 
-        if(customClusterName != null){
-            if (isObjectRepository(metadata.getRepositoryInterface())) {
-                return new ClusteredOrientObjectRepository(operations, javaType, customClusterName, repositoryInterface);
+        if (isObjectRepository(metadata.getRepositoryInterface())) {
+            if (cluster != null) {
+                return new SimpleOrientObjectRepository(operations, javaType, cluster, repositoryInterface);
             } else {
-                return new ClusteredOrientRepository(operations, javaType, customClusterName, repositoryInterface);
+                return new SimpleOrientObjectRepository(operations, javaType, repositoryInterface);
             }
         } else {
-            if (isObjectRepository(metadata.getRepositoryInterface())) {
-                return new SimpleOrientObjectRepository(operations, javaType, repositoryInterface);
+            if (cluster != null) {
+                return new SimpleOrientRepository(operations, javaType, cluster, repositoryInterface);
             } else {
                 return new SimpleOrientRepository(operations, javaType, repositoryInterface);
             }
@@ -77,20 +76,10 @@ public class OrientRepositoryFactory extends RepositoryFactorySupport {
      */
     @Override
     protected Class<?> getRepositoryBaseClass(RepositoryMetadata metadata) {
-        String customClusterName = getCustomCluster(metadata);
-
-        if(customClusterName != null){
-            if (isObjectRepository(metadata.getRepositoryInterface())) {
-                return ClusteredOrientObjectRepository.class;
-            } else {
-                return ClusteredOrientRepository.class;
-            }
+        if (isObjectRepository(metadata.getRepositoryInterface())) {
+            return SimpleOrientObjectRepository.class;
         } else {
-            if (isObjectRepository(metadata.getRepositoryInterface())) {
-                return SimpleOrientObjectRepository.class;
-            } else {
-                return SimpleOrientRepository.class;
-            }
+            return SimpleOrientRepository.class;
         }
     }
 

@@ -28,6 +28,10 @@ public class SimpleOrientObjectRepository<T> extends SimpleOrientRepository<T> i
         super(operations, domainClass, repositoryInterface);
     }
     
+    public SimpleOrientObjectRepository(OrientOperations operations, Class<T> domainClass, String cluster, Class<?> repositoryInterface) {
+        super(operations, domainClass, cluster, repositoryInterface);
+    }
+
     public T detachAll(T entity) {
         return ((OrientObjectOperations) super.operations).detachAll(entity, true);
     }
