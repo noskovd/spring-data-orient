@@ -3,6 +3,7 @@ package org.springframework.data.orient.core;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ import org.springframework.orm.orient.OrientObjectDatabaseFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.orientechnologies.common.exception.OException;
+import com.orientechnologies.orient.core.annotation.OId;
 import com.orientechnologies.orient.core.cache.OLocalRecordCache;
 import com.orientechnologies.orient.core.command.OCommandOutputListener;
 import com.orientechnologies.orient.core.command.OCommandRequest;
@@ -71,7 +73,6 @@ public class OrientObjectTemplate implements OrientObjectOperations {
     private Set<String> defaultClusters;
 
     public OrientObjectTemplate(OrientObjectDatabaseFactory dbf) {
-        super();
         this.dbf = dbf;
     }
 
@@ -809,6 +810,27 @@ public class OrientObjectTemplate implements OrientObjectOperations {
                 }
             }
         }
+    }
+
+    @Override
+    public String getRid(Object entity) {
+        Class clazz = entity.getClass();
+        while(clazz != Object.class){
+            for(Field field : clazz.getDeclaredFields()){
+                OId ridAnnotation = field.getAnnotation(OId.class);
+                if(ridAnnotation != null){
+                    field.setAccessible(true);
+                    try{
+                        Object rid = field.get(entity);
+                        return  rid != null ? rid.toString() : null;
+                    } catch (IllegalAccessException | IllegalArgumentException ex){
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+            clazz = clazz.getSuperclass();
+        }
+        return null;
     }
 
     public void registerEntityClass(Class<?> domainClass) {

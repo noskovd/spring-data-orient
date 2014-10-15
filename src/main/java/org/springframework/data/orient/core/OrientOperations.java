@@ -72,6 +72,15 @@ public interface OrientOperations {
      * @return Is Class registered in OrientDb
      */
     boolean existsClass(String className);
+
+    /**
+     * Find field annotated with {@link com.orientechnologies.orient.core.annotation.OId}
+     * in entity and return it's value.
+     *
+     * @param entity Orient Entity
+     * @return orient row ID or null if it is to found
+     */
+    String getRid(Object entity);
     
     void registerEntityClass(Class<?> domainClass);
     
