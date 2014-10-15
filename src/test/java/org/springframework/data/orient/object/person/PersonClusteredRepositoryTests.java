@@ -37,8 +37,6 @@ public class PersonClusteredRepositoryTests extends AbstractTestNGSpringContextT
     
     @BeforeClass
     public void before() {
-        factory.setUrl("memory:orientdb/PersonRepositoryTests2");
-        
         try (OObjectDatabaseTx db = factory.openDatabase()) {
             OEntityManager manager = db.getEntityManager();
             manager.registerEntityClass(Person.class);

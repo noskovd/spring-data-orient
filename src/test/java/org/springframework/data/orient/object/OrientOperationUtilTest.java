@@ -1,30 +1,41 @@
 package org.springframework.data.orient.object;
 
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.orient.core.OrientObjectOperations;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.test.data.Address;
 import org.test.data.Employee;
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
-import junit.framework.Assert;
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@Configuration
+@EnableAutoConfiguration
+@EnableTransactionManagement
 @TransactionConfiguration
-@ContextConfiguration(classes = OrientObjectTestConfiguration.class)
-public class OrientOperationUtilTest {
+@SpringApplicationConfiguration(classes = OrientOperationUtilTest.class)
+public class OrientOperationUtilTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
-    @Qualifier("contextTemplate")
     OrientObjectOperations template;
 
     @Autowired
-    OrientObjectDatabaseFactory dbf;
+    OrientObjectDatabaseFactory factory;
+    
+    @BeforeClass
+    public void before() {
+        try (OObjectDatabaseTx db = factory.openDatabase()) {
+            db.getEntityManager().registerEntityClass(Employee.class);
+        }
+    }
 
     @Test
     public void getRidTest(){
@@ -32,7 +43,7 @@ public class OrientOperationUtilTest {
         Assert.assertNull(template.getRid(address));
 
         address.setId("123");
-        Assert.assertEquals("123", template.getRid(address));
+        Assert.assertEquals(template.getRid(address), "123");
     }
 
     @Test
@@ -41,17 +52,15 @@ public class OrientOperationUtilTest {
         Assert.assertNull(template.getRid(employee));
 
         employee.setRid("123");
-        Assert.assertEquals("123", template.getRid(employee));
+        Assert.assertEquals(template.getRid(employee), "123");
     }
 
     @Test
     public void getRidFromProxy(){
-        dbf.db().getEntityManager().registerEntityClass(Employee.class);
-
         Employee employee = new Employee();
         Employee savedEmployee = template.save(employee);
-        Assert.assertNotSame(Employee.class, savedEmployee.getClass());
-
-        Assert.assertEquals(savedEmployee.getRid(), template.getRid(savedEmployee));
+        
+        Assert.assertNotSame(savedEmployee.getClass(), Employee.class);
+        Assert.assertEquals(template.getRid(savedEmployee), savedEmployee.getRid());
     }
 }
