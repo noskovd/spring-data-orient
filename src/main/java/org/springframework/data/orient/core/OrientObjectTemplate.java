@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -822,8 +824,13 @@ public class OrientObjectTemplate implements OrientObjectOperations {
                     field.setAccessible(true);
                     try{
                         Object rid = field.get(entity);
+                        if(rid == null) {
+                            Method method = clazz.getDeclaredMethod(getterName(field.getName()));
+                            rid = method.invoke(entity);
+                        }
                         return  rid != null ? rid.toString() : null;
-                    } catch (IllegalAccessException | IllegalArgumentException ex){
+                    } catch (IllegalAccessException | IllegalArgumentException
+                            | NoSuchMethodException | InvocationTargetException ex){
                         throw new RuntimeException(ex);
                     }
                 }
@@ -831,6 +838,11 @@ public class OrientObjectTemplate implements OrientObjectOperations {
             clazz = clazz.getSuperclass();
         }
         return null;
+    }
+
+    private String getterName(String propertyName) {
+        return "get" + propertyName.substring(0, 1).toUpperCase() +
+                propertyName.substring(1).toLowerCase();
     }
 
     public void registerEntityClass(Class<?> domainClass) {
