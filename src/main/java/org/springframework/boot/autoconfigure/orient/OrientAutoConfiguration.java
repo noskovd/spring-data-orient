@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.orient.core.OrientObjectOperations;
 import org.springframework.data.orient.core.OrientObjectTemplate;
+import org.springframework.data.orient.web.config.OrientWebConfigurer;
 import org.springframework.orm.orient.AbstractOrientDatabaseFactory;
 import org.springframework.orm.orient.OrientDocumentDatabaseFactory;
 import org.springframework.orm.orient.OrientObjectDatabaseFactory;
@@ -58,6 +60,14 @@ public class OrientAutoConfiguration {
     @ConditionalOnMissingBean(OrientObjectOperations.class)
     public OrientObjectTemplate objectTemplate(OrientObjectDatabaseFactory factory) {
         return new OrientObjectTemplate(factory);
+    }
+    
+    @Bean
+    @ConditionalOnWebApplication
+    @ConditionalOnClass(OObjectDatabaseTx.class)
+    @ConditionalOnMissingBean(OrientWebConfigurer.class)
+    public OrientWebConfigurer orientWebConfigurer() {
+        return new OrientWebConfigurer();
     }
     
     @SuppressWarnings("rawtypes")
