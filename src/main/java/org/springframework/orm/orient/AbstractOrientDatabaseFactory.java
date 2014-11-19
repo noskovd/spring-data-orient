@@ -11,7 +11,7 @@ import org.springframework.util.Assert;
  * @author Dzmitry_Naskou
  * @param <T> the type of database to handle
  */
-public abstract class AbstractOrientDatabaseFactory<T extends ODatabaseInternal> {
+public abstract class AbstractOrientDatabaseFactory<T extends ODatabaseInternal<?>> {
 
     /** Default minimum pool size. */
     public static final int DEFAULT_MIN_POOL_SIZE = 1;
@@ -37,11 +37,11 @@ public abstract class AbstractOrientDatabaseFactory<T extends ODatabaseInternal>
 
     @PostConstruct
     public void init() {
-            Assert.notNull(url);
-            Assert.notNull(username);
-            Assert.notNull(password);
-        
-        ODatabaseComplex<?> db = newDatabase();
+        Assert.notNull(url);
+        Assert.notNull(username);
+        Assert.notNull(password);
+
+        ODatabaseInternal<?> db = newDatabase();
         createDatabase(db);
         createPool();
     }
@@ -63,15 +63,15 @@ public abstract class AbstractOrientDatabaseFactory<T extends ODatabaseInternal>
      *
      * @return the o database complex
      */
-    public abstract ODatabaseComplex<?> openDatabase();
+    public abstract ODatabaseInternal<?> openDatabase();
 
-    protected abstract ODatabaseComplex<?> newDatabase();
+    protected abstract ODatabaseInternal<?> newDatabase();
 
-    public ODatabaseComplex<?> db() {
+    public ODatabaseInternal<?> db() {
         return ODatabaseRecordThreadLocal.INSTANCE.get().getDatabaseOwner();
     }
 
-    protected void createDatabase(ODatabaseComplex<?> db) {
+    protected void createDatabase(ODatabaseInternal<?> db) {
         if (!getUrl().startsWith("remote:")) {
             if (!db.exists()) {
                 db.create();

@@ -26,11 +26,10 @@ import com.orientechnologies.orient.core.cache.OLocalRecordCache;
 import com.orientechnologies.orient.core.command.OCommandOutputListener;
 import com.orientechnologies.orient.core.command.OCommandRequest;
 import com.orientechnologies.orient.core.db.ODatabase;
+import com.orientechnologies.orient.core.db.ODatabaseInternal;
 import com.orientechnologies.orient.core.db.ODatabase.ATTRIBUTES;
+import com.orientechnologies.orient.core.db.ODatabase.OPERATION_MODE;
 import com.orientechnologies.orient.core.db.ODatabase.STATUS;
-import com.orientechnologies.orient.core.db.ODatabaseComplex;
-import com.orientechnologies.orient.core.db.ODatabaseComplex.OPERATION_MODE;
-import com.orientechnologies.orient.core.db.ODatabaseComplexInternal;
 import com.orientechnologies.orient.core.db.ODatabaseListener;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.db.object.ODatabaseObject;
@@ -46,6 +45,7 @@ import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.intent.OIntent;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
+import com.orientechnologies.orient.core.metadata.security.OSecurityUser;
 import com.orientechnologies.orient.core.metadata.security.OUser;
 import com.orientechnologies.orient.core.query.OQuery;
 import com.orientechnologies.orient.core.record.ORecord;
@@ -90,7 +90,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().getStatus();
     }
 
-    public <THISDB extends ODatabase> THISDB setStatus(STATUS iStatus) {
+    public <THISDB extends ODatabase<?>> THISDB setStatus(STATUS iStatus) {
         return dbf.db().setStatus(iStatus);
     }
 
@@ -110,7 +110,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().getTransaction();
     }
 
-    public ODatabaseComplex<Object> begin() {
+    public ODatabase<Object> begin() {
         return dbf.db().begin();
     }
 
@@ -118,7 +118,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().getLocalCache();
     }
 
-    public ODatabaseComplex<Object> begin(TXTYPE iType) {
+    public ODatabase<Object> begin(TXTYPE iType) {
         return dbf.db().begin(iType);
     }
 
@@ -126,7 +126,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().isClosed();
     }
 
-    public ODatabaseComplex<Object> begin(OTransaction iTx) {
+    public ODatabase<Object> begin(OTransaction iTx) {
         return dbf.db().begin(iTx);
     }
 
@@ -213,6 +213,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
                 return clusterId;
             }
         }
+        
         throw new OException("Cluster " + clusterName + " not found");
     }
 
@@ -241,7 +242,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().newInstance(iClassName, iEnclosingClass, iDocument, iArgs);
     }
 
-    public OUser getUser() {
+    public OSecurityUser getUser() {
         return dbf.db().getUser();
     }
 
@@ -327,7 +328,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
     }
 
     @Override
-    public ODatabaseComplex<Object> delete(ORecordInternal iRecord) {
+    public ODatabaseObject delete(ORecordInternal iRecord) {
         return dbf.db().delete(iRecord);
     }
 
@@ -335,7 +336,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().browseClass(iClassName);
     }
 
-    public ODatabaseComplex<?> getDatabaseOwner() {
+    public ODatabaseInternal<?> getDatabaseOwner() {
         return dbf.db().getDatabaseOwner();
     }
 
@@ -343,7 +344,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().browseClass(iClassName, iPolymorphic);
     }
 
-    public ODatabaseComplex<?> setDatabaseOwner(ODatabaseComplexInternal<?> iOwner) {
+    public ODatabaseInternal<?> setDatabaseOwner(ODatabaseInternal<?> iOwner) {
         return dbf.db().setDatabaseOwner(iOwner);
     }
 
@@ -351,7 +352,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().equals(iOther);
     }
 
-    public <DBTYPE extends ODatabaseComplex<?>> DBTYPE registerHook(ORecordHook iHookImpl) {
+    public <DBTYPE extends ODatabase<?>> DBTYPE registerHook(ORecordHook iHookImpl) {
         return dbf.db().registerHook(iHookImpl);
     }
 
@@ -367,7 +368,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().setProperty(iName, iValue);
     }
 
-    public <DBTYPE extends ODatabaseComplex<?>> DBTYPE registerHook(ORecordHook iHookImpl, HOOK_POSITION iPosition) {
+    public <DBTYPE extends ODatabase<?>> DBTYPE registerHook(ORecordHook iHookImpl, HOOK_POSITION iPosition) {
         return dbf.db().registerHook(iHookImpl, iPosition);
     }
 
@@ -403,12 +404,11 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().reload(iPojo, iIgnoreCache);
     }
 
-    public <THISDB extends ODatabase> THISDB set(ATTRIBUTES attribute, Object iValue) {
+    public <THISDB extends ODatabase<?>> THISDB set(ATTRIBUTES attribute, Object iValue) {
         return dbf.db().set(attribute, iValue);
     }
 
-    public <DBTYPE extends ODatabaseComplex<?>> DBTYPE unregisterHook(
-            ORecordHook iHookImpl) {
+    public <DBTYPE extends ODatabase<?>> DBTYPE unregisterHook(ORecordHook iHookImpl) {
         return dbf.db().unregisterHook(iHookImpl);
     }
 
@@ -424,7 +424,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().isMVCC();
     }
 
-    public <DBTYPE extends ODatabaseComplex<?>> DBTYPE setMVCC(boolean iMvcc) {
+    public <DBTYPE extends ODatabase<?>> DBTYPE setMVCC(boolean iMvcc) {
         return dbf.db().setMVCC(iMvcc);
     }
 
@@ -442,11 +442,6 @@ public class OrientObjectTemplate implements OrientObjectOperations {
 
     public <RET> RET load(Object iPojo, String iFetchPlan) {
         return dbf.db().load(iPojo, iFetchPlan);
-    }
-
-    public <V> V callInRecordLock(Callable<V> iCallable, ORID rid,
-                                  boolean iExclusiveLock) {
-        return dbf.db().callInRecordLock(iCallable, rid, iExclusiveLock);
     }
 
     public void attach(Object iPojo) {
@@ -583,10 +578,6 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().delete(iRID, iVersion);
     }
 
-    public ODatabaseComplex<Object> cleanOutRecord(ORID iRID, ORecordVersion iVersion) {
-        return dbf.db().cleanOutRecord(iRID, iVersion);
-    }
-
     /* (non-Javadoc)
      * @see org.springframework.data.orient.core.OrientOperations#countClass(java.lang.String)
      */
@@ -649,18 +640,6 @@ public class OrientObjectTemplate implements OrientObjectOperations {
 
     public Object newInstance() {
         return dbf.db().newInstance();
-    }
-
-    public <DBTYPE extends ODatabase> DBTYPE checkSecurity(String iResource, byte iOperation) {
-        return dbf.db().checkSecurity(iResource, iOperation);
-    }
-
-    public <DBTYPE extends ODatabase> DBTYPE checkSecurity(String iResource, int iOperation, Object iResourceSpecific) {
-        return dbf.db().checkSecurity(iResource, iOperation, iResourceSpecific);
-    }
-
-    public <DBTYPE extends ODatabase> DBTYPE checkSecurity(String iResource, int iOperation, Object... iResourcesSpecific) {
-        return dbf.db().checkSecurity(iResource, iOperation, iResourcesSpecific);
     }
 
     public ODocument pojo2Stream(Object iPojo, ODocument iRecord) {
@@ -731,7 +710,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
         return dbf.db().load(iRecordId, iFetchPlan, iIgnoreCache, loadTombstone, iLockingStrategy);
     }
 
-    public <THISDB extends ODatabase> THISDB open(String iUserName, String iUserPassword) {
+    public <THISDB extends ODatabase<?>> THISDB open(String iUserName, String iUserPassword) {
         return dbf.db().open(iUserName, iUserPassword);
     }
 
@@ -816,7 +795,7 @@ public class OrientObjectTemplate implements OrientObjectOperations {
 
     @Override
     public String getRid(Object entity) {
-        Class clazz = entity.getClass();
+        Class<?> clazz = entity.getClass();
         while(clazz != Object.class){
             for(Field field : clazz.getDeclaredFields()){
                 OId ridAnnotation = field.getAnnotation(OId.class);

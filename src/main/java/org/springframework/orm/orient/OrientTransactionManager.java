@@ -10,11 +10,9 @@ import org.springframework.transaction.support.ResourceTransactionManager;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.orientechnologies.orient.core.db.ODatabase;
-import com.orientechnologies.orient.core.db.ODatabaseComplex;
-import com.orientechnologies.orient.core.db.ODatabaseComplexInternal;
+import com.orientechnologies.orient.core.db.ODatabaseDocumentInternal;
 import com.orientechnologies.orient.core.db.ODatabaseInternal;
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
-import com.orientechnologies.orient.core.db.record.ODatabaseRecordInternal;
 
 /**
  * {@link org.springframework.transaction.PlatformTransactionManager} implementation
@@ -30,14 +28,14 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
     private static Logger log = LoggerFactory.getLogger(OrientTransactionManager.class);
 
     /** The database factory. */
-    private AbstractOrientDatabaseFactory<? extends ODatabase> dbf;
+    private AbstractOrientDatabaseFactory<? extends ODatabase<?>> dbf;
 
     /**
      * Instantiates a new {@link OrientTransactionManager}.
      *
      * @param dbf the dbf
      */
-    public OrientTransactionManager(AbstractOrientDatabaseFactory<? extends ODatabase> dbf) {
+    public OrientTransactionManager(AbstractOrientDatabaseFactory<? extends ODatabase<?>> dbf) {
         super();
         this.dbf = dbf;
     }
@@ -49,7 +47,7 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
     protected Object doGetTransaction() throws TransactionException {
         OrientTransaction tx = new OrientTransaction();
 
-        ODatabaseComplex<?> db = (ODatabaseComplex<?>) TransactionSynchronizationManager.getResource(getResourceFactory());
+        ODatabaseInternal<?> db = (ODatabaseInternal<?>) TransactionSynchronizationManager.getResource(getResourceFactory());
         
         if (db != null) {
             tx.setDatabase(db);
@@ -76,7 +74,7 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
     protected void doBegin(Object transaction, TransactionDefinition definition) throws TransactionException {
         OrientTransaction tx = (OrientTransaction) transaction;
 
-        ODatabaseComplex<?> db = tx.getDatabase();
+        ODatabaseInternal<?> db = tx.getDatabase();
         if (db == null || db.isClosed()) {
             db = dbf.openDatabase();
             tx.setDatabase(db);
@@ -94,7 +92,7 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
     @Override
     protected void doCommit(DefaultTransactionStatus status) throws TransactionException {
         OrientTransaction tx = (OrientTransaction) status.getTransaction();
-        ODatabaseComplex<?> db = tx.getDatabase();
+        ODatabaseInternal<?> db = tx.getDatabase();
         
         log.debug("committing transaction, db.hashCode() = {}", db.hashCode());
         
@@ -107,7 +105,7 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
     @Override
     protected void doRollback(DefaultTransactionStatus status) throws TransactionException {
         OrientTransaction tx = (OrientTransaction) status.getTransaction();
-        ODatabaseComplex<?> db = tx.getDatabase();
+        ODatabaseInternal<?> db = tx.getDatabase();
         
         log.debug("committing transaction, db.hashCode() = {}", db.hashCode());
         
@@ -142,7 +140,8 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
     @Override
     protected Object doSuspend(Object transaction) throws TransactionException {
         OrientTransaction tx = (OrientTransaction) transaction;
-        ODatabaseComplex<?> db = tx.getDatabase();
+        ODatabaseInternal<?> db = tx.getDatabase();
+        
         return db;
     }
     
@@ -152,15 +151,15 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
     @Override
     protected void doResume(Object transaction, Object suspendedResources) throws TransactionException {
         OrientTransaction tx = (OrientTransaction) transaction;
-        ODatabaseComplex<?> db = tx.getDatabase();
+        ODatabaseInternal<?> db = tx.getDatabase();
         
         if (!db.isClosed()) {
             db.close();
         }
 
-        ODatabaseComplexInternal<?> oldDb = (ODatabaseComplexInternal<?>) suspendedResources;
+        ODatabaseInternal<?> oldDb = (ODatabaseInternal<?>) suspendedResources;
         TransactionSynchronizationManager.bindResource(dbf, oldDb);
-        ODatabaseRecordThreadLocal.INSTANCE.set((ODatabaseRecordInternal) oldDb.getUnderlying());
+        ODatabaseRecordThreadLocal.INSTANCE.set((ODatabaseDocumentInternal) oldDb.getUnderlying());
     }
 
     /* (non-Javadoc)
@@ -176,7 +175,7 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
      * 
      * @return the database
      */
-    public AbstractOrientDatabaseFactory<? extends ODatabase> getDatabaseFactory() {
+    public AbstractOrientDatabaseFactory<? extends ODatabase<?>> getDatabaseFactory() {
         return dbf;
     }
 
@@ -185,7 +184,7 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
      * 
      * @param databaseFactory the database to set
      */
-    public void setDatabaseManager(AbstractOrientDatabaseFactory<ODatabaseInternal> databaseFactory) {
+    public void setDatabaseManager(AbstractOrientDatabaseFactory<ODatabaseInternal<?>> databaseFactory) {
         this.dbf = databaseFactory;
     }
 }

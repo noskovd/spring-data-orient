@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.orient.object.repository.DetachMode;
 
-import com.orientechnologies.orient.core.db.ODatabaseComplex;
+import com.orientechnologies.orient.core.db.ODatabase;
 import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.query.OQuery;
@@ -37,7 +37,7 @@ public interface OrientOperations {
     
     <RET extends List<?>> RET query(OQuery<?> query, DetachMode detachMode, Object... values);
     
-    ODatabaseComplex<Object> delete(ORecordInternal iRecord);
+    ODatabase<Object> delete(ORecordInternal iRecord);
 
     ODatabaseObject delete(ORID iRID);
 
