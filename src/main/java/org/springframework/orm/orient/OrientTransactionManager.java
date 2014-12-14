@@ -128,6 +128,7 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
         OrientTransaction tx = (OrientTransaction) transaction;
         
         if (!tx.getDatabase().isClosed()) {
+            log.debug("closing transaction, db.hashCode() = {}", tx.getDatabase().hashCode());
             tx.getDatabase().close();
         }
         
