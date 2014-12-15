@@ -1,9 +1,14 @@
 package org.springframework.orm.orient;
 
-import javax.annotation.PostConstruct;
-
-import com.orientechnologies.orient.core.db.*;
+import com.orientechnologies.orient.core.db.ODatabase;
+import com.orientechnologies.orient.core.db.ODatabaseInternal;
+import com.orientechnologies.orient.core.db.ODatabasePoolBase;
+import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
+
+import javax.annotation.PostConstruct;
 
 /**
  * A base factory for creating {@link ODatabase} objects.
@@ -12,6 +17,9 @@ import org.springframework.util.Assert;
  * @param <T> the type of database to handle
  */
 public abstract class AbstractOrientDatabaseFactory<T extends ODatabaseInternal<?>> {
+
+    /** The logger. */
+    private static Logger log = LoggerFactory.getLogger(AbstractOrientDatabaseFactory.class);
 
     /** Default minimum pool size. */
     public static final int DEFAULT_MIN_POOL_SIZE = 1;
@@ -68,7 +76,16 @@ public abstract class AbstractOrientDatabaseFactory<T extends ODatabaseInternal<
     protected abstract ODatabaseInternal<?> newDatabase();
 
     public ODatabaseInternal<?> db() {
-        return ODatabaseRecordThreadLocal.INSTANCE.get().getDatabaseOwner();
+        ODatabaseInternal<?> db;
+        if(!ODatabaseRecordThreadLocal.INSTANCE.isDefined()) {
+            db = openDatabase();
+            log.debug("acquire db from pool {}", db.hashCode());
+        } else {
+            db = ODatabaseRecordThreadLocal.INSTANCE.get().getDatabaseOwner();
+            log.debug("use existing db {}", db.hashCode());
+        }
+
+        return db;
     }
 
     protected void createDatabase(ODatabaseInternal<?> db) {
