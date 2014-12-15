@@ -107,7 +107,7 @@ public class OrientTransactionManager extends AbstractPlatformTransactionManager
         OrientTransaction tx = (OrientTransaction) status.getTransaction();
         ODatabaseInternal<?> db = tx.getDatabase();
         
-        log.debug("committing transaction, db.hashCode() = {}", db.hashCode());
+        log.debug("rolling back transaction, db.hashCode() = {}", db.hashCode());
         
         db.rollback();
     }
