@@ -7,6 +7,7 @@ import org.springframework.data.orient.object.repository.DetachMode;
 import com.orientechnologies.orient.core.db.ODatabase;
 import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import com.orientechnologies.orient.core.id.ORID;
+import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.query.OQuery;
 import com.orientechnologies.orient.core.record.ORecordInternal;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
@@ -36,12 +37,6 @@ public interface OrientOperations {
     <RET> RET queryForObject(OSQLQuery<?> query, DetachMode detachMode, Object... values);
     
     <RET extends List<?>> RET query(OQuery<?> query, DetachMode detachMode, Object... values);
-    
-    ODatabase<Object> delete(ORecordInternal iRecord);
-
-    ODatabaseObject delete(ORID iRID);
-
-    ODatabaseObject delete(Object iPojo);
 
     <RET> OObjectIteratorClass<RET> browseClass(Class<RET> iClusterClass);
 
@@ -87,4 +82,8 @@ public interface OrientOperations {
     <RET> RET command(OCommandSQL command, Object... args);
     
     <RET> RET command(String sql, Object... args);
+
+    Object delete(ORID iRID);
+
+    Object delete(Object iObject);
 }
